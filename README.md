@@ -1,2 +1,2 @@
 # DTBaseModule
-Shared scripts and resources module
+Shared scripts and one-off useful things module
