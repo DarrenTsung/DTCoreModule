@@ -2,7 +2,7 @@
 using System.Collections;
 ﻿using UnityEngine;
 
-public static class NotificationsBase {
+public static class Notifications {
 	// NOTE (darren): notification snippet is useful here
 	
 	// PRAGMA MARK - Player
