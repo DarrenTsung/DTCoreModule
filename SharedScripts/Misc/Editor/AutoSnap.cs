@@ -92,7 +92,7 @@ namespace DT {
 
 		[MenuItem("Edit/Auto Snap %_l")]
 		static void Init() {
-			AutoSnapEditorWindow window = (AutoSnapEditorWindow)EditorWindow.GetWindow(typeof(AutoSnapEditorWindow));
+			AutoSnapEditorWindow window = EditorWindow.GetWindow<AutoSnapEditorWindow>(false, "Auto Snap");
 			window.maxSize = new Vector2(200, 125);
 		}
 

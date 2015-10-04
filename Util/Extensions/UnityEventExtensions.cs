@@ -23,6 +23,9 @@ namespace UnityEvents
 
     [System.Serializable]
     public class O : UnityEvent<object> { }
+    
+    [System.Serializable]
+    public class G : UnityEvent<GameObject> { }
 
     [System.Serializable]
     public class FF : UnityEvent<float, float> { }
