@@ -11,5 +11,9 @@ namespace DT {
       }
       return name;
     }
+    
+    public static bool IsInLayerMask(this GameObject g, LayerMask mask) {
+      return ((mask.value & (1 << g.layer)) > 0);
+    }
   }
 }
