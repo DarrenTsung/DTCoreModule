@@ -20,14 +20,10 @@ namespace DT {
     [SerializeField]
     protected double _bone2Length = 1.0;
     
-    [SerializeField, VectorInspectable]
-    protected Vector2 _targetWorldPosition;
-    protected Vector2 _cachedTargetWorldPosition = Vector2.zero;
+    [SerializeField, LocalVectorInspectable]
+    protected Vector2 _targetLocalPosition;
     
     [Header("Read-Only Properties")]
-    [SerializeField, ReadOnly]
-    protected Vector2 _localTargetPosition;
-    
     [SerializeField, ReadOnly]
     protected bool _validPositionFound;
     
@@ -41,20 +37,12 @@ namespace DT {
     protected float _angle2Degrees;
     
     protected void Update() {
-      this.UpdateIK();
-    }
-    
-    protected void UpdateIK() {
-      if (_cachedTargetWorldPosition != _targetWorldPosition) {
-        this.SolveForIKSolution();
-        _cachedTargetWorldPosition = _targetWorldPosition;
-      }
+      this.SolveForIKSolution();
     }
     
     [MakeButtonAttribute]
     protected void SolveForIKSolution() {
-      _localTargetPosition = _targetWorldPosition - (Vector2)_bone1.position;
-      _validPositionFound = IKUtil.Calc2DTwoBoneAnalytic(out _angle1, out _angle2, _solveForPositiveAngle2, _bone1Length, _bone2Length, _localTargetPosition);
+      _validPositionFound = IKUtil.Calc2DTwoBoneAnalytic(out _angle1, out _angle2, _solveForPositiveAngle2, _bone1Length, _bone2Length, _targetLocalPosition);
       
       _angle1Degrees = (float)(Mathf.Rad2Deg * _angle1);
       _angle2Degrees = (float)(Mathf.Rad2Deg * _angle2);
@@ -73,7 +61,7 @@ namespace DT {
       Gizmos.DrawLine(_bone1.position, bone2Position);
       Gizmos.DrawLine(bone2Position, bone2EndPosition);
       
-      Gizmos.DrawSphere((Vector3)_targetWorldPosition, 0.05f);
+      Gizmos.DrawSphere((Vector3)((Vector2)transform.position + _targetLocalPosition), 0.05f);
     }
 	}
 }

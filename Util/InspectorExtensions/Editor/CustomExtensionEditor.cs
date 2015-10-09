@@ -15,7 +15,7 @@ using UnityEditor;
 
 namespace DT {
   /// <summary>
-  /// for fields to work with the Vector3 inspector they must either be public or marked with SerializeField and have the VectorInspectable
+  /// for fields to work with the Vector inspector they must either be public or marked with SerializeField and have the VectorInspectable
   /// attribute.
   /// </summary>
   [CustomEditor(typeof(UnityEngine.Object), true)]
@@ -29,6 +29,10 @@ namespace DT {
     // Vector editor
     bool _hasVectorFields = false;
     IEnumerable<FieldInfo> _vectorInspectibleFields;
+    
+    // Local Vector editor
+    bool _hasLocalVectorFields = false;
+    IEnumerable<FieldInfo> _localVectorInspectibleFields;
     
     public void OnEnable() {
       var type = target.GetType();
@@ -48,11 +52,17 @@ namespace DT {
         _buttonMethods.Add(meth);
       }
       
-      // the vector3 editor needs to find any fields with the VectorInspectable attribute and validate them
+      // the vector editor needs to find any fields with the VectorInspectable attribute and validate them
       _vectorInspectibleFields = type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
                                       .Where(f => f.IsDefined(typeof(VectorInspectable), false))
                                       .Where(f => f.IsPublic || f.IsDefined(typeof(SerializeField), false));
       _hasVectorFields = _vectorInspectibleFields.Count() > 0;
+      
+      // the local vector editor needs to find any fields with the LocalVectorInspectable attribute and validate them
+      _localVectorInspectibleFields = type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                                      .Where(f => f.IsDefined(typeof(LocalVectorInspectable), false))
+                                      .Where(f => f.IsPublic || f.IsDefined(typeof(SerializeField), false));
+      _hasLocalVectorFields = _localVectorInspectibleFields.Count() > 0;
     }
     
     public override void OnInspectorGUI() {
@@ -81,12 +91,24 @@ namespace DT {
       if (_hasVectorFields) {
         this.VectorOnSceneGUI();
       }
+      
+      if (_hasLocalVectorFields) {
+        this.LocalVectorOnSceneGUI();
+      }
     }
     
     protected void VectorOnSceneGUI() {
       Undo.RecordObject(target, "Vector Editor");
-      
-      foreach (var field in _vectorInspectibleFields) {
+      this.DisplayVectorFields(_vectorInspectibleFields);
+    }
+    
+    protected void LocalVectorOnSceneGUI() {
+      Undo.RecordObject(target, "Local Vector Editor");
+      this.DisplayVectorFields(_localVectorInspectibleFields, (target as MonoBehaviour).gameObject.transform.position);
+    }
+  
+    protected void DisplayVectorFields(IEnumerable<FieldInfo> fields, Vector3 offset = default(Vector3)) {
+      foreach (var field in fields) {
         var value = field.GetValue(target);
         if (value is Vector3 || value is Vector2) {
           Vector3 val = Vector3.zero;
@@ -96,8 +118,8 @@ namespace DT {
           } else {
             val = (Vector3)value;
           }
-          Handles.Label(val, field.Name);
-          Vector3 newValue = Handles.PositionHandle(val, Quaternion.identity);
+          Handles.Label(val + offset, field.Name);
+          Vector3 newValue = Handles.PositionHandle(val + offset, Quaternion.identity) - offset;
           if (GUI.changed) {
             GUI.changed = false;
             if (value is Vector3) {
@@ -115,8 +137,8 @@ namespace DT {
           var label = field.Name + ": ";
           
           for (var i = 0; i < list.Count; i++) {
-            Handles.Label(list[i], label + i);
-            list[i] = Handles.PositionHandle(list[i], Quaternion.identity);
+            Handles.Label(list[i] + offset, label + i);
+            list[i] = Handles.PositionHandle(list[i] + offset, Quaternion.identity) - offset;
           }
           Handles.DrawPolyLine(list.ToArray());
         } else if (value is List<Vector2>) {
@@ -128,8 +150,8 @@ namespace DT {
           var label = field.Name + ": ";
           
           for (var i = 0; i < vec3List.Count; i++) {
-            Handles.Label(vec3List[i], label + i);
-            vec2List[i] = (Vector2)Handles.PositionHandle(vec3List[i], Quaternion.identity);
+            Handles.Label(vec3List[i] + offset, label + i);
+            vec2List[i] = (Vector2)(Handles.PositionHandle(vec3List[i] + offset, Quaternion.identity) - offset);
           }
           Handles.DrawPolyLine(vec3List.ToArray());
         } else if (value is Vector3[]) {
@@ -137,8 +159,8 @@ namespace DT {
           var label = field.Name + ": ";
           
           for (var i = 0; i < list.Length; i++) {
-            Handles.Label(list[i], label + i);
-            list[i] = Handles.PositionHandle(list[i], Quaternion.identity);
+            Handles.Label(list[i] + offset, label + i);
+            list[i] = Handles.PositionHandle(list[i] + offset, Quaternion.identity) - offset;
           }
           Handles.DrawPolyLine(list);
         } else if (value is Vector2[]) {
@@ -150,8 +172,8 @@ namespace DT {
           var label = field.Name + ": ";
           
           for (var i = 0; i < vec3Array.Length; i++) {
-            Handles.Label(vec3Array[i], label + i);
-            vec2Array[i] = (Vector2)Handles.PositionHandle(vec3Array[i], Quaternion.identity);
+            Handles.Label(vec3Array[i] + offset, label + i);
+            vec2Array[i] = (Vector2)(Handles.PositionHandle(vec3Array[i] + offset, Quaternion.identity) - offset);
           }
           Handles.DrawPolyLine(vec3Array);
         }

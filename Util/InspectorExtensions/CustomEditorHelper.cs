@@ -21,4 +21,11 @@ namespace DT {
 	/// </summary>
 	[AttributeUsageAttribute(AttributeTargets.Field)]
 	public class VectorInspectable : Attribute {}
+	
+	/// <summary>
+	/// adds a local vector2/3 editor to the scene GUI if this attribute is on any serialized Vector2/3, List<Vector2/3>
+	/// or Vector2/3[] fields.
+	/// </summary>
+	[AttributeUsageAttribute(AttributeTargets.Field)]
+	public class LocalVectorInspectable : Attribute {}
 }
