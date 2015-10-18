@@ -56,6 +56,15 @@ namespace UnityEvents
 
     [System.Serializable]
     public class IO : UnityEvent<int, object> { }
+    
+    [System.Serializable]
+    public class IG : UnityEvent<int, GameObject> { }
+
+    [System.Serializable]
+    public class IV2 : UnityEvent<int, Vector2> { }
+
+    [System.Serializable]
+    public class IV3 : UnityEvent<int, Vector3> { }
 
     [System.Serializable]
     public class SF : UnityEvent<string, float> { }
