@@ -23,6 +23,7 @@ namespace DT {
   public class CustomExtensionEditor : Editor {
     MethodInfo _onInspectorGuiMethod;
     MethodInfo _onSceneGuiMethod;
+    MethodInfo _onValidateMethod;
     MethodInfo _updateMethod;
     List<MethodInfo> _buttonMethods = new List<MethodInfo>();
     
@@ -40,10 +41,11 @@ namespace DT {
         return;
       }
       
-      _onInspectorGuiMethod = type.GetMethod("OnInspectorGUI", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-      _onSceneGuiMethod = type.GetMethod("OnSceneGUI", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+      _onInspectorGuiMethod = type.GetMethod("OnInspectorGUI", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
+      _onSceneGuiMethod = type.GetMethod("OnSceneGUI", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
       if (type.IsDefined(typeof(ExecuteInEditMode), false)) {
-        _updateMethod = target.GetType().GetMethod("Update", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+        _onValidateMethod = type.GetMethod("OnValidate", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
+        _updateMethod = target.GetType().GetMethod("Update", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
       }
       
       var meths = type.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
@@ -131,6 +133,10 @@ namespace DT {
             if (_updateMethod != null) {
               _updateMethod.Invoke(target, new object[0]);
             }
+            if (_onValidateMethod != null) {
+              _onValidateMethod.Invoke(target, new object[0]);
+            }
+            EditorUtility.SetDirty(target);
           }
         } else if (value is List<Vector3>) {
           var list = value as List<Vector3>;
