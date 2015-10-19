@@ -5,14 +5,14 @@ using UnityEngine;
 
 namespace DT {
 	public class DTEditor<T> : Editor where T : MonoBehaviour {
-		// PRAGMA MARK - INTERFACE
+		// PRAGMA MARK - Interface
 		public override void OnInspectorGUI() {
 			if (GUI.changed) {
 				EditorUtility.SetDirty(_object);
 			}
 		}
 		
-		// PRAGMA MARK - INTERNAL
+		// PRAGMA MARK - Internal
 		protected T _object;
 		
 		protected void OnEnable() {
