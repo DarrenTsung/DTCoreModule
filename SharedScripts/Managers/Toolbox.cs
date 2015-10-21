@@ -13,34 +13,20 @@ using UnityEngine;
 ///
 /// This requires someone to setup the composition root (Toolbox game object)
 /// in the scene
-public class Toolbox : Singleton<Toolbox> {
-	protected Toolbox() {}
-	
-  // PRAGMA MARK - Internal 
-	protected Dictionary<Type, MonoBehaviour> _componentMap;
-	
-	protected void Awake() {
-		_componentMap = new Dictionary<Type, MonoBehaviour>();
-	}
-	
-	static public T GetInstance<T>() where T : class {
-		return Instance.GetComponentInstance<T>();
-	}
+namespace DT {
+	public class Toolbox : Singleton<Toolbox> {
+		protected Toolbox() {}
 		
-	public T GetComponentInstance<T>() where T : class {
-		Type type = typeof(T);
-		
-		if (!_componentMap.ContainsKey(type)) {
-			MonoBehaviour component = this.GetComponent<T>() as MonoBehaviour;
+		// PRAGMA MARK - Interface
+		static public T GetInstance<T>() where T : class {
+			return Instance.GetComponentInstance<T>();
+		}
 			
-			if (!component) {
-				Debug.LogError("Failed to get component for type: " + type);
-				return default(T);
-			}
-			
-			_componentMap[type] = component;
+		public T GetComponentInstance<T>() where T : class {
+			return this.GetCachedComponent<T>(_cachedComponentMap);
 		}
 		
-		return _componentMap[type] as T;
+	  // PRAGMA MARK - Internal 
+		protected Dictionary<Type, MonoBehaviour> _cachedComponentMap = new Dictionary<Type, MonoBehaviour>();
 	}
 }
