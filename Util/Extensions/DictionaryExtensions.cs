@@ -32,5 +32,12 @@ namespace DT {
         return defaultValue;
       }
     }
+    
+    public static V GetAndCreateIfNotFound<U, V>(this IDictionary<U, V> source, U key) where V : new() {
+      if (!source.ContainsKey(key)) {
+        source[key] = new V();
+      }
+      return source[key];
+    }
   }
 }
