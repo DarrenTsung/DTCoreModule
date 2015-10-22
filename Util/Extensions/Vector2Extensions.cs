@@ -76,5 +76,9 @@ namespace DT {
     public static Vector2 Rotate(this Vector2 v, float degrees) {
       return Quaternion.Euler(0, 0, degrees) * v;
     }
+    
+    public static Vector3 Vector3XZValue(this Vector2 v) {
+      return new Vector3(v.x, 0.0f, v.y);
+    }
   }
 }
