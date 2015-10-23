@@ -9,5 +9,13 @@ namespace DT {
     public static T PickRandom<T>(this IList<T> source) {
         return source[ListExtensions.rand.Next(source.Count)];
     }
+    
+    public static T SafeGet<T>(this IList<T> source, int index, T defaultValue = default(T)) {
+      if (index >= 0 && index < source.Count) {
+        return source[index];
+      } else {
+        return defaultValue;
+      }
+    }
   }
 }
