@@ -42,5 +42,13 @@ namespace DT {
       v.z = z;
       return v;
     }
+    
+    public static Vector3 ClampedToMagnitude(this Vector3 v, float clampedMagnitude) {
+      if (v.magnitude > clampedMagnitude) {
+        return v.normalized * clampedMagnitude;
+      } else {
+        return v;
+      }
+    }
   }
 }
