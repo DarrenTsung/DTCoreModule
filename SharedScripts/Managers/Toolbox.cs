@@ -17,11 +17,11 @@ namespace DT {
 	public class Toolbox : Singleton<Toolbox> {
 		protected Toolbox() {}
 		
-		// PRAGMA MARK - Interface
-		static public T GetInstance<T>() where T : class {
+		public static T GetInstance<T>() where T : class {
 			return Instance.GetComponentInstance<T>();
 		}
-			
+		
+		// PRAGMA MARK - Interface
 		public T GetComponentInstance<T>() where T : class {
 			return this.GetCachedComponent<T>(_cachedComponentMap);
 		}
