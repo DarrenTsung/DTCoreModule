@@ -34,5 +34,29 @@ namespace DT {
 			
 			return cache[type] as T;
     }
+    
+    public static T GetRequiredComponent<T>(this GameObject g) {
+      T component = g.GetComponent<T>();
+      if (component == null) {
+        Debug.Log("Component " + typeof(T).Name + " missing in " + g.FullName());
+      }
+      return component;
+    }
+    
+    public static GameObject[] FindChildGameObjectsWithTag(this GameObject g, string tag) {
+      List<GameObject> taggedChildGameObjects = new List<GameObject>();
+      g.FindChildGameObjectsWithTagHelper(tag, taggedChildGameObjects);
+      return taggedChildGameObjects.ToArray();
+    }
+    
+    public static void FindChildGameObjectsWithTagHelper(this GameObject g, string tag, List<GameObject> objects) {
+      foreach (Transform childTransform in g.transform) {
+        GameObject child = childTransform.gameObject;
+        if (child.CompareTag(tag)) {
+          objects.Add(child.gameObject);
+        }
+        child.FindChildGameObjectsWithTagHelper(tag, objects);
+      }
+    }
   }
 }
