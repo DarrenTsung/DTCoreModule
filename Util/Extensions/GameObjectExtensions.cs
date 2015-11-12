@@ -38,7 +38,7 @@ namespace DT {
     public static T GetRequiredComponent<T>(this GameObject g) {
       T component = g.GetComponent<T>();
       if (component == null) {
-        Debug.Log("Component " + typeof(T).Name + " missing in " + g.FullName());
+        Debug.LogError("MissingRequiredComponent: Component " + typeof(T).Name + " missing in " + g.FullName());
       }
       return component;
     }
