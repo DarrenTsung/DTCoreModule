@@ -58,5 +58,16 @@ namespace DT {
 			
 			return v1 * s;
 		}
+		
+		/// <summary>
+		/// Wraps a value between the range of min and max
+		/// </summary>
+		public static int Wrap(int input, int min, int max) {
+			int newVal = input % max;
+			if (newVal < min) {
+				newVal += max;
+			}
+			return newVal;
+		}
 	}
 }
