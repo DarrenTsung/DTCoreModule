@@ -12,7 +12,7 @@ public class OpenAssetEditorWindow : EditorWindow {
 	private const float kRowHeight = 20.0f;
 	private const int kFontSize = 25;
 	
-	// PRAGMA MARK - Interface
+	// PRAGMA MARK - Public Interface
 	[MenuItem("DarrenTsung/Open Asset.. %t")]
 	public static void ShowWindow() {
 		EditorWindow window = EditorWindow.GetWindow(typeof(OpenAssetEditorWindow), utility: true, title: "Open File", focus: true);
@@ -79,7 +79,7 @@ public class OpenAssetEditorWindow : EditorWindow {
 			case KeyCode.Return:
 				if (guids.Length > 0) {
 					string path = AssetDatabase.GUIDToAssetPath(guids[_selectedIndex]);
-					if (path.Contains(".unity")) {
+					if (PathUtil.IsScene(path)) {
 						if (EditorApplication.isSceneDirty) {
 							if (EditorApplication.SaveCurrentSceneIfUserWantsTo()) {
 								EditorApplication.OpenScene(path);
@@ -87,7 +87,7 @@ public class OpenAssetEditorWindow : EditorWindow {
 						} else {
 							EditorApplication.OpenScene(path);
 						}
-					} else if (path.Contains(".prefab")) {
+					} else if (PathUtil.IsPrefab(path)) {
 						// TODO (darren): open prefab sandbox here
 					}
 				}
