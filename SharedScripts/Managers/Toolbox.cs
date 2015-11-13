@@ -21,7 +21,7 @@ namespace DT {
 			return Instance.GetComponentInstance<T>();
 		}
 		
-		// PRAGMA MARK - Interface
+		// PRAGMA MARK - Public Interface
 		public T GetComponentInstance<T>() where T : class {
 			return this.GetCachedComponent<T>(_cachedComponentMap);
 		}

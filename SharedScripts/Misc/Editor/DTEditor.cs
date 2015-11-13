@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace DT {
 	public class DTEditor<T> : Editor where T : MonoBehaviour {
-		// PRAGMA MARK - Interface
+		// PRAGMA MARK - Public Interface
 		public override void OnInspectorGUI() {
 			if (GUI.changed) {
 				EditorUtility.SetDirty(_object);
