@@ -69,5 +69,24 @@ namespace DT {
 			}
 			return newVal;
 		}
+		
+		/// <summary>
+		/// Evaluates a sine function with the given amplitude, wavelength, and offset
+		/// </summary>
+		public static float EvaluateSine(float val, float amplitude, float wavelength, float offset = 0.0f) {
+			if (wavelength == 0) {
+				wavelength = 1.0f;
+			}
+			return amplitude * Mathf.Sin((val * 2.0f * Mathf.PI) / wavelength) + offset;
+		}
+		
+		/// <summary>
+		/// Example: RoundToDecimalPlace(12.345f, 1) == 12.3f
+		/// </summary>
+		public static float RoundToDecimalPlace(float val, int decimalPlace) {
+			float conversion = Mathf.Pow(10.0f, decimalPlace);
+			float raisedValue = val * conversion;
+			return Mathf.Round(raisedValue) / conversion;
+		}
 	}
 }

@@ -43,6 +43,21 @@ namespace DT {
       return v;
     }
     
+    public static Vector3 AddX(this Vector3 v, float x) {
+      v.x = v.x + x;
+      return v;
+    }
+    
+    public static Vector3 AddY(this Vector3 v, float y) {
+      v.y = v.y + y;
+      return v;
+    }
+    
+    public static Vector3 AddZ(this Vector3 v, float z) {
+      v.z = v.z + z;
+      return v;
+    }
+    
     public static Vector3 ClampedToMagnitude(this Vector3 v, float clampedMagnitude) {
       if (v.magnitude > clampedMagnitude) {
         return v.normalized * clampedMagnitude;
