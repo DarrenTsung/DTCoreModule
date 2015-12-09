@@ -18,6 +18,9 @@ namespace DT {
     }
     
     public static Coroutine DoAfterDelay(this MonoBehaviour m, float delay, Action callback) {
+      if (delay < 0) {
+        delay = 0;
+      }
       return m.StartCoroutine(m.DoActionAfterDelayCoroutine(delay, callback));
     }
     
