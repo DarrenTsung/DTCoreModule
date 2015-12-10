@@ -1,6 +1,7 @@
 using DT;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace DT {
 	public class OpenableObjectManager {
@@ -31,17 +32,33 @@ namespace DT {
     
     // PRAGMA MARK - Public Interface
     public IOpenableObject[] ObjectsSortedByMatch(string input) {
+			string inputLowercase = input.ToLower();
+			
       List<IOpenableObject> objectsCopy = new List<IOpenableObject>(_loadedObjects);
       
-      Dictionary<string, int> cachedEditDistances = new Dictionary<string, int>();
+      Dictionary<string, double> cachedDistances = new Dictionary<string, double>();
       foreach (IOpenableObject obj in objectsCopy) {
-        cachedEditDistances[obj.DisplayName] = ComparisonUtil.EditDistance(obj.DisplayName, input);
+				string displayName = obj.DisplayName;
+				string displayNameLowercase = displayName.ToLower();
+				
+				float editDistance = ComparisonUtil.EditDistance(displayNameLowercase, inputLowercase);
+				
+				string longestCommonSubstring = ComparisonUtil.LongestCommonSubstring(displayNameLowercase, inputLowercase);
+				float substringLength = longestCommonSubstring.Length;
+				float substringIndex = displayNameLowercase.IndexOf(longestCommonSubstring);
+				
+				double distance = 0;
+				distance += 0.05f * editDistance;
+				distance += 2.0f * -substringLength;
+				distance += substringIndex;
+				
+        cachedDistances[displayName] = distance;
       }
       
       objectsCopy.Sort(delegate(IOpenableObject objA, IOpenableObject objB) {
-        int editDistanceA = cachedEditDistances[objA.DisplayName];
-        int editDistanceB = cachedEditDistances[objB.DisplayName];
-        return editDistanceA.CompareTo(editDistanceB);
+        double distanceA = cachedDistances[objA.DisplayName];
+        double distanceB = cachedDistances[objB.DisplayName];
+        return distanceA.CompareTo(distanceB);
       });
       
       return objectsCopy.ToArray();

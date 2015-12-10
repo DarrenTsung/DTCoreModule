@@ -25,6 +25,7 @@ namespace DT {
 			_focusTrigger = true;
 			
 			_openableObjectManager = new OpenableObjectManager();
+			OpenAssetEditorWindow.ReloadObjects();
 		}
 		
 		// PRAGMA MARK - Internal
@@ -87,6 +88,10 @@ namespace DT {
 		
 		private void HandleInputUpdated() {
 			_selectedIndex = 0;
+			OpenAssetEditorWindow.ReloadObjects();
+		}
+		
+		private static void ReloadObjects() {
 			_objects = _openableObjectManager.ObjectsSortedByMatch(_input);
 		}
 		
