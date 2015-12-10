@@ -17,39 +17,54 @@ namespace DT {
 		// PRAGMA MARK - Public Interface
 		[MenuItem("DarrenTsung/Open Asset.. %t")]
 		public static void ShowWindow() {
-			EditorWindow window = EditorWindow.GetWindow(typeof(OpenAssetEditorWindow), utility: true, title: "Open File", focus: true);
+			EditorWindow window = EditorWindow.GetWindow(typeof(OpenAssetEditorWindow), utility: true, title: "Open..", focus: true);
 			window.position = new Rect(0.0f, 0.0f, kWindowWidth, kWindowHeight);
 			window.CenterInMainEditorWindow();
 			
 			_selectedIndex = 0;
-			_justFocused = true;
+			_focusTrigger = true;
+			
+			_openableObjectManager = new OpenableObjectManager();
 		}
 		
 		// PRAGMA MARK - Internal
-		protected static Color selectedBackgroundColor = ColorExtensions.HexStringToColor("#4976C2");
-		protected static string _assetName = "";
-		protected static bool _justFocused = false;
+		protected static string _input = "";
+		protected static bool _focusTrigger = false;
 		protected static int _selectedIndex = 0;
+		protected static IOpenableObject[] _objects = new IOpenableObject[0];
+		protected static OpenableObjectManager _openableObjectManager = null;
+		protected static Color _selectedBackgroundColor = ColorExtensions.HexStringToColor("#4976C2");
+		
+		protected static Texture2D _selectedBackgroundTexture;
+		protected static Texture2D SelectedBackgroundTexture {
+			get {
+				if (_selectedBackgroundTexture == null) {
+					_selectedBackgroundTexture = new Texture2D(1, 1);
+					_selectedBackgroundTexture.hideFlags = HideFlags.DontSave;
+					_selectedBackgroundTexture.SetPixel(0, 0, _selectedBackgroundColor);
+					_selectedBackgroundTexture.Apply();
+				}
+				return _selectedBackgroundTexture;
+			}
+		}
 		
 		protected void OnGUI() {
-			if (_justFocused) {
-				_justFocused = false;
+			if (_focusTrigger) {
+				_focusTrigger = false;
 				EditorGUI.FocusTextInControl(kTextFieldControlName);
 			}
-			
-			string[] guids = AssetDatabase.FindAssets(_assetName + " t:Prefab t:Scene");
 			
 			Event e = Event.current;
 			switch (e.type) {
 				case EventType.KeyDown:
-					this.HandleKeyDownEvent(e, guids);
+					this.HandleKeyDownEvent(e);
 					break;
 				default:
 					break;
 			}		
 			
-			if (guids.Length > 0) {
-				_selectedIndex = MathUtil.Wrap(_selectedIndex, 0, Mathf.Min(guids.Length, kMaxRowsDisplayed));
+			if (_objects.Length > 0) {
+				_selectedIndex = MathUtil.Wrap(_selectedIndex, 0, Mathf.Min(_objects.Length, kMaxRowsDisplayed));
 			} else {
 				_selectedIndex = 0;
 			}
@@ -58,42 +73,30 @@ namespace DT {
 			textFieldStyle.fontSize = kFontSize;
 			
 			GUI.SetNextControlName(kTextFieldControlName);
-			string updatedName = EditorGUI.TextField(new Rect(0.0f, 0.0f, kWindowWidth, kWindowHeight), _assetName, textFieldStyle);
-			if (updatedName != _assetName) {
-				_assetName = updatedName;
-				_selectedIndex = 0;
+			string updatedInput = EditorGUI.TextField(new Rect(0.0f, 0.0f, kWindowWidth, kWindowHeight), _input, textFieldStyle);
+			if (updatedInput != _input) {
+				_input = updatedInput;
+				this.HandleInputUpdated();
 			}
 			
-			int displayedAssetCount = 0;
-			if (!string.IsNullOrEmpty(_assetName)) {
-				displayedAssetCount = Mathf.Min(guids.Length, kMaxRowsDisplayed);
-				this.DrawDropDown(guids, displayedAssetCount);
-			}
+			int displayedAssetCount = Mathf.Min(_objects.Length, kMaxRowsDisplayed);
+			this.DrawDropDown(displayedAssetCount);
 			
 			this.position = new Rect(this.position.x, this.position.y, this.position.width, kWindowHeight + displayedAssetCount * kRowHeight);
 		}
 		
-		private void HandleKeyDownEvent(Event e, string[] guids) {
+		private void HandleInputUpdated() {
+			_selectedIndex = 0;
+			_objects = _openableObjectManager.ObjectsSortedByMatch(_input);
+		}
+		
+		private void HandleKeyDownEvent(Event e) {
 			switch (e.keyCode) {
 				case KeyCode.Escape:
 					this.Close();
 					break;
 				case KeyCode.Return:
-					if (guids.Length > 0) {
-						string selectedGuid = guids[_selectedIndex];
-						string path = AssetDatabase.GUIDToAssetPath(selectedGuid);
-						if (PathUtil.IsScene(path)) {
-							if (EditorApplication.isSceneDirty) {
-								if (EditorApplication.SaveCurrentSceneIfUserWantsTo()) {
-									EditorApplication.OpenScene(path);
-								}
-							} else {
-								EditorApplication.OpenScene(path);
-							}
-						} else if (PathUtil.IsPrefab(path)) {
-							PrefabSandbox.OpenPrefab(selectedGuid, null);
-						}
-					}
+					_objects[_selectedIndex].Open();
 					this.Close();
 					break;
 				case KeyCode.DownArrow:
@@ -109,33 +112,19 @@ namespace DT {
 			}
 		}
 		
-		private static Texture2D _selectedBackgroundTexture;
-		private static Texture2D SelectedBackgroundTexture {
-			get {
-				if (_selectedBackgroundTexture == null) {
-					_selectedBackgroundTexture = new Texture2D(1, 1);
-					_selectedBackgroundTexture.hideFlags = HideFlags.DontSave;
-					_selectedBackgroundTexture.SetPixel(0, 0, selectedBackgroundColor);
-					_selectedBackgroundTexture.Apply();
-				}
-				return _selectedBackgroundTexture;
-			}
-		}
-		
-		private void DrawDropDown(string[] guids, int displayedAssetCount) {
+		private void DrawDropDown(int displayedAssetCount) {
 			for (int i = 0; i < displayedAssetCount; i++) {
 				GUIStyle labelStyle = new GUIStyle(GUI.skin.label);
 				if (i == _selectedIndex) {
 					labelStyle.normal.background = OpenAssetEditorWindow.SelectedBackgroundTexture;
 				}
 				
-				string prefabName = System.IO.Path.GetFileName(AssetDatabase.GUIDToAssetPath(guids[i]));
-				EditorGUI.LabelField(new Rect(0.0f, kWindowHeight + kRowHeight * i, kWindowWidth, kRowHeight), prefabName, labelStyle);
+				EditorGUI.LabelField(new Rect(0.0f, kWindowHeight + kRowHeight * i, kWindowWidth, kRowHeight), _objects[i].DisplayName, labelStyle);
 			}
 		}
 		
 		private void OnFocus() {
-			_justFocused = true;
+			_focusTrigger = true;
 		}
 		
 		private void OnLostFocus() {
