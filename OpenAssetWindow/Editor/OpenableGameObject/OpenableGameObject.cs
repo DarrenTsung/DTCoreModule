@@ -5,10 +5,20 @@ using UnityEditor;
 namespace DT {
   public abstract class OpenableGameObject : IOpenableObject {
     // PRAGMA MARK - IOpenableObject
-    public string DisplayName {
+    public string DisplayTitle {
       get {
         return _obj.name;
       }
+    }
+    
+    public string DisplayDetailText {
+      get {
+        return _obj.FullName();
+      }
+    }
+    
+    public abstract Texture2D DisplayIcon {
+      get;
     }
     
     public abstract void Open();

@@ -1,9 +1,26 @@
 using System;
 using UnityEditor;
+using UnityEngine;
 
 namespace DT {
   public class OpenableSceneObject : OpenableAsset {
+    private static Texture2D _sceneDisplayIcon;
+    private static Texture2D SceneDisplayIcon {
+      get {
+        if (_sceneDisplayIcon == null) {
+          _sceneDisplayIcon = AssetDatabase.LoadAssetAtPath(OpenAssetEditorWindow.EditorWindowScriptPath + "/Icons/SceneIcon.png", typeof(Texture2D)) as Texture2D;
+        }
+        return _sceneDisplayIcon ?? new Texture2D(0, 0);
+      }
+    }
+    
     // PRAGMA MARK - IOpenableObject
+    public override Texture2D DisplayIcon {
+      get {
+        return OpenableSceneObject.SceneDisplayIcon;
+      }
+    }
+    
     public override void Open() {
 			if (EditorApplication.isSceneDirty) {
 				if (EditorApplication.SaveCurrentSceneIfUserWantsTo()) {

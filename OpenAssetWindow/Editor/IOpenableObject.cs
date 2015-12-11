@@ -1,10 +1,19 @@
 ﻿using DT;
+using UnityEngine;
 
 namespace DT {
 	public interface IOpenableObject {
-    string DisplayName {
+    string DisplayTitle {
       get; 
     }
+		
+		string DisplayDetailText {
+			get;
+		}
+		
+		Texture2D DisplayIcon {
+			get;
+		}
     
     void Open();
   }

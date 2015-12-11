@@ -1,18 +1,41 @@
 ﻿using DT;
 using DT.Prefab;
+using System;
 using System.Collections;
+using System.IO;
 using UnityEditor;
 ﻿using UnityEngine;
 
 namespace DT {
 	public class OpenAssetEditorWindow : EditorWindow {
 		// PRAGMA MARK - Constants 
+		public static string EditorWindowScriptPath;
 		private const string kTextFieldControlName = "OpenAssetEditorWindowTextField";
+		
 		private const int kMaxRowsDisplayed = 8;
 		private const float kWindowWidth = 400.0f;
 		private const float kWindowHeight = 40.0f;
-		private const float kRowHeight = 20.0f;
+		
+		private const float kRowHeight = 35.0f;
+		private const float kRowTitleHeight = 20.0f;
+		private const float kRowSubtitleHeightPadding = -5.0f;
+		private const float kRowSubtitleHeight = 20.0f;
+		
+		private const int kSubtitleMaxSoftLength = 35;
+		private const int kSubtitleMaxTitleAdditiveLength = 15;
+		
+		private const float kIconEdgeSize = 20.0f;
+		private const float kIconPadding = 5.0f;
+		
 		private const int kFontSize = 25;
+		
+		static OpenAssetEditorWindow() {
+			OpenAssetEditorWindow window = ScriptableObject.CreateInstance<OpenAssetEditorWindow>();
+			MonoScript script = MonoScript.FromScriptableObject(window);
+      OpenAssetEditorWindow.EditorWindowScriptPath = Path.GetDirectoryName(AssetDatabase.GetAssetPath(script));
+			ScriptableObject.DestroyImmediate(window);
+		}
+		
 		
 		// PRAGMA MARK - Public Interface
 		[MenuItem("DarrenTsung/Open Asset.. %t")]
@@ -35,19 +58,6 @@ namespace DT {
 		protected static IOpenableObject[] _objects = new IOpenableObject[0];
 		protected static OpenableObjectManager _openableObjectManager = null;
 		protected static Color _selectedBackgroundColor = ColorExtensions.HexStringToColor("#4976C2");
-		
-		protected static Texture2D _selectedBackgroundTexture;
-		protected static Texture2D SelectedBackgroundTexture {
-			get {
-				if (_selectedBackgroundTexture == null) {
-					_selectedBackgroundTexture = new Texture2D(1, 1);
-					_selectedBackgroundTexture.hideFlags = HideFlags.DontSave;
-					_selectedBackgroundTexture.SetPixel(0, 0, _selectedBackgroundColor);
-					_selectedBackgroundTexture.Apply();
-				}
-				return _selectedBackgroundTexture;
-			}
-		}
 		
 		protected void OnGUI() {
 			if (_focusTrigger) {
@@ -118,13 +128,40 @@ namespace DT {
 		}
 		
 		private void DrawDropDown(int displayedAssetCount) {
+			GUIStyle titleStyle = new GUIStyle(GUI.skin.label);
+			titleStyle.fontStyle = FontStyle.Bold;
+			
+			GUIStyle subtitleStyle = new GUIStyle(GUI.skin.label);
+			subtitleStyle.fontSize = (int)(subtitleStyle.fontSize * 1.2f);
+			
 			for (int i = 0; i < displayedAssetCount; i++) {
-				GUIStyle labelStyle = new GUIStyle(GUI.skin.label);
+				IOpenableObject obj = _objects[i];
+				
+				float topY = kWindowHeight + kRowHeight * i;
+				
 				if (i == _selectedIndex) {
-					labelStyle.normal.background = OpenAssetEditorWindow.SelectedBackgroundTexture;
+					EditorGUI.DrawRect(new Rect(0.0f, topY, kWindowWidth, kRowHeight), _selectedBackgroundColor);
 				}
 				
-				EditorGUI.LabelField(new Rect(0.0f, kWindowHeight + kRowHeight * i, kWindowWidth, kRowHeight), _objects[i].DisplayName, labelStyle);
+				string title = obj.DisplayTitle;
+				string subtitle = obj.DisplayDetailText;
+				
+				int subtitleMaxLength = Math.Min(kSubtitleMaxSoftLength + title.Length, kSubtitleMaxSoftLength + kSubtitleMaxTitleAdditiveLength);
+				if (subtitle.Length > subtitleMaxLength + 2) {
+					subtitle = ".." + subtitle.Substring(subtitle.Length - subtitleMaxLength);
+				}
+				
+				EditorGUI.LabelField(new Rect(0.0f, topY, kWindowWidth, kRowTitleHeight), title, titleStyle);
+				EditorGUI.LabelField(new Rect(0.0f, topY + kRowTitleHeight + kRowSubtitleHeightPadding, kWindowWidth, kRowSubtitleHeight), subtitle, subtitleStyle);
+				
+				GUIStyle textureStyle = new GUIStyle();
+				textureStyle.normal.background = obj.DisplayIcon;
+				EditorGUI.LabelField(new Rect(kWindowWidth - kIconEdgeSize - kIconPadding, 
+																			topY + kIconPadding, 
+																			kIconEdgeSize, 
+																			kIconEdgeSize), 
+														 GUIContent.none,
+														 textureStyle);
 			}
 		}
 		

@@ -38,26 +38,26 @@ namespace DT {
       
       Dictionary<string, double> cachedDistances = new Dictionary<string, double>();
       foreach (IOpenableObject obj in objectsCopy) {
-				string displayName = obj.DisplayName;
-				string displayNameLowercase = displayName.ToLower();
+				string displayTitle = obj.DisplayTitle;
+				string displayTitleLowercase = displayTitle.ToLower();
 				
-				float editDistance = ComparisonUtil.EditDistance(displayNameLowercase, inputLowercase);
+				float editDistance = ComparisonUtil.EditDistance(displayTitleLowercase, inputLowercase);
 				
-				string longestCommonSubstring = ComparisonUtil.LongestCommonSubstring(displayNameLowercase, inputLowercase);
+				string longestCommonSubstring = ComparisonUtil.LongestCommonSubstring(displayTitleLowercase, inputLowercase);
 				float substringLength = longestCommonSubstring.Length;
-				float substringIndex = displayNameLowercase.IndexOf(longestCommonSubstring);
+				float substringIndex = displayTitleLowercase.IndexOf(longestCommonSubstring);
 				
 				double distance = 0;
 				distance += 0.05f * editDistance;
 				distance += 2.0f * -substringLength;
 				distance += substringIndex;
 				
-        cachedDistances[displayName] = distance;
+        cachedDistances[displayTitle] = distance;
       }
       
       objectsCopy.Sort(delegate(IOpenableObject objA, IOpenableObject objB) {
-        double distanceA = cachedDistances[objA.DisplayName];
-        double distanceB = cachedDistances[objB.DisplayName];
+        double distanceA = cachedDistances[objA.DisplayTitle];
+        double distanceB = cachedDistances[objB.DisplayTitle];
         return distanceA.CompareTo(distanceB);
       });
       
