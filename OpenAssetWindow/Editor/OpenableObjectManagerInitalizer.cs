@@ -8,6 +8,7 @@ namespace DT {
       OpenableObjectManager.AddLoader(new OpenablePrefabObjectLoader());
       OpenableObjectManager.AddLoader(new OpenableSceneObjectLoader());
       OpenableObjectManager.AddLoader(new SelectableGameObjectLoader());
+      OpenableObjectManager.AddLoader(new OpenableMethodLoader());
     }
   }
 }
