@@ -43,7 +43,7 @@ namespace DT {
 		
 		
 		// PRAGMA MARK - Public Interface
-		[MenuItem("DarrenTsung/Open Asset.. %t")]
+		[MenuItem("DarrenTsung/Open.. %t")]
 		public static void ShowWindow() {
 			EditorWindow window = EditorWindow.GetWindow(typeof(OpenObjectWindow), utility: true, title: "Open..", focus: true);
 			window.position = new Rect(0.0f, 0.0f, kWindowWidth, kWindowHeight);
