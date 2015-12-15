@@ -43,6 +43,26 @@ namespace DT {
       return component;
     }
     
+    public static T GetRequiredComponentInChildren<T>(this GameObject g) {
+      T component = g.GetOnlyComponentInChildren<T>();
+      if (component == null) {
+        Debug.LogError("GetRequiredComponentInChildren: Component " + typeof(T).Name + " missing in " + g.FullName());
+      }
+      return component;
+    }
+    
+    public static T GetOnlyComponentInChildren<T>(this GameObject g) {
+      T[] components = g.GetComponentsInChildren<T>();
+      if (components.Length <= 0) {
+        return default(T);
+      } else {
+        if (components.Length > 1) {
+          Debug.LogError("GetOnlyComponentInChildren: Found more than 1 component (" + typeof(T).Name + ") in children for gameObject: " + g.FullName());
+        }
+        return components[0];
+      }
+    }
+    
     public static GameObject[] FindChildGameObjectsWithTag(this GameObject g, string tag) {
       List<GameObject> taggedChildGameObjects = new List<GameObject>();
       g.FindChildGameObjectsWithTagHelper(tag, taggedChildGameObjects);
