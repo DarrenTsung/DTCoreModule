@@ -63,6 +63,14 @@ namespace DT {
       }
     }
     
+    public static T GetRequiredComponentInParent<T>(this GameObject g) {
+      T component = g.GetComponentInParent<T>();
+      if (component == null) {
+        Debug.LogError("GetRequiredComponentInParent: Component " + typeof(T).Name + " missing in " + g.FullName());
+      }
+      return component;
+    }
+    
     public static GameObject[] FindChildGameObjectsWithTag(this GameObject g, string tag) {
       List<GameObject> taggedChildGameObjects = new List<GameObject>();
       g.FindChildGameObjectsWithTagHelper(tag, taggedChildGameObjects);

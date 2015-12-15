@@ -25,6 +25,10 @@ namespace DT {
       return m.gameObject.GetOnlyComponentInChildren<T>();
     }
     
+    public static T GetRequiredComponentInParent<T>(this MonoBehaviour m) {
+      return m.gameObject.GetRequiredComponentInParent<T>();
+    }
+    
     public static Coroutine DoAfterDelay(this MonoBehaviour m, float delay, Action callback) {
       if (delay < 0) {
         delay = 0;
