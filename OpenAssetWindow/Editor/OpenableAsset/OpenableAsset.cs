@@ -21,6 +21,10 @@ namespace DT {
       get;
     }
     
+    public bool IsValid() {
+      return true;
+    }
+    
     public abstract void Open();
     
     

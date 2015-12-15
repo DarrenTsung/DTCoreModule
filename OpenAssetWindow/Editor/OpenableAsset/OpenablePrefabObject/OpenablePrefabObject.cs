@@ -9,7 +9,7 @@ namespace DT {
     private static Texture2D PrefabDisplayIcon {
       get {
         if (_prefabDisplayIcon == null) {
-          _prefabDisplayIcon = AssetDatabase.LoadAssetAtPath(OpenAssetEditorWindow.EditorWindowScriptPath + "/Icons/PrefabIcon.png", typeof(Texture2D)) as Texture2D;
+          _prefabDisplayIcon = AssetDatabase.LoadAssetAtPath(OpenObjectWindow.ScriptDirectory + "/Icons/PrefabIcon.png", typeof(Texture2D)) as Texture2D;
         }
         return _prefabDisplayIcon ?? new Texture2D(0, 0);
       }

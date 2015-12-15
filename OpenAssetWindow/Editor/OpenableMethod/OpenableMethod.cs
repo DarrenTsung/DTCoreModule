@@ -16,7 +16,7 @@ namespace DT {
     private static Texture2D MethodDisplayIcon {
       get {
         if (_methodDisplayIcon == null) {
-          _methodDisplayIcon = AssetDatabase.LoadAssetAtPath(OpenAssetEditorWindow.EditorWindowScriptPath + "/Icons/FunctionIcon.png", typeof(Texture2D)) as Texture2D;
+          _methodDisplayIcon = AssetDatabase.LoadAssetAtPath(OpenObjectWindow.ScriptDirectory + "/Icons/MethodIcon.png", typeof(Texture2D)) as Texture2D;
         }
         return _methodDisplayIcon ?? new Texture2D(0, 0);
       }
@@ -43,6 +43,10 @@ namespace DT {
       get {
         return OpenableMethod.MethodDisplayIcon;
       }
+    }
+    
+    public bool IsValid() {
+      return true;
     }
     
     public void Open() {

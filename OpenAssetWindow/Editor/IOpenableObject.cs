@@ -14,6 +14,8 @@ namespace DT {
 		Texture2D DisplayIcon {
 			get;
 		}
+		
+		bool IsValid();
     
     void Open();
   }

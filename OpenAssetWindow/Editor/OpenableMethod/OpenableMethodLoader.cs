@@ -13,24 +13,42 @@ namespace DT {
     static OpenableMethodLoader() {
       List<IOpenableObject> objects = new List<IOpenableObject>();
       
-      // Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
-      // foreach (Assembly a in assemblies) {
-      Assembly a = Assembly.GetAssembly(typeof(OpenableMethodAttribute));
+      List<Assembly> assemblies = new List<Assembly>();
+      // Editor Assembly
+      assemblies.Add(Assembly.GetAssembly(typeof(OpenableMethodLoader)));
+      // Runtime Assembly
+      assemblies.Add(Assembly.GetAssembly(typeof(OpenableMethodAttribute)));
+      
+      foreach (Assembly a in assemblies) {
         foreach (Type t in a.GetTypes()) {
-          var methods = t.GetMethods(BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-                                  .Where(m => m.IsDefined(typeof(OpenableMethodAttribute), false));
+          bool hasOpenableClassAttribute = false;
+          System.Attribute[] attrs = System.Attribute.GetCustomAttributes(t); 
+          foreach (System.Attribute attr in attrs) {
+            if (attr is OpenableClassAttribute) {
+              hasOpenableClassAttribute = true;
+            }
+          }
+          
+          if (!hasOpenableClassAttribute) {
+            continue;
+          }
+          
+          var methods = t.GetMethods(BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
           foreach (MethodInfo method in methods) {
-            Debug.Log("t.FullName: " + t.FullName);
-            Debug.Log("method.Name: " + method.Name);
+            OpenableMethodAttribute attr = method.GetCustomAttributes(true).OfType<OpenableMethodAttribute>().FirstOrDefault();
+            if (attr == null) {
+              continue;
+            }
+            
             OpenableMethod openable = new OpenableMethod(new OpenableMethodConfig {
               methodInfo = method,
               classType = t,
-              methodDisplayName = null
+              methodDisplayName = attr.methodDisplayName
             });
             objects.Add(openable);
           }                                                                  
         }
-      // }
+      }
       
       OpenableMethodLoader.methodObjects = objects.ToArray();
     }

@@ -8,7 +8,7 @@ namespace DT {
     private static Texture2D SceneDisplayIcon {
       get {
         if (_sceneDisplayIcon == null) {
-          _sceneDisplayIcon = AssetDatabase.LoadAssetAtPath(OpenAssetEditorWindow.EditorWindowScriptPath + "/Icons/SceneIcon.png", typeof(Texture2D)) as Texture2D;
+          _sceneDisplayIcon = AssetDatabase.LoadAssetAtPath(OpenObjectWindow.ScriptDirectory + "/Icons/SceneIcon.png", typeof(Texture2D)) as Texture2D;
         }
         return _sceneDisplayIcon ?? new Texture2D(0, 0);
       }

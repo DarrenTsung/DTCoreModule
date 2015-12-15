@@ -7,10 +7,9 @@ using UnityEditor;
 ﻿using UnityEngine;
 
 namespace DT {
-	public class OpenAssetEditorWindow : EditorWindow {
+	public class OpenObjectWindow : EditorWindow {
 		// PRAGMA MARK - Constants 
-		public static string EditorWindowScriptPath;
-		private const string kTextFieldControlName = "OpenAssetEditorWindowTextField";
+		private const string kTextFieldControlName = "OpenObjectWindowTextField";
 		
 		private const int kMaxRowsDisplayed = 8;
 		private const float kWindowWidth = 400.0f;
@@ -24,23 +23,29 @@ namespace DT {
 		private const int kSubtitleMaxSoftLength = 35;
 		private const int kSubtitleMaxTitleAdditiveLength = 15;
 		
-		private const float kIconEdgeSize = 20.0f;
-		private const float kIconPadding = 5.0f;
+		private const float kIconEdgeSize = 17.0f;
+		private const float kIconPadding = 7.0f;
 		
 		private const int kFontSize = 25;
 		
-		static OpenAssetEditorWindow() {
-			OpenAssetEditorWindow window = ScriptableObject.CreateInstance<OpenAssetEditorWindow>();
-			MonoScript script = MonoScript.FromScriptableObject(window);
-      OpenAssetEditorWindow.EditorWindowScriptPath = Path.GetDirectoryName(AssetDatabase.GetAssetPath(script));
-			ScriptableObject.DestroyImmediate(window);
+		public static string _scriptDirectory = null;
+		public static string ScriptDirectory {
+			get {
+				if (_scriptDirectory == null) {
+					OpenObjectWindow window = ScriptableObject.CreateInstance<OpenObjectWindow>();
+					MonoScript script = MonoScript.FromScriptableObject(window);
+		      _scriptDirectory = Path.GetDirectoryName(AssetDatabase.GetAssetPath(script));
+					ScriptableObject.DestroyImmediate(window);
+				}
+				return _scriptDirectory;
+			}
 		}
 		
 		
 		// PRAGMA MARK - Public Interface
 		[MenuItem("DarrenTsung/Open Asset.. %t")]
 		public static void ShowWindow() {
-			EditorWindow window = EditorWindow.GetWindow(typeof(OpenAssetEditorWindow), utility: true, title: "Open..", focus: true);
+			EditorWindow window = EditorWindow.GetWindow(typeof(OpenObjectWindow), utility: true, title: "Open..", focus: true);
 			window.position = new Rect(0.0f, 0.0f, kWindowWidth, kWindowHeight);
 			window.CenterInMainEditorWindow();
 			
@@ -48,7 +53,7 @@ namespace DT {
 			_focusTrigger = true;
 			
 			_openableObjectManager = new OpenableObjectManager();
-			OpenAssetEditorWindow.ReloadObjects();
+			OpenObjectWindow.ReloadObjects();
 		}
 		
 		// PRAGMA MARK - Internal
@@ -98,7 +103,7 @@ namespace DT {
 		
 		private void HandleInputUpdated() {
 			_selectedIndex = 0;
-			OpenAssetEditorWindow.ReloadObjects();
+			OpenObjectWindow.ReloadObjects();
 		}
 		
 		private static void ReloadObjects() {
@@ -134,8 +139,15 @@ namespace DT {
 			GUIStyle subtitleStyle = new GUIStyle(GUI.skin.label);
 			subtitleStyle.fontSize = (int)(subtitleStyle.fontSize * 1.2f);
 			
-			for (int i = 0; i < displayedAssetCount; i++) {
-				IOpenableObject obj = _objects[i];
+			int currentIndex = 0;
+			for (int i = 0; i < displayedAssetCount;) {
+				IOpenableObject obj = _objects[currentIndex];
+				
+				currentIndex++;
+				
+				if (!obj.IsValid()) {
+					continue;
+				}
 				
 				float topY = kWindowHeight + kRowHeight * i;
 				
@@ -156,12 +168,10 @@ namespace DT {
 				
 				GUIStyle textureStyle = new GUIStyle();
 				textureStyle.normal.background = obj.DisplayIcon;
-				EditorGUI.LabelField(new Rect(kWindowWidth - kIconEdgeSize - kIconPadding, 
-																			topY + kIconPadding, 
-																			kIconEdgeSize, 
-																			kIconEdgeSize), 
+				EditorGUI.LabelField(new Rect(kWindowWidth - kIconEdgeSize - kIconPadding, topY + kIconPadding, kIconEdgeSize, kIconEdgeSize), 
 														 GUIContent.none,
 														 textureStyle);
+				i++;
 			}
 		}
 		
