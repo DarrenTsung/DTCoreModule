@@ -5,7 +5,8 @@ using DT;
 
 namespace DT {
   [ExecuteInEditMode]
-	public class TwoBoneIKSolver2DComponent : MonoBehaviour, ICustomEditor {
+  [CustomExtensionInspector]
+	public class TwoBoneIKSolver2DComponent : MonoBehaviour {
     // PRAGMA MARK - Internal
     [SerializeField]
     protected Transform _bone1;

@@ -36,8 +36,16 @@ namespace DT {
     IEnumerable<FieldInfo> _localVectorInspectibleFields;
     
     public void OnEnable() {
-      var type = target.GetType();
-      if (!typeof(ICustomEditor).IsAssignableFrom(type)) {
+      Type type = target.GetType();
+      
+      bool earlyExit = true;
+      foreach (Attribute a in type.GetCustomAttributes(true)) {
+        if (a is CustomExtensionInspectorAttribute) {
+          earlyExit = false;
+        }
+      }
+      
+      if (earlyExit) {
         return;
       }
       

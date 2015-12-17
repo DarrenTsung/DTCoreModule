@@ -5,9 +5,10 @@ using System;
 
 namespace DT {
 	/// <summary>
-	/// implement this empty interface to tell the CustomExtensionEditor that your class should be inspected
+	/// add this attribute to tell the CustomExtensionEditor that your class should be inspected
 	/// </summary>
-	public interface ICustomEditor {}
+	[AttributeUsageAttribute(AttributeTargets.Class)]
+	public class CustomExtensionInspectorAttribute : Attribute {}
 
 	/// <summary>
 	/// makes any method have a button in the inspector to call it
