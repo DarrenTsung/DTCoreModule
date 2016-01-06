@@ -15,7 +15,7 @@ namespace DT {
 		// PRAGMA MARK - Internal
 		protected T _object;
 		
-		protected void OnEnable() {
+		protected virtual void OnEnable() {
       _object = target as T;
  		}
 		
