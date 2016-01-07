@@ -13,8 +13,8 @@ namespace DT {
       other.transform.parent = m.transform;
     }
     
-    public static T GetCachedComponent<T>(this MonoBehaviour m, Dictionary<Type, MonoBehaviour> cache) where T : class {
-      return m.gameObject.GetCachedComponent<T>(cache);
+    public static T GetCachedComponent<T>(this MonoBehaviour m, Dictionary<Type, MonoBehaviour> cache, bool searchChildren = false) where T : class {
+      return m.gameObject.GetCachedComponent<T>(cache, searchChildren);
     }
     
     public static T GetRequiredComponentInChildren<T>(this MonoBehaviour m) {

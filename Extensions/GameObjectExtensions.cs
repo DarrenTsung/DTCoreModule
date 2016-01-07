@@ -18,14 +18,31 @@ namespace DT {
       return ((mask.value & (1 << g.layer)) > 0);
     }
     
-    public static T GetCachedComponent<T>(this GameObject g, Dictionary<Type, MonoBehaviour> cache) where T : class {
+    public static T GetCachedComponent<T>(this GameObject g, Dictionary<Type, MonoBehaviour> cache, bool searchChildren = false) where T : class {
 			Type type = typeof(T);
       
 			if (!cache.ContainsKey(type)) {
-				MonoBehaviour component = g.GetComponent<T>() as MonoBehaviour;
+        Queue<GameObject> gameObjectQueue = new Queue<GameObject>();
+        gameObjectQueue.Enqueue(g);
+        
+        MonoBehaviour component = null;
+        while (gameObjectQueue.Count > 0) {
+          GameObject current = gameObjectQueue.Dequeue();
+				  component = current.GetComponent<T>() as MonoBehaviour;
+          
+          if (component != null) {
+            break;
+          }
+          
+          if (searchChildren) {
+            foreach (Transform childTransform in current.transform) {
+              gameObjectQueue.Enqueue(childTransform.gameObject);
+            }
+          }
+        }
 				
-				if (!component) {
-					Debug.LogError("Failed to get component for type: " + type);
+				if (component == null) {
+					Debug.LogError("Failed to get component for type: " + type.Name);
 					return default(T);
 				}
 				

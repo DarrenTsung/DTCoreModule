@@ -23,7 +23,7 @@ namespace DT {
 		
 		// PRAGMA MARK - Public Interface
 		public T GetComponentInstance<T>() where T : class {
-			return this.GetCachedComponent<T>(_cachedComponentMap);
+			return this.GetCachedComponent<T>(_cachedComponentMap, searchChildren : true);
 		}
 		
 	  // PRAGMA MARK - Internal 
