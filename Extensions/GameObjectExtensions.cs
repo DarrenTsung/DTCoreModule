@@ -103,5 +103,15 @@ namespace DT {
         child.FindChildGameObjectsWithTagHelper(tag, objects);
       }
     }
+    
+    public static T GetOrAddComponent<T>(this GameObject g) where T : MonoBehaviour {
+      T component = g.GetComponent<T>();
+      
+      if (component == null) {
+        component = g.AddComponent<T>();
+      }
+      
+      return component;
+    }
   }
 }

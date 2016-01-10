@@ -2,46 +2,92 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace DT.ObjectPools {
-	public class ObjectPool<T> where T : MonoBehaviour, IPoolableObject {
-		protected List<T> _objectPool;
-		[SerializeField]
-		protected T _factoryObject;
-		protected GameObject _manager;
-		
-		public ObjectPool(GameObject manager, T factoryObject) {
-			_manager = manager;
-			_factoryObject = factoryObject;
+namespace DT {
+	public class ObjectPool : Singleton<ObjectPool> {
+		// PRAGMA MARK - Public Interface
+		public GameObject Instantiate(string prefabName, GameObject parent = null) {
+			GameObject instantiatedPrefab = this.GetGameObjectForPrefabName(prefabName);
 			
-			_objectPool = new List<T>();
+			if (parent != null) {
+				instantiatedPrefab.transform.SetParent(parent.transform);
+			}
+			
+			return instantiatedPrefab;
 		}
 		
-		public T GetUnusedObject() {
-			foreach (T obj in _objectPool) {
-				if (!obj.IsActive()) {
-					obj.SetActive();
-					return obj;
+		public void Recycle(GameObject usedObject) {
+			if (usedObject == null) {
+				Debug.LogError("Recycle: called on null object!");
+				return;
+			}
+			
+			RecyclablePrefab recycleData = usedObject.GetComponent<RecyclablePrefab>();
+			if (recycleData == null) {
+				Debug.LogError("Recycle: usedObject - (" + usedObject + ") does not have RecyclablePrefab script!");
+				return;
+			}
+			
+			usedObject.transform.SetParent(this.transform);
+			usedObject.SetActive(false);
+		}
+		
+		
+		// PRAGMA MARK - Internal
+		private Dictionary<string, Stack<GameObject>> _objectPools = new Dictionary<string, Stack<GameObject>>();
+		
+		private Stack<GameObject> ObjectPoolForPrefabName(string prefabName) {
+			return this._objectPools.GetAndCreateIfNotFound(prefabName);
+		}
+		
+		private GameObject GetGameObjectForPrefabName(string prefabName) {
+			Stack<GameObject> recycledObjects = this.ObjectPoolForPrefabName(prefabName);
+			
+			// try to find a recycled object that is usable
+			while (recycledObjects.Count > 0) {
+				GameObject recycledObj = recycledObjects.Pop();
+				
+				if (recycledObj != null) {
+					if (!this.ValidateRecycledObject(recycledObj, prefabName)) {
+						return null;
+					}
+					
+					recycledObj.SetActive(true);
+					return recycledObj;
 				}
 			}
 			
-			return MakeNewObject();
-		}
-		
-		public List<T> CurrentlyActiveObjects() {
-			List<T> activeObjects = new List<T>();
-			foreach (T obj in _objectPool) {
-				if (obj.IsActive()) {
-					activeObjects.Add(obj);
-				}
+			// if no recycled object is found, instantiate one
+			GameObject prefab = PrefabList.PrefabForName(prefabName);
+			if (prefab == null) {
+				return null;
 			}
-			return activeObjects;
+			
+			GameObject instantiatedPrefab = Object.Instantiate(prefab) as GameObject;
+			
+			RecyclablePrefab recycleData = instantiatedPrefab.GetOrAddComponent<RecyclablePrefab>();
+			recycleData.prefabName = prefabName;
+			
+			return instantiatedPrefab;
 		}
-		
-		protected T MakeNewObject() {
-			T newObject = Object.Instantiate(_factoryObject);
-			newObject.gameObject.transform.parent = _manager.transform;
-			_objectPool.Add(newObject);
-			return newObject;
+			
+		private bool ValidateRecycledObject(GameObject recycledObject, string prefabName) {
+			if (recycledObject.activeSelf) {
+				Debug.LogError("GetGameObjectForPrefabName: recycled object: (" + recycledObject + ") is still active, did something go wrong?");
+				return false;
+			}
+			
+			RecyclablePrefab recycleData = recycledObject.GetComponent<RecyclablePrefab>();
+			if (recycleData == null) {
+				Debug.LogError("GetGameObjectForPrefabName: recycled object: (" + recycledObject + ") doesn't have a recyclable prefab script!");
+				return false;
+			}
+			
+			if (recycleData.prefabName != prefabName) {
+				Debug.LogError("GetGameObjectForPrefabName: recycled object: (" + recycledObject + ") doesn't match prefab name: " + prefabName + "!");
+				return false;
+			}
+			
+			return true;
 		}
 	}
 }
