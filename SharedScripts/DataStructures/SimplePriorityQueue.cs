@@ -159,6 +159,11 @@ namespace DT {
       }
     }
     
+    public double DebugGetPriorityForItem(T item) {
+      SimpleNode node = this.GetExistingNode(item);
+      return node.Priority;
+    }
+    
     public IEnumerator<T> GetEnumerator() {
       List<T> queueData = new List<T>();
       lock (_queue) {
