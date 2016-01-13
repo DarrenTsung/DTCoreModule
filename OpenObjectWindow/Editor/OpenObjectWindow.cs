@@ -51,6 +51,7 @@ namespace DT {
 			
 			_selectedIndex = 0;
 			_focusTrigger = true;
+			_isClosing = false;
 			
 			_openableObjectManager = new OpenableObjectManager();
 			OpenObjectWindow.ReloadObjects();
@@ -59,6 +60,7 @@ namespace DT {
 		// PRAGMA MARK - Internal
 		protected static string _input = "";
 		protected static bool _focusTrigger = false;
+		protected static bool _isClosing = false;
 		protected static int _selectedIndex = 0;
 		protected static IOpenableObject[] _objects = new IOpenableObject[0];
 		protected static OpenableObjectManager _openableObjectManager = null;
@@ -113,11 +115,11 @@ namespace DT {
 		private void HandleKeyDownEvent(Event e) {
 			switch (e.keyCode) {
 				case KeyCode.Escape:
-					this.Close();
+					this.CloseIfNotClosing();
 					break;
 				case KeyCode.Return:
 					_objects[_selectedIndex].Open();
-					this.Close();
+					this.CloseIfNotClosing();
 					break;
 				case KeyCode.DownArrow:
 					_selectedIndex++;
@@ -180,7 +182,14 @@ namespace DT {
 		}
 		
 		private void OnLostFocus() {
-			this.Close();
+			this.CloseIfNotClosing();
+		}
+		
+		protected void CloseIfNotClosing() {
+			if (!_isClosing) {
+				_isClosing = true;
+				this.Close();
+			}
 		}
 	}
 }
