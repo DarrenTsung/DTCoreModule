@@ -12,7 +12,7 @@ namespace DT {
         return;
       }
       
-      GameObject newObject = ObjectPool.Instance.Instantiate(prefabName, parent : obj);
+      GameObject newObject = Toolbox.GetInstance<ObjectPoolManager>().Instantiate(prefabName, parent : obj);
       callback(newObject);
     }
     
@@ -23,7 +23,7 @@ namespace DT {
         return;
       }
       
-      GameObject newObject = ObjectPool.Instance.Instantiate(prefabName);
+      GameObject newObject = Toolbox.GetInstance<ObjectPoolManager>().Instantiate(prefabName);
       callback(newObject);
 		}
 	}

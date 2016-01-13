@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 namespace DT {
-	public class ObjectPool : Singleton<ObjectPool> {
+	public class ObjectPoolManager : MonoBehaviour {
 		// PRAGMA MARK - Public Interface
 		public GameObject Instantiate(string prefabName, GameObject parent = null) {
 			GameObject instantiatedPrefab = this.GetGameObjectForPrefabName(prefabName);
