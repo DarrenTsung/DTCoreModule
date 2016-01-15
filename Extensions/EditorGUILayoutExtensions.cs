@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using System.Collections;
 using UnityEditor;
 using UnityEngine;
@@ -10,3 +11,4 @@ namespace DT {
     }
   }
 }
+#endif

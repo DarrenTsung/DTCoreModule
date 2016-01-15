@@ -11,18 +11,18 @@ namespace DT {
         callback(null);
         return;
       }
-      
+
       GameObject newObject = Toolbox.GetInstance<ObjectPoolManager>().Instantiate(prefabName, parent : obj);
       callback(newObject);
     }
-    
+
 		public static void InstantiatePrefab(string prefabName, Action<GameObject> callback) {
       if (string.IsNullOrEmpty(prefabName)) {
         Debug.LogError("Failed call on SpawnPrefab: prefabName: " + prefabName + " empty!");
         callback(null);
         return;
       }
-      
+
       GameObject newObject = Toolbox.GetInstance<ObjectPoolManager>().Instantiate(prefabName);
       callback(newObject);
 		}

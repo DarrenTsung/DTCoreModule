@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,28 +17,28 @@ namespace DT {
       if (containerWinType == null) {
         throw new System.MissingMemberException("Can't find internal type ContainerWindow.");
       }
-      
+
       FieldInfo showModeField = containerWinType.GetField("m_ShowMode", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
       PropertyInfo positionProperty = containerWinType.GetProperty("position", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
       if (showModeField == null || positionProperty == null) {
         throw new System.MissingMemberException("Can't find internal fields 'm_ShowMode' or 'position'. Maybe something has changed with Unity");
       }
-      
+
       object[] windows = Resources.FindObjectsOfTypeAll(containerWinType);
       foreach (object window in windows) {
         int showMode = (int)showModeField.GetValue(window);
-        
+
         // if this window is the main window
         if (showMode == 4) {
           Rect position = (Rect)positionProperty.GetValue(window, null);
           return position;
         }
       }
-      
+
       throw new System.NotSupportedException("Can't find internal main window. Maybe something has changed with Unity");
     }
-      
-    
+
+
     /// <summary>
     /// Centers this window within the main editor window
     /// </summary>
@@ -52,3 +53,4 @@ namespace DT {
     }
   }
 }
+#endif
