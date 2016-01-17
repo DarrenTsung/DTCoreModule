@@ -3,6 +3,7 @@ using DT.Prefab;
 using System;
 using System.Collections;
 using System.IO;
+using System.Linq;
 using UnityEditor;
 ﻿using UnityEngine;
 
@@ -82,6 +83,9 @@ namespace DT {
 		protected static OpenableObjectManager _openableObjectManager = null;
 		protected static Color _selectedBackgroundColor = ColorExtensions.HexStringToColor("#4976C2");
 
+    private static string _parsedSearchInput = "";
+    private static string[] _parsedArguments = null;
+
 		protected void OnGUI() {
 			if (_focusTrigger) {
 				_focusTrigger = false;
@@ -120,13 +124,26 @@ namespace DT {
 		}
 
 		private void HandleInputUpdated() {
+      this.ReparseInput();
 			_selectedIndex = 0;
 			OpenObjectWindow.ReloadObjects();
 		}
 
 		private static void ReloadObjects() {
-			_objects = _openableObjectManager.ObjectsSortedByMatch(_input);
+			_objects = _openableObjectManager.ObjectsSortedByMatch(_parsedSearchInput);
 		}
+
+    private static void ReparseInput() {
+      string[] parameters = _input.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+
+      _parsedSearchInput = parameters[0];
+
+      if (parameters.Length == 1) {
+        _parsedArguments = null;
+      } else {
+        _parsedArguments = parameters.Skip(1).ToArray();
+      }
+    }
 
 		private void HandleKeyDownEvent(Event e) {
 			switch (e.keyCode) {
@@ -134,7 +151,19 @@ namespace DT {
 					this.CloseIfNotClosing();
 					break;
 				case KeyCode.Return:
-					_objects[_selectedIndex].Open();
+          IOpenableObject obj = _objects[_selectedIndex];
+          if (_parsedArguments != null) {
+            IOpenableWithArgumentsObject castedObj;
+            try {
+              castedObj = (IOpenableWithArgumentsObject)obj;
+              castedObj.Open(_parsedArguments);
+            } catch (InvalidCastException) {
+              Debug.LogWarning("Attempted to pass arguments to OpenableObject, but object does not allow arguments!");
+              obj.Open();
+            }
+          } else {
+            obj.Open();
+          }
 					this.CloseIfNotClosing();
 					break;
 				case KeyCode.DownArrow:

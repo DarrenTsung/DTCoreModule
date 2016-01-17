@@ -10,8 +10,8 @@ namespace DT {
     public Type classType;
     public string methodDisplayName;
   }
-  
-  public class OpenableMethod : IOpenableObject {
+
+  public class OpenableMethod : IOpenableWithArgumentsObject {
     private static Texture2D _methodDisplayIcon;
     private static Texture2D MethodDisplayIcon {
       get {
@@ -21,14 +21,14 @@ namespace DT {
         return _methodDisplayIcon ?? new Texture2D(0, 0);
       }
     }
-    
+
     // PRAGMA MARK - IOpenableObject
     public string DisplayTitle {
       get {
         return _methodDisplayName;
       }
     }
-    
+
     public string DisplayDetailText {
       get {
         if (_method.IsStatic) {
@@ -38,42 +38,50 @@ namespace DT {
         }
       }
     }
-    
+
     public Texture2D DisplayIcon {
       get {
         return OpenableMethod.MethodDisplayIcon;
       }
     }
-    
+
     public bool IsValid() {
       return true;
     }
-    
-    public void Open() {
-      if (_method.IsStatic) {
-        _method.Invoke(null, new object[0]);
-      } else {
-        UnityEngine.Object[] objects = UnityEngine.Object.FindObjectsOfType(_classType);
-        if (objects.Length > 0) {
-          _method.Invoke(objects[0], new object[0]);
-        } else {
-          Debug.LogWarning("OpenableMethod: instance method couldn't find UnityEngine.Object instance matching type");
-        }
-      }
+
+    public void Open(object[] args) {
+      this.OpenInteral(args);
     }
-    
-    
+
+    public void Open() {
+      this.OpenInteral();
+    }
+
+
     // PRAGMA MARK - Constructors
     public OpenableMethod(OpenableMethodConfig config) {
       _method = config.methodInfo;
       _methodDisplayName = config.methodDisplayName ?? _method.Name;
       _classType = config.classType;
     }
-    
-    
+
+
     // PRAGMA MARK - Internal
     protected MethodInfo _method;
     protected Type _classType;
     protected string _methodDisplayName;
+
+    private void OpenInteral(object[] args = null) {
+      if (_method.IsStatic) {
+        _method.Invoke(null, args ?? new object[0]);
+      } else {
+        UnityEngine.Object[] objects = UnityEngine.Object.FindObjectsOfType(_classType);
+        if (objects.Length > 0) {
+          _method.Invoke(objects[0], args ?? new object[0]);
+        } else {
+          Debug.LogWarning("OpenableMethod: instance method couldn't find UnityEngine.Object instance matching type");
+        }
+      }
+    }
   }
 }

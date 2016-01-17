@@ -22,6 +22,12 @@ namespace DT {
 
       EditorApplication.isPlaying = true;
     }
+
+    [OpenableMethod]
+    public static void CreateTopLevelEmptyChild() {
+      GameObject newObject = new GameObject();
+      Selection.activeGameObject = newObject;
+    }
   }
 }
 #endif
