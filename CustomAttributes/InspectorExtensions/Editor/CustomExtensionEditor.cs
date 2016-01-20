@@ -26,63 +26,64 @@ namespace DT {
     MethodInfo _onValidateMethod;
     MethodInfo _updateMethod;
     List<MethodInfo> _buttonMethods = new List<MethodInfo>();
-    
+
     // Vector editor
     bool _hasVectorFields = false;
     IEnumerable<FieldInfo> _vectorInspectibleFields;
-    
+
     // Local Vector editor
     bool _hasLocalVectorFields = false;
     IEnumerable<FieldInfo> _localVectorInspectibleFields;
-    
+
     public void OnEnable() {
       Type type = target.GetType();
-      
+
       bool earlyExit = true;
-      foreach (Attribute a in type.GetCustomAttributes(true)) {
-        if (a is CustomExtensionInspectorAttribute) {
-          earlyExit = false;
-        }
+      foreach (Attribute a in type.GetCustomAttributes(typeof(CustomExtensionInspectorAttribute), true)) {
+        earlyExit = false;
       }
-      
+
       if (earlyExit) {
         return;
       }
-      
+
       _onInspectorGuiMethod = type.GetMethod("OnInspectorGUI", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
       _onSceneGuiMethod = type.GetMethod("OnSceneGUI", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
       if (type.IsDefined(typeof(ExecuteInEditMode), false)) {
         _onValidateMethod = type.GetMethod("OnValidate", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
         _updateMethod = target.GetType().GetMethod("Update", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
       }
-      
-      var meths = type.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-                      .Where(m => m.IsDefined(typeof(MakeButtonAttribute), false));
+
+      var meths = type.GetMethods(BindingFlags.Instance
+                                  | BindingFlags.Public
+                                  | BindingFlags.NonPublic
+                                  | BindingFlags.FlattenHierarchy)
+                      .Where(m => m.IsDefined(typeof(MakeButtonAttribute), true));
       foreach (var meth in meths) {
         _buttonMethods.Add(meth);
       }
-      
+
       // the vector editor needs to find any fields with the VectorInspectable attribute and validate them
       _vectorInspectibleFields = type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
                                       .Where(f => f.IsDefined(typeof(VectorInspectable), false))
                                       .Where(f => f.IsPublic || f.IsDefined(typeof(SerializeField), false));
       _hasVectorFields = _vectorInspectibleFields.Count() > 0;
-      
+
       // the local vector editor needs to find any fields with the LocalVectorInspectable attribute and validate them
       _localVectorInspectibleFields = type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
                                       .Where(f => f.IsDefined(typeof(LocalVectorInspectable), false))
                                       .Where(f => f.IsPublic || f.IsDefined(typeof(SerializeField), false));
       _hasLocalVectorFields = _localVectorInspectibleFields.Count() > 0;
     }
-    
+
     public override void OnInspectorGUI() {
       this.DrawDefaultInspector();
-      
+
       if (_onInspectorGuiMethod != null) {
         foreach (var target in targets)
         _onInspectorGuiMethod.Invoke(target, new object[0]);
       }
-      
+
       foreach (var meth in _buttonMethods) {
         if (GUILayout.Button(CultureInfo.InvariantCulture.TextInfo.ToTitleCase(Regex.Replace(meth.Name, "(\\B[A-Z])", " $1")))) {
           // if method button pressed
@@ -92,31 +93,31 @@ namespace DT {
         }
       }
     }
-    
+
     protected virtual void OnSceneGUI() {
       if (_onSceneGuiMethod != null) {
         _onSceneGuiMethod.Invoke(target, new object[0]);
       }
-      
+
       if (_hasVectorFields) {
         this.VectorOnSceneGUI();
       }
-      
+
       if (_hasLocalVectorFields) {
         this.LocalVectorOnSceneGUI();
       }
     }
-    
+
     protected void VectorOnSceneGUI() {
       Undo.RecordObject(target, "Vector Editor");
       this.DisplayVectorFields(_vectorInspectibleFields);
     }
-    
+
     protected void LocalVectorOnSceneGUI() {
       Undo.RecordObject(target, "Local Vector Editor");
       this.DisplayVectorFields(_localVectorInspectibleFields, (target as MonoBehaviour).gameObject.transform.position);
     }
-  
+
     protected void DisplayVectorFields(IEnumerable<FieldInfo> fields, Vector3 offset = default(Vector3)) {
       foreach (var field in fields) {
         var value = field.GetValue(target);
@@ -137,7 +138,7 @@ namespace DT {
             } else {
               field.SetValue(target, (Vector2)newValue);
             }
-            
+
             if (_updateMethod != null) {
               _updateMethod.Invoke(target, new object[0]);
             }
@@ -149,7 +150,7 @@ namespace DT {
         } else if (value is List<Vector3>) {
           var list = value as List<Vector3>;
           var label = field.Name + ": ";
-          
+
           for (var i = 0; i < list.Count; i++) {
             Handles.Label(list[i] + offset, label + i);
             list[i] = Handles.PositionHandle(list[i] + offset, Quaternion.identity) - offset;
@@ -162,7 +163,7 @@ namespace DT {
             vec3List.Add(vec2);
           }
           var label = field.Name + ": ";
-          
+
           for (var i = 0; i < vec3List.Count; i++) {
             Handles.Label(vec3List[i] + offset, label + i);
             vec2List[i] = (Vector2)(Handles.PositionHandle(vec3List[i] + offset, Quaternion.identity) - offset);
@@ -171,7 +172,7 @@ namespace DT {
         } else if (value is Vector3[]) {
           var list = value as Vector3[];
           var label = field.Name + ": ";
-          
+
           for (var i = 0; i < list.Length; i++) {
             Handles.Label(list[i] + offset, label + i);
             list[i] = Handles.PositionHandle(list[i] + offset, Quaternion.identity) - offset;
@@ -184,7 +185,7 @@ namespace DT {
             vec3Array[i] = (Vector3)vec2Array[i];
           }
           var label = field.Name + ": ";
-          
+
           for (var i = 0; i < vec3Array.Length; i++) {
             Handles.Label(vec3Array[i] + offset, label + i);
             vec2Array[i] = (Vector2)(Handles.PositionHandle(vec3Array[i] + offset, Quaternion.identity) - offset);
