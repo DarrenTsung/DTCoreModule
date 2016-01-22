@@ -39,7 +39,7 @@ namespace DT {
       Type type = target.GetType();
 
       bool earlyExit = true;
-      foreach (Attribute a in type.GetCustomAttributes(typeof(CustomExtensionInspectorAttribute), true)) {
+      if (type.GetCustomAttributes(typeof(CustomExtensionInspectorAttribute), true).Count() > 0) {
         earlyExit = false;
       }
 

@@ -4,7 +4,9 @@ using UnityEngine;
 
 /// All taken from prime31's ZestKit here: https://github.com/prime31/ZestKit/blob/master/Assets/ZestKit/Easing/Zest.cs
 namespace DT {
-	public class Easers : MonoBehaviour {
+	public class Easers {
+    public static EaseType DefaultEaseType = EaseType.QuadOut;
+
 		// PRAGMA MARK - Unclamped Lerps
 		public static float UnclampedLerp(float from, float to, float t) {
 			return from + (to - from) * t;
