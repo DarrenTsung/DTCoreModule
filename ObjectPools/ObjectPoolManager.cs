@@ -27,6 +27,7 @@ namespace DT {
 				return;
 			}
 
+      recycleData.Cleanup();
 			usedObject.transform.SetParent(this.transform);
 			usedObject.SetActive(false);
 
@@ -69,6 +70,7 @@ namespace DT {
 
 			RecyclablePrefab recycleData = instantiatedPrefab.GetOrAddComponent<RecyclablePrefab>();
 			recycleData.prefabName = prefabName;
+      recycleData.Setup();
 
 			return instantiatedPrefab;
 		}
