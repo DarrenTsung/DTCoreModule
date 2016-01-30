@@ -1,5 +1,4 @@
 ﻿using DT;
-﻿using DT.GameEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -16,17 +15,17 @@ using UnityEngine;
 namespace DT {
 	public class Toolbox : Singleton<Toolbox> {
 		protected Toolbox() {}
-		
+
 		public static T GetInstance<T>() where T : class {
 			return Instance.GetComponentInstance<T>();
 		}
-		
+
 		// PRAGMA MARK - Public Interface
 		public T GetComponentInstance<T>() where T : class {
 			return this.GetCachedComponent<T>(_cachedComponentMap, searchChildren : true);
 		}
-		
-	  // PRAGMA MARK - Internal 
+
+	  // PRAGMA MARK - Internal
 		protected Dictionary<Type, MonoBehaviour> _cachedComponentMap = new Dictionary<Type, MonoBehaviour>();
 	}
 }
