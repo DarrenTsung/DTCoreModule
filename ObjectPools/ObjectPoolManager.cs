@@ -12,6 +12,9 @@ namespace DT {
 				instantiatedPrefab.transform.SetParent(parent.transform);
 			}
 
+			RecyclablePrefab recycleData = instantiatedPrefab.GetOrAddComponent<RecyclablePrefab>();
+      recycleData.Setup();
+
 			return instantiatedPrefab;
 		}
 
@@ -70,7 +73,6 @@ namespace DT {
 
 			RecyclablePrefab recycleData = instantiatedPrefab.GetOrAddComponent<RecyclablePrefab>();
 			recycleData.prefabName = prefabName;
-      recycleData.Setup();
 
 			return instantiatedPrefab;
 		}

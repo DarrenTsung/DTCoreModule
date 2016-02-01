@@ -18,12 +18,12 @@ namespace DT {
 
     // PRAGMA MARK - Internal
     private void Awake() {
-      IRecycleSetupSubscriber[] setupSubscribers = this.GetComponents<IRecycleSetupSubscriber>();
+      IRecycleSetupSubscriber[] setupSubscribers = this.GetComponentsInChildren<IRecycleSetupSubscriber>();
       foreach (IRecycleSetupSubscriber subscriber in setupSubscribers) {
         this.RecycleSetup.AddListener(subscriber.OnRecycleSetup);
       }
 
-      IRecycleCleanupSubscriber[] cleanupSubscribers = this.GetComponents<IRecycleCleanupSubscriber>();
+      IRecycleCleanupSubscriber[] cleanupSubscribers = this.GetComponentsInChildren<IRecycleCleanupSubscriber>();
       foreach (IRecycleCleanupSubscriber subscriber in cleanupSubscribers) {
         this.RecycleCleanup.AddListener(subscriber.OnRecycleCleanup);
       }
