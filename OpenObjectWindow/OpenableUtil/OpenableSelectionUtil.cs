@@ -1,4 +1,5 @@
 #if UNITY_EDITOR
+using System;
 using UnityEngine;
 using UnityEditor;
 
@@ -25,6 +26,34 @@ namespace DT {
       }
 
       obj.name = name;
+    }
+
+    [OpenableMethod]
+    public static void EnableTopParentOfSelectedGameObject() {
+        OpenableSelectionUtil.DoActionOnTopParentOfSelectedGameObject((GameObject topParent) => {
+          topParent.SetActive(true);
+        });
+    }
+
+    [OpenableMethod]
+    public static void DisableTopParentOfSelectedGameObject() {
+        OpenableSelectionUtil.DoActionOnTopParentOfSelectedGameObject((GameObject topParent) => {
+          topParent.SetActive(false);
+        });
+    }
+
+    public static void DoActionOnTopParentOfSelectedGameObject(Action<GameObject> action) {
+      GameObject obj = Selection.activeGameObject;
+      if (obj == null) {
+        return;
+      }
+
+      Transform topParentTransform = obj.transform;
+      while (topParentTransform.parent != null) {
+        topParentTransform = topParentTransform.parent;
+      }
+
+      action.Invoke(topParentTransform.gameObject);
     }
   }
 }
