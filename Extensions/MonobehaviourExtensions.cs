@@ -40,7 +40,24 @@ namespace DT {
 
     public static IEnumerator DoActionAfterDelayCoroutine(this MonoBehaviour m, float delay, Action callback) {
       yield return new WaitForSeconds(delay);
-      callback();
+      callback.Invoke();
+    }
+
+    public static IEnumerator DoEveryFrameForDuration(this MonoBehaviour m, float duration, Action<float, float> frameCallback, Action finishedCallback = null) {
+      IEnumerator coroutine = m.DoEveryFrameForDurationCoroutine(duration, frameCallback, finishedCallback);
+      m.StartCoroutine(coroutine);
+      return coroutine;
+    }
+
+    public static IEnumerator DoEveryFrameForDurationCoroutine(this MonoBehaviour m, float duration, Action<float, float> frameCallback, Action finishedCallback = null) {
+			for (float time = 0.0f; time < duration; time += Time.deltaTime) {
+        frameCallback.Invoke(time, duration);
+				yield return new WaitForEndOfFrame();
+			}
+
+      if (finishedCallback != null) {
+        finishedCallback.Invoke();
+      }
     }
 
     public static GameObject[] FindChildGameObjectsWithTag(this MonoBehaviour m, string tag) {
