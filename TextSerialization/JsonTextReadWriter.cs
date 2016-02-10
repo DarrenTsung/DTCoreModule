@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace DT {
   [CustomExtensionInspector]
-  public class JsonTextReadWriter<T> : MonoBehaviour where T : JsonSerializable, new() {
+  public class JsonTextReadWriter<T> : MonoBehaviour where T : new() {
     // PRAGMA MARK - Internal
     protected T Data {
       get {
@@ -29,24 +29,7 @@ namespace DT {
 
     [MakeButton]
     protected void WriteToSource() {
-      IStringSerializableUtil.WriteToTextSource(this._data, this._textSource);
+      JsonSerializable.SerializeToTextAsset(this._data, this._textSource);
     }
   }
-  //
-  // [Serializable]
-  // public class SpawnerParameters : JsonSerializable {
-  //   // PRAGMA MARK - Public Variables
-  //   public List<SpawnObjectParameters> objectParameters;
-  // }
-  //
-  // [Serializable]
-  // public class SpawnObjectParameters {
-  //   // PRAGMA MARK - Public Variables
-  //   public float minAfterSpawnDelay;
-  //   public float maxAfterSpawnDelay;
-  //
-  //   public string prefabName;
-  //
-  //   public int weight;
-  // }
 }
