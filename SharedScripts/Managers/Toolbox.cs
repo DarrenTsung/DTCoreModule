@@ -17,7 +17,12 @@ namespace DT {
 		protected Toolbox() {}
 
 		public static T GetInstance<T>() where T : class {
-			return Instance.GetComponentInstance<T>();
+      Toolbox toolboxInstance = Toolbox.Instance;
+      if (toolboxInstance == null) {
+        return null;
+      }
+
+			return toolboxInstance.GetComponentInstance<T>();
 		}
 
 		// PRAGMA MARK - Public Interface
