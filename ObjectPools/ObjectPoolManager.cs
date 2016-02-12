@@ -5,11 +5,11 @@ using System.Collections.Generic;
 namespace DT {
 	public class ObjectPoolManager : MonoBehaviour {
 		// PRAGMA MARK - Public Interface
-		public GameObject Instantiate(string prefabName, GameObject parent = null) {
+		public GameObject Instantiate(string prefabName, GameObject parent = null, bool worldPositionStays = false) {
 			GameObject instantiatedPrefab = this.GetGameObjectForPrefabName(prefabName);
 
 			if (parent != null) {
-				instantiatedPrefab.transform.SetParent(parent.transform);
+				instantiatedPrefab.transform.SetParent(parent.transform, worldPositionStays);
 			}
 
 			RecyclablePrefab recycleData = instantiatedPrefab.GetOrAddComponent<RecyclablePrefab>();
@@ -18,7 +18,7 @@ namespace DT {
 			return instantiatedPrefab;
 		}
 
-		public void Recycle(GameObject usedObject) {
+		public void Recycle(GameObject usedObject, bool worldPositionStays = false) {
 			if (usedObject == null) {
 				Debug.LogError("Recycle: called on null object!");
 				return;
@@ -31,7 +31,7 @@ namespace DT {
 			}
 
       recycleData.Cleanup();
-			usedObject.transform.SetParent(this.transform);
+			usedObject.transform.SetParent(this.transform, worldPositionStays);
 			usedObject.SetActive(false);
 
       Stack<GameObject> recycledObjects = this.ObjectPoolForPrefabName(recycleData.prefabName);

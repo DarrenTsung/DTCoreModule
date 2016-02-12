@@ -24,11 +24,26 @@ namespace DT {
 
     [MakeButton]
     protected void ReadFromSource() {
+      if (this._textSource == null) {
+        Debug.LogWarning("ReadFromSource - failed because text source is null!");
+        return;
+      }
+
       this._data = JsonSerializable.DeserializeFromTextAsset<T>(this._textSource);
     }
 
     [MakeButton]
     protected void WriteToSource() {
+      if (this._textSource == null) {
+        Debug.LogWarning("WriteToSource - failed because text source is null!");
+        return;
+      }
+
+      if (this._data == null) {
+        Debug.LogWarning("WriteToSource - failed because data is null!");
+        return;
+      }
+
       JsonSerializable.SerializeToTextAsset(this._data, this._textSource);
     }
   }
