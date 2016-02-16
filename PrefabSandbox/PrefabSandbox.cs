@@ -228,6 +228,11 @@ namespace DT.Prefab {
 			PrefabUtility.DisconnectPrefabInstance(_data.PrefabInstance);
 			_data.PrefabInstanceId = _data.PrefabInstance.GetInstanceID();
 
+      // if the prefab is a UI element, child it under the canvas
+      if (_data.PrefabInstance.GetComponent<RectTransform>() != null) {
+        _data.PrefabInstance.transform.SetParent(CanvasUtil.MainCanvas.transform, worldPositionStays : false);
+      }
+
 			Selection.activeGameObject = _data.PrefabInstance;
       HierarchyUtil.ExpandCurrentSelectedObjectInHierarchy();
 
