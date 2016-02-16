@@ -134,6 +134,12 @@ namespace DT {
 		}
 
     private static void ReparseInput() {
+      if (_input == null || _input.Length <= 0) {
+        _parsedSearchInput = "";
+        _parsedArguments = null;
+        return;
+      }
+
       string[] parameters = _input.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
 
       _parsedSearchInput = parameters[0];
