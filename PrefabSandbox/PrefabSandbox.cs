@@ -229,6 +229,7 @@ namespace DT.Prefab {
 			_data.PrefabInstanceId = _data.PrefabInstance.GetInstanceID();
 
 			Selection.activeGameObject = _data.PrefabInstance;
+      HierarchyUtil.ExpandCurrentSelectedObjectInHierarchy();
 
 			return true;
 		}

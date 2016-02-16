@@ -43,6 +43,12 @@ namespace DT {
       HierarchyUtil.SetFoldValueForAllGameObjectsInHiearchy(FoldValue.EXPANDED);
     }
 
+    [OpenableMethod]
+    [MenuItem("DarrenTsung/Hiearchy Utilities/Expand Current Selected Object In Hierarchy")]
+    public static void ExpandCurrentSelectedObjectInHierarchy() {
+      HierarchyUtil.SetFoldValueForGameObjectInHiearchyRecursive(Selection.activeGameObject, FoldValue.EXPANDED);
+    }
+
     private static void SetFoldValueForAllGameObjectsInHiearchy(FoldValue fv) {
       var toplevelGos = Object.FindObjectsOfType<GameObject>().Where(g => g.transform.parent == null);
 
