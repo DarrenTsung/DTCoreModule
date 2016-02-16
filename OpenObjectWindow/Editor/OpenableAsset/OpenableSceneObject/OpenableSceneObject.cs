@@ -1,5 +1,6 @@
 using System;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 
 namespace DT {
@@ -13,25 +14,21 @@ namespace DT {
         return _sceneDisplayIcon ?? new Texture2D(0, 0);
       }
     }
-    
+
     // PRAGMA MARK - IOpenableObject
     public override Texture2D DisplayIcon {
       get {
         return OpenableSceneObject.SceneDisplayIcon;
       }
     }
-    
+
     public override void Open() {
-			if (EditorApplication.isSceneDirty) {
-				if (EditorApplication.SaveCurrentSceneIfUserWantsTo()) {
-					EditorApplication.OpenScene(_path);
-				}
-			} else {
-				EditorApplication.OpenScene(_path);
+			if (EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) {
+        EditorSceneManager.OpenScene(this._path);
 			}
     }
-    
-    
+
+
     // PRAGMA MARK - Constructors
     public OpenableSceneObject(string guid) : base(guid) {
       if (!PathUtil.IsScene(_path)) {

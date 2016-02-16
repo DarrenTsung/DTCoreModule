@@ -4,7 +4,9 @@ using System;
 using System.Collections;
 using System.IO;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 ﻿using UnityEngine;
+﻿using UnityEngine.SceneManagement;
 
 namespace DT.Prefab {
 	[InitializeOnLoad]
@@ -19,8 +21,6 @@ namespace DT.Prefab {
 			public string PrefabPath;
 			public GameObject PrefabAsset;
 
-			public string PreviousScene;
-
 			public GameObject PrefabInstance;
 			public int PrefabInstanceId;
 
@@ -31,6 +31,7 @@ namespace DT.Prefab {
 		private static GameObject _newPrefab;
 		private static PrefabSandboxSetupCompleteCallback _setupCompletionCallback;
 		private static bool _isSavingScene;
+    private static Scene _sandboxScene;
 
 		private static string _sandboxScenePath;
 		private static GameObject _sandboxSetupPrefab;
@@ -131,34 +132,32 @@ namespace DT.Prefab {
 				return;
 			}
 
-			if (EditorApplication.currentScene == _sandboxScenePath) {
-				Handles.BeginGUI();
+			Handles.BeginGUI();
 
-				Color previousColor = GUI.color;
+			Color previousColor = GUI.color;
 
-				// BEGIN SCENE GUI
-				GUI.color = Color.green;
-				if (GUI.Button(new Rect(sceneView.position.size.x - kPreviousSceneButtonWidth, 0.0f, kPreviousSceneButtonWidth, kSceneButtonHeight), "Previous Scene")) {
-					PrefabSandbox.ReturnToPreviousScene();
-				}
-
-				if (GUI.Button(new Rect(0.0f, 0.0f, kSaveButtonWidth, kSceneButtonHeight), "Save")) {
-					PrefabSandbox.SavePrefabAsset();
-				}
-
-				GUI.color = Color.red;
-				if (GUI.Button(new Rect(0.0f, kSceneButtonHeight + kSceneButtonHeightPadding, kRevertButtonWidth, kSceneButtonHeight), "Revert")) {
-					if (EditorUtility.DisplayDialog("Discard Changes?", "Would you like to revert all changes since last save?", "Discard Changes", "Keep Changes")) {
-						PrefabSandbox.CreatePrefabInstance();
-					}
-				}
-				// END SCENE GUI
-
-				GUI.color = previousColor;
-				GUI.enabled = true;
-
-				Handles.EndGUI();
+			// BEGIN SCENE GUI
+			GUI.color = Color.green;
+			if (GUI.Button(new Rect(sceneView.position.size.x - kPreviousSceneButtonWidth, 0.0f, kPreviousSceneButtonWidth, kSceneButtonHeight), "Close Sandbox Scene")) {
+				PrefabSandbox.CloseSandboxScene();
 			}
+
+			if (GUI.Button(new Rect(0.0f, 0.0f, kSaveButtonWidth, kSceneButtonHeight), "Save")) {
+				PrefabSandbox.SavePrefabAsset();
+			}
+
+			GUI.color = Color.red;
+			if (GUI.Button(new Rect(0.0f, kSceneButtonHeight + kSceneButtonHeightPadding, kRevertButtonWidth, kSceneButtonHeight), "Revert")) {
+				if (EditorUtility.DisplayDialog("Discard Changes?", "Would you like to revert all changes since last save?", "Discard Changes", "Keep Changes")) {
+					PrefabSandbox.CreatePrefabInstance();
+				}
+			}
+			// END SCENE GUI
+
+			GUI.color = previousColor;
+			GUI.enabled = true;
+
+			Handles.EndGUI();
 		}
 
 		// PRAGMA MARK - Setup
@@ -183,22 +182,18 @@ namespace DT.Prefab {
 		}
 
 		protected static void SetupSandbox() {
-			string previousScene = EditorApplication.currentScene;
+      _sandboxScene = EditorSceneManager.OpenScene(_sandboxScenePath, OpenSceneMode.Additive);
+      EditorSceneManager.SetActiveScene(_sandboxScene);
 
-			bool sceneOpened = EditorApplication.OpenScene(_sandboxScenePath);
-			if (sceneOpened) {
+			if (_sandboxScene.isLoaded) {
 				PrefabSandbox.SaveScene();
 				PrefabSandbox.ClearAllGameObjectsInSandbox();
 
 				// setup scene with sandbox setup prefab
 				PrefabUtility.InstantiatePrefab(_sandboxSetupPrefab);
 
-				if (previousScene != _sandboxScenePath) {
-					_data.PreviousScene = previousScene;
-				}
-
 				if (!PrefabSandbox.CreatePrefabInstance()) {
-					PrefabSandbox.ReturnToPreviousScene();
+					PrefabSandbox.CloseSandboxScene();
 					return;
 				}
 			} else {
@@ -208,11 +203,11 @@ namespace DT.Prefab {
 
 		protected static void SaveScene() {
 			_isSavingScene = true;
-			EditorApplication.SaveScene();
+			EditorSceneManager.SaveScene(_sandboxScene);
 			_isSavingScene = false;
 		}
 
-		protected static void ReturnToPreviousScene() {
+		protected static void CloseSandboxScene() {
 			if (_data == null) {
 				return;
 			}
@@ -220,7 +215,7 @@ namespace DT.Prefab {
 			PrefabSandbox.ClearAllGameObjectsInSandbox();
 			PrefabSandbox.SaveScene();
 
-			EditorApplication.OpenScene(_data.PreviousScene);
+			EditorSceneManager.CloseScene(_sandboxScene, true);
 			_data = null;
 		}
 
@@ -239,11 +234,7 @@ namespace DT.Prefab {
 		}
 
 		protected static void ClearAllGameObjectsInSandbox() {
-			if (EditorApplication.currentScene != _sandboxScenePath) {
-				return;
-			}
-
-			foreach (GameObject obj in GameObject.FindObjectsOfType<GameObject>()) {
+			foreach (GameObject obj in _sandboxScene.GetRootGameObjects()) {
 				GameObject.DestroyImmediate(obj);
 			}
 		}
