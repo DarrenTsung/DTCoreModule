@@ -49,13 +49,15 @@ namespace DT {
       OpenObjectWindow.InitializeWindow("Open.. ");
 
 			_openableObjectManager = new OpenableObjectManager();
-      _openableObjectManager.AddLoader(new OpenablePrefabObjectLoader());
-      _openableObjectManager.AddLoader(new OpenableSceneObjectLoader());
+      if (!Application.isPlaying) {
+        _openableObjectManager.AddLoader(new OpenablePrefabObjectLoader());
+        _openableObjectManager.AddLoader(new OpenableSceneObjectLoader());
+      }
       _openableObjectManager.AddLoader(new SelectableGameObjectLoader());
 			OpenObjectWindow.ReloadObjects();
 		}
 
-    [MenuItem("DarrenTsung/Open Command Palette.. %#p")]
+    [MenuItem("DarrenTsung/Open Command Palette.. %#m")]
 		public static void ShowCommandPaletteWindow() {
       OpenObjectWindow.InitializeWindow("Command Palette.. ");
 
