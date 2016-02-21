@@ -235,6 +235,7 @@ namespace DT.Prefab {
 
 			Selection.activeGameObject = _data.PrefabInstance;
       HierarchyUtil.ExpandCurrentSelectedObjectInHierarchy();
+      EditorApplication.ExecuteMenuItem("Edit/Frame Selected");
 
 			return true;
 		}

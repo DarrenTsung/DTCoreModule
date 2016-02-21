@@ -1,29 +1,29 @@
 using System;
 using UnityEditor;
 using UnityEngine;
- 
+
 namespace DT {
   [CustomPropertyDrawer(typeof(EnumFlagAttribute))]
   public class EnumFlagsAttributeDrawer : PropertyDrawer {
-    public override void OnGUI(Rect _position, SerializedProperty _property, GUIContent _label) {
+    public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
       int buttonsIntValue = 0;
-      int enumLength = _property.enumNames.Length;
+      int enumLength = property.enumNames.Length;
       bool[] buttonPressed = new bool[enumLength];
-      float buttonWidth = (_position.width - EditorGUIUtility.labelWidth) / enumLength;
+      float buttonWidth = (position.width - EditorGUIUtility.labelWidth) / enumLength;
 
-      EditorGUI.LabelField(new Rect(_position.x, _position.y, EditorGUIUtility.labelWidth, _position.height), _label);
+      EditorGUI.LabelField(new Rect(position.x, position.y, EditorGUIUtility.labelWidth, position.height), label);
 
       EditorGUI.BeginChangeCheck();
 
-      for (int i=0; i<enumLength; i++) {
-        // Check if the button is/was pressed 
-        if ((_property.intValue & (1 << i)) == 1 << i) {
+      for (int i = 0; i < enumLength; i++) {
+        // Check if the button is/was pressed
+        if ((property.intValue & (1 << i)) == 1 << i) {
           buttonPressed[i] = true;
         }
 
-        Rect buttonPos = new Rect(_position.x + EditorGUIUtility.labelWidth + buttonWidth * i, _position.y, buttonWidth, _position.height);
+        Rect buttonPos = new Rect(position.x + EditorGUIUtility.labelWidth + buttonWidth * i, position.y, buttonWidth, position.height);
 
-        buttonPressed[i] = GUI.Toggle(buttonPos, buttonPressed[i], _property.enumNames[i],  "Button");
+        buttonPressed[i] = GUI.Toggle(buttonPos, buttonPressed[i], property.enumNames[i],  "Button");
 
         if (buttonPressed[i]) {
           buttonsIntValue += 1 << i;
@@ -31,7 +31,7 @@ namespace DT {
       }
 
       if (EditorGUI.EndChangeCheck()) {
-        _property.intValue = buttonsIntValue;
+        property.intValue = buttonsIntValue;
       }
     }
   }

@@ -20,7 +20,7 @@ namespace DT {
   /// </summary>
   [CustomEditor(typeof(UnityEngine.Object), true)]
   [CanEditMultipleObjects]
-  public class CustomExtensionEditor : Editor {
+  public class CustomInspectorEditor : Editor {
     MethodInfo _onInspectorGuiMethod;
     MethodInfo _onSceneGuiMethod;
     MethodInfo _onValidateMethod;
@@ -39,7 +39,7 @@ namespace DT {
       Type type = target.GetType();
 
       bool earlyExit = true;
-      if (type.GetCustomAttributes(typeof(CustomExtensionInspectorAttribute), true).Count() > 0) {
+      if (type.GetCustomAttributes(typeof(CustomInspectorAttribute), true).Count() > 0) {
         earlyExit = false;
       }
 

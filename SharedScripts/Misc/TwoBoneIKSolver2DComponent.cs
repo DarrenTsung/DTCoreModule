@@ -5,7 +5,7 @@ using DT;
 
 namespace DT {
   [ExecuteInEditMode]
-  [CustomExtensionInspector]
+  [CustomInspector]
 	public class TwoBoneIKSolver2DComponent : MonoBehaviour {
     // PRAGMA MARK - Internal
     [SerializeField]

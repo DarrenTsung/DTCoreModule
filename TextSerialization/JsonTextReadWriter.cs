@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace DT {
-  [CustomExtensionInspector]
+  [CustomInspector]
   public class JsonTextReadWriter<T> : MonoBehaviour where T : new() {
     // PRAGMA MARK - Internal
     protected T Data {

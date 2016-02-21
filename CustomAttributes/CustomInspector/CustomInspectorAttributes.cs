@@ -5,10 +5,10 @@ using System;
 
 namespace DT {
 	/// <summary>
-	/// add this attribute to tell the CustomExtensionEditor that your class should be inspected
+	/// add this attribute to tell the CustomInspectorEditor that your class should be inspected
 	/// </summary>
 	[AttributeUsageAttribute(AttributeTargets.Class)]
-	public class CustomExtensionInspectorAttribute : Attribute {}
+	public class CustomInspectorAttribute : Attribute {}
 
 	/// <summary>
 	/// makes any method have a button in the inspector to call it
@@ -22,7 +22,7 @@ namespace DT {
 	/// </summary>
 	[AttributeUsageAttribute(AttributeTargets.Field)]
 	public class VectorInspectable : Attribute {}
-	
+
 	/// <summary>
 	/// adds a local vector2/3 editor to the scene GUI if this attribute is on any serialized Vector2/3, List<Vector2/3>
 	/// or Vector2/3[] fields.

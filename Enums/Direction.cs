@@ -4,10 +4,10 @@ using System.Collections;
 
 namespace DT {
 	public enum Direction {
-		UP = 0,
-		RIGHT = 1,
-		DOWN = 2,
-		LEFT = 3
+		UP = 1,
+		RIGHT = 2,
+		DOWN = 4,
+		LEFT = 8
 	}
 
 	public static class DirectionExtensions {
@@ -24,7 +24,7 @@ namespace DT {
 			}
 			return Vector2.up;
 		}
-		
+
 		public static Direction OppositeDirection(this Direction direction) {
 			switch (direction) {
 				case Direction.UP:
@@ -38,7 +38,7 @@ namespace DT {
 			}
 			return Direction.UP;
 		}
-		
+
 		public static Direction ClockwiseDirection(this Direction direction) {
 			switch (direction) {
 				case Direction.UP:
@@ -52,7 +52,7 @@ namespace DT {
 			}
 			return Direction.UP;
 		}
-		
+
 		public static Direction CounterClockwiseDirection(this Direction direction) {
 			switch (direction) {
 				case Direction.UP:
@@ -66,7 +66,7 @@ namespace DT {
 			}
 			return Direction.UP;
 		}
-		
+
 		public static float ApplicableValueToVector2(this Direction direction, Vector2 input) {
 			if (direction == Direction.LEFT || direction == Direction.RIGHT) {
 				return input.x;
