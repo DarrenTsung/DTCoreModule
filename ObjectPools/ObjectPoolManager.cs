@@ -5,6 +5,11 @@ using System.Collections.Generic;
 namespace DT {
 	public class ObjectPoolManager : MonoBehaviour {
 		// PRAGMA MARK - Public Interface
+		public T Instantiate<T>(string prefabName, GameObject parent = null, bool worldPositionStays = false) where T : MonoBehaviour {
+      GameObject instantiatedPrefab = this.Instantiate(prefabName, parent, worldPositionStays);
+      return instantiatedPrefab.GetRequiredComponent<T>();
+    }
+
 		public GameObject Instantiate(string prefabName, GameObject parent = null, bool worldPositionStays = false) {
 			GameObject instantiatedPrefab = this.GetGameObjectForPrefabName(prefabName);
 
