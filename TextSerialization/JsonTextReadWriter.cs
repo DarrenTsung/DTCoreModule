@@ -18,7 +18,11 @@ namespace DT {
     [SerializeField]
     private T _data = new T();
 
-    protected virtual void Awake() {
+    // optional
+    protected virtual void HandleDataUpdated() {}
+
+    protected void SetTextSourceAndRead(TextAsset textSource) {
+      this._textSource = textSource;
       this.ReadFromSource();
     }
 
@@ -30,6 +34,7 @@ namespace DT {
       }
 
       this._data = JsonSerializable.DeserializeFromTextAsset<T>(this._textSource);
+      this.HandleDataUpdated();
     }
 
     [MakeButton]
