@@ -19,8 +19,8 @@ namespace DT {
       JsonUtility.FromJsonOverwrite(source, objectToOverwrite);
     }
 
-    public static void SerializeToTextAsset(object obj, TextAsset source) {
-      TextAssetUtil.WriteToTextAsset(JsonUtility.ToJson(obj), source);
+    public static void SerializeToTextAsset(object obj, TextAsset source, bool prettyPrint = false) {
+      TextAssetUtil.WriteToTextAsset(JsonUtility.ToJson(obj, prettyPrint), source);
     }
   }
 }

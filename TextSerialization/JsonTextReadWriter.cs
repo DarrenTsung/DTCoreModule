@@ -49,7 +49,7 @@ namespace DT {
         return;
       }
 
-      JsonSerializable.SerializeToTextAsset(this._data, this._textSource);
+      JsonSerializable.SerializeToTextAsset(this._data, this._textSource, prettyPrint: true);
     }
   }
 }
