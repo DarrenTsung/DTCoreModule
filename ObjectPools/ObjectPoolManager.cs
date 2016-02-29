@@ -25,13 +25,15 @@ namespace DT {
 
 		public void Recycle(GameObject usedObject, bool worldPositionStays = false) {
 			if (usedObject == null) {
-				Debug.LogError("Recycle: called on null object!");
+				Debug.LogWarning("Recycle: called on null object!");
 				return;
 			}
 
 			RecyclablePrefab recycleData = usedObject.GetComponent<RecyclablePrefab>();
 			if (recycleData == null) {
-				Debug.LogError("Recycle: usedObject - (" + usedObject + ") does not have RecyclablePrefab script!");
+				Debug.LogWarning("Recycle: usedObject - (" + usedObject + ") does not have RecyclablePrefab script!");
+        // Because the recycle lifecycle wasn't set up properly, just destroy this object instead of recycling
+        GameObject.Destroy(usedObject);
 				return;
 			}
 
@@ -84,7 +86,7 @@ namespace DT {
 
 		private bool ValidateRecycledObject(GameObject recycledObject, string prefabName) {
 			if (recycledObject.activeSelf) {
-				Debug.LogError("GetGameObjectForPrefabName: recycled object: (" + recycledObject + ") is still active, did something go wrong?");
+				Debug.LogError("GetGameObjectForPrefabName: recycled object: (" + recycledObject + ") is still active, is someone else using it?");
 				return false;
 			}
 
