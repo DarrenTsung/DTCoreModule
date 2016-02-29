@@ -3,7 +3,9 @@ using UnityEngine.Events;
 
 namespace DT {
   public class RecyclablePrefab : MonoBehaviour {
+    [HideInInspector]
     public UnityEvent RecycleSetup = new UnityEvent();
+    [HideInInspector]
     public UnityEvent RecycleCleanup = new UnityEvent();
 
     public void Setup() {
