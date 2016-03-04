@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace DT {
 	public class CanvasUtil {
-    private static GameObject[] _canvases;
+    private static GameObject _screenSpaceMainCanvas;
 
     static CanvasUtil() {
       CanvasUtil.FindCanvases();
@@ -15,19 +15,19 @@ namespace DT {
       Canvas[] canvasComponents = Object.FindObjectsOfType(typeof(Canvas)) as Canvas[];
       if (canvasComponents == null || canvasComponents.Length <= 0) {
         Debug.LogError("CanvasUtil: No canvases components found!");
-        CanvasUtil._canvases = new GameObject[0];
         return;
       }
 
-      CanvasUtil._canvases = (from canvasComponent in canvasComponents select canvasComponent.gameObject).ToArray();
+      CanvasUtil._screenSpaceMainCanvas = (from canvasComponent in canvasComponents
+        where canvasComponent.gameObject.tag == "ScreenSpaceCanvas" select canvasComponent.gameObject).FirstOrDefault();
     }
 
-    public static GameObject MainCanvas {
+    public static GameObject ScreenSpaceMainCanvas {
       get {
-        if (CanvasUtil._canvases.Length <= 0 || CanvasUtil._canvases[0] == null) {
+        if (CanvasUtil._screenSpaceMainCanvas == null) {
           CanvasUtil.FindCanvases();
         }
-        return CanvasUtil._canvases[0];
+        return CanvasUtil._screenSpaceMainCanvas;
       }
     }
 	}

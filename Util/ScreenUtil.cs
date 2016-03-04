@@ -6,7 +6,7 @@ namespace DT {
 	public class ScreenUtil {
     public static Vector2 ScaledScreenSize {
       get {
-        RectTransform canvasTransform = (RectTransform)CanvasUtil.MainCanvas.transform;
+        RectTransform canvasTransform = (RectTransform)CanvasUtil.ScreenSpaceMainCanvas.transform;
         return new Vector2(Screen.width / canvasTransform.localScale.x,
                            Screen.height / canvasTransform.localScale.y);
       }

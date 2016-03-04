@@ -2,7 +2,11 @@ using System;
 using UnityEngine;
 
 namespace DT {
-  public interface IStateBehaviour<T> {
-    void InitializeWithContext(T context, Animator animator);
+  public interface IStateBehaviour<TStateMachine> {
+    void InitializeWithContext(Animator animator, TStateMachine stateMachine);
+  }
+
+  public interface IStateBehaviour<TStateMachine, U> {
+    void InitializeWithContext(Animator animator, TStateMachine stateMachine, U context);
   }
 }

@@ -230,7 +230,7 @@ namespace DT.Prefab {
 
       // if the prefab is a UI element, child it under the canvas
       if (_data.PrefabInstance.GetComponent<RectTransform>() != null) {
-        _data.PrefabInstance.transform.SetParent(CanvasUtil.MainCanvas.transform, worldPositionStays : false);
+        _data.PrefabInstance.transform.SetParent(CanvasUtil.ScreenSpaceMainCanvas.transform, worldPositionStays : false);
       }
 
 			Selection.activeGameObject = _data.PrefabInstance;
