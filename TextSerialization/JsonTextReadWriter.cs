@@ -33,7 +33,7 @@ namespace DT {
         return;
       }
 
-      this._data = JsonSerializable.DeserializeFromTextAsset<T>(this._textSource);
+      this._data = JsonSerialization.DeserializeFromTextAsset<T>(this._textSource);
       this.HandleDataUpdated();
     }
 
@@ -49,7 +49,7 @@ namespace DT {
         return;
       }
 
-      JsonSerializable.SerializeToTextAsset(this._data, this._textSource, prettyPrint: true);
+      JsonSerialization.SerializeToTextAsset(this._data, this._textSource, prettyPrint: true);
     }
   }
 }

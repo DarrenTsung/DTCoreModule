@@ -2,9 +2,9 @@ using System;
 using UnityEngine;
 
 namespace DT {
-  public static class JsonSerializable {
+  public static class JsonSerialization {
     public static T DeserializeFromTextAsset<T>(TextAsset source) {
-      return JsonSerializable.DeserializeFromString<T>(source.text);
+      return JsonSerialization.DeserializeFromString<T>(source.text);
     }
 
     public static T DeserializeFromString<T>(string source) {
@@ -12,7 +12,7 @@ namespace DT {
     }
 
     public static void OverwriteDeserializeFromTextAsset(TextAsset source, object objectToOverwrite) {
-      JsonSerializable.OverwriteDeserializeFromString(source.text, objectToOverwrite);
+      JsonSerialization.OverwriteDeserializeFromString(source.text, objectToOverwrite);
     }
 
     public static void OverwriteDeserializeFromString(string source, object objectToOverwrite) {
