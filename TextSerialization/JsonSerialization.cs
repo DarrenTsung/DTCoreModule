@@ -22,5 +22,9 @@ namespace DT {
     public static void SerializeToTextAsset(object obj, TextAsset source, bool prettyPrint = false) {
       TextAssetUtil.WriteToTextAsset(JsonUtility.ToJson(obj, prettyPrint), source);
     }
+
+    public static void SerializeToTextAssetFilename(object obj, string filename, bool prettyPrint = false) {
+      TextAssetUtil.WriteToTextAssetFilename(JsonUtility.ToJson(obj, prettyPrint), filename);
+    }
   }
 }
