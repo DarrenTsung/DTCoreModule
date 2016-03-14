@@ -15,7 +15,7 @@ namespace DT {
       '|',
       '\"'
     };
-    
+
     public static string RemoveSubstring(this string input, string removeString) {
       int index = input.IndexOf(removeString);
       if (index < 0) {
@@ -23,6 +23,18 @@ namespace DT {
       } else {
         return input.Remove(index, removeString.Length);
       }
+    }
+
+    public static bool IsNullOrEmpty(this string input) {
+      if (input == null) {
+        return true;
+      }
+
+      if (input.Length == 0) {
+        return true;
+      }
+
+      return false;
     }
   }
 }
