@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,6 +11,7 @@ namespace DT {
     public static object GetValueAsObject(this SerializedProperty property) {
       switch (property.propertyType) {
         case SerializedPropertyType.Integer:
+        case SerializedPropertyType.ArraySize:
           return (object)property.intValue;
         case SerializedPropertyType.Float:
           return (object)property.floatValue;
@@ -32,8 +34,9 @@ namespace DT {
         case SerializedPropertyType.Bounds:
           return (object)property.boundsValue;
         case SerializedPropertyType.ObjectReference:
-        default:
           return (object)property.objectReferenceValue;
+        default:
+          throw new NotImplementedException("GetValueAsObject - Failed to parse SerializedPropertyType");
       }
     }
   }
