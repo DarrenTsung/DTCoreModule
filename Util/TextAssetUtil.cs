@@ -51,13 +51,13 @@ namespace DT {
       return textAsset;
 		}
 
-#if UNITY_EDITOR
     public static void WriteToTextAssetFilename(string serializedString, string filename) {
+#if UNITY_EDITOR
       string textAssetFullPath = RESOURCES_PATH + "/" + TEXT_ASSETS_FOLDER + "/" + filename + FILE_EXTENSION;
 			File.WriteAllText(textAssetFullPath, serializedString);
 			AssetDatabase.SaveAssets();
 			AssetDatabase.Refresh();
-    }
 #endif
+    }
   }
 }
