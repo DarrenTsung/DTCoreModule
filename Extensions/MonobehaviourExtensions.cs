@@ -55,6 +55,8 @@ namespace DT {
 				yield return new WaitForEndOfFrame();
 			}
 
+      // add frame callback for final frame (when time == duration)
+      frameCallback.Invoke(duration, duration);
       if (finishedCallback != null) {
         finishedCallback.Invoke();
       }
