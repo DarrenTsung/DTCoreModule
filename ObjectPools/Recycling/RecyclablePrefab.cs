@@ -3,32 +3,27 @@ using UnityEngine.Events;
 
 namespace DT {
   public class RecyclablePrefab : MonoBehaviour {
-    [HideInInspector]
-    public UnityEvent RecycleSetup = new UnityEvent();
-    [HideInInspector]
-    public UnityEvent RecycleCleanup = new UnityEvent();
-
     public void Setup() {
-      this.RecycleSetup.Invoke();
+      foreach (IRecycleSetupSubscriber subscriber in this._setupSubscribers) {
+        subscriber.OnRecycleSetup();
+      }
     }
 
     public void Cleanup() {
-      this.RecycleCleanup.Invoke();
+      foreach (IRecycleCleanupSubscriber subscriber in this._cleanupSubscribers) {
+        subscriber.OnRecycleCleanup();
+      }
     }
 
     public string prefabName;
 
     // PRAGMA MARK - Internal
-    private void Awake() {
-      IRecycleSetupSubscriber[] setupSubscribers = this.GetComponentsInChildren<IRecycleSetupSubscriber>();
-      foreach (IRecycleSetupSubscriber subscriber in setupSubscribers) {
-        this.RecycleSetup.AddListener(subscriber.OnRecycleSetup);
-      }
+    private IRecycleSetupSubscriber[] _setupSubscribers;
+    private IRecycleCleanupSubscriber[] _cleanupSubscribers;
 
-      IRecycleCleanupSubscriber[] cleanupSubscribers = this.GetComponentsInChildren<IRecycleCleanupSubscriber>();
-      foreach (IRecycleCleanupSubscriber subscriber in cleanupSubscribers) {
-        this.RecycleCleanup.AddListener(subscriber.OnRecycleCleanup);
-      }
+    private void Awake() {
+      this._setupSubscribers = this.GetDepthSortedComponentsInChildren<IRecycleSetupSubscriber>(greatestDepthFirst: true);
+      this._cleanupSubscribers = this.GetDepthSortedComponentsInChildren<IRecycleCleanupSubscriber>(greatestDepthFirst: true);
     }
   }
 }

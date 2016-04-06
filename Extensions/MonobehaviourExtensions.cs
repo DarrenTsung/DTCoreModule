@@ -65,5 +65,9 @@ namespace DT {
     public static GameObject[] FindChildGameObjectsWithTag(this MonoBehaviour m, string tag) {
       return m.gameObject.FindChildGameObjectsWithTag(tag);
     }
+
+    public static T[] GetDepthSortedComponentsInChildren<T>(this MonoBehaviour m, bool greatestDepthFirst = false) {
+      return m.gameObject.GetDepthSortedComponentsInChildren<T>(greatestDepthFirst);
+    }
   }
 }
