@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 
 namespace DT {
-  public static class ColorExtensions {
+  public static class ColorUtil {
     /// <summary>
     /// Creates a washed out color (random color mixed with white) that isn't too bad looking
     /// Not sure it's the best way to generate nice colors, but it's alright.
@@ -11,10 +11,10 @@ namespace DT {
       float red = (Random.value + 1.0f) / 2.0f;
       float green = (Random.value + 1.0f) / 2.0f;
       float blue = (Random.value + 1.0f) / 2.0f;
-      
+
       return new Color(red, green, blue);
     }
-    
+
     public static Color HexStringToColor(string hex) {
       hex = hex.Replace ("0x", "");        // in case the string is formatted 0xFFFFFF
       hex = hex.Replace ("#", "");         // in case the string is formatted #FFFFFF

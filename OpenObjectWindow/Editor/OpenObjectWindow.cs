@@ -83,7 +83,7 @@ namespace DT {
 		protected static int _selectedIndex = 0;
 		protected static IOpenableObject[] _objects = new IOpenableObject[0];
 		protected static OpenableObjectManager _openableObjectManager = null;
-		protected static Color _selectedBackgroundColor = ColorExtensions.HexStringToColor("#4976C2");
+		protected static Color _selectedBackgroundColor = ColorUtil.HexStringToColor("#4976C2");
 
     private static string _parsedSearchInput = "";
     private static string[] _parsedArguments = null;
