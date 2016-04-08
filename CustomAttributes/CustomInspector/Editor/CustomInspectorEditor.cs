@@ -21,19 +21,32 @@ namespace DT {
   [CustomEditor(typeof(UnityEngine.Object), true)]
   [CanEditMultipleObjects]
   public class CustomInspectorEditor : Editor {
-    MethodInfo _onInspectorGuiMethod;
-    MethodInfo _onSceneGuiMethod;
-    MethodInfo _onValidateMethod;
-    MethodInfo _updateMethod;
-    List<MethodInfo> _buttonMethods = new List<MethodInfo>();
+    private MethodInfo _onInspectorGuiMethod;
+    private MethodInfo _onSceneGuiMethod;
+    private MethodInfo _onValidateMethod;
+    private MethodInfo _updateMethod;
+    private InspectorMethodButtonData[] _inspectorMethodButtonData = new InspectorMethodButtonData[0];
 
     // Vector editor
-    bool _hasVectorFields = false;
-    IEnumerable<FieldInfo> _vectorInspectibleFields;
+    private bool _hasVectorFields = false;
+    private IEnumerable<FieldInfo> _vectorInspectibleFields;
 
     // Local Vector editor
-    bool _hasLocalVectorFields = false;
-    IEnumerable<FieldInfo> _localVectorInspectibleFields;
+    private bool _hasLocalVectorFields = false;
+    private IEnumerable<FieldInfo> _localVectorInspectibleFields;
+
+    private GUIStyle _methodGroupStyle;
+    private GUIStyle MethodGroupStyle {
+      get {
+        if (this._methodGroupStyle == null) {
+          this._methodGroupStyle = new GUIStyle();
+          this._methodGroupStyle.normal.background = Texture2DUtil.CreateTextureWithColor(ColorUtil.HexStringToColor("#a9a9a9"));
+        }
+        return this._methodGroupStyle;
+      }
+    }
+
+
 
     public void OnEnable() {
       Type type = target.GetType();
@@ -47,75 +60,114 @@ namespace DT {
         return;
       }
 
-      _onInspectorGuiMethod = type.GetMethod("OnInspectorGUI", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
-      _onSceneGuiMethod = type.GetMethod("OnSceneGUI", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
+      this._onInspectorGuiMethod = type.GetMethod("OnInspectorGUI", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
+      this._onSceneGuiMethod = type.GetMethod("OnSceneGUI", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
       if (type.IsDefined(typeof(ExecuteInEditMode), false)) {
-        _onValidateMethod = type.GetMethod("OnValidate", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
-        _updateMethod = target.GetType().GetMethod("Update", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
+        this._onValidateMethod = type.GetMethod("OnValidate", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
+        this._updateMethod = target.GetType().GetMethod("Update", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
       }
 
-      var meths = type.GetMethods(BindingFlags.Instance
+      var methodInfos = type.GetMethods(BindingFlags.Instance
                                   | BindingFlags.Public
                                   | BindingFlags.NonPublic
                                   | BindingFlags.FlattenHierarchy)
                       .Where(m => m.IsDefined(typeof(MakeButtonAttribute), true));
-      foreach (var meth in meths) {
-        _buttonMethods.Add(meth);
+
+      List<InspectorMethodButtonData> inspectorMethodButtonData = new List<InspectorMethodButtonData>();
+      foreach (var methodInfo in methodInfos) {
+        inspectorMethodButtonData.Add(new InspectorMethodButtonData(methodInfo));
       }
 
+      this._inspectorMethodButtonData = inspectorMethodButtonData.ToArray();
+
       // the vector editor needs to find any fields with the VectorInspectable attribute and validate them
-      _vectorInspectibleFields = type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+      this._vectorInspectibleFields = type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
                                       .Where(f => f.IsDefined(typeof(VectorInspectable), false))
                                       .Where(f => f.IsPublic || f.IsDefined(typeof(SerializeField), false));
-      _hasVectorFields = _vectorInspectibleFields.Count() > 0;
+      this._hasVectorFields = this._vectorInspectibleFields.Count() > 0;
 
       // the local vector editor needs to find any fields with the LocalVectorInspectable attribute and validate them
-      _localVectorInspectibleFields = type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+      this._localVectorInspectibleFields = type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
                                       .Where(f => f.IsDefined(typeof(LocalVectorInspectable), false))
                                       .Where(f => f.IsPublic || f.IsDefined(typeof(SerializeField), false));
-      _hasLocalVectorFields = _localVectorInspectibleFields.Count() > 0;
+      this._hasLocalVectorFields = this._localVectorInspectibleFields.Count() > 0;
     }
 
     public override void OnInspectorGUI() {
       this.DrawDefaultInspector();
 
-      if (_onInspectorGuiMethod != null) {
+      if (this._onInspectorGuiMethod != null) {
         foreach (var target in targets)
-        _onInspectorGuiMethod.Invoke(target, new object[0]);
+        this._onInspectorGuiMethod.Invoke(target, new object[0]);
       }
 
-      foreach (var meth in _buttonMethods) {
-        if (GUILayout.Button(CultureInfo.InvariantCulture.TextInfo.ToTitleCase(Regex.Replace(meth.Name, "(\\B[A-Z])", " $1")))) {
-          // if method button pressed
-          foreach (var eachTarget in targets) {
-            meth.Invoke(eachTarget, new object[0]);
+      foreach (InspectorMethodButtonData methodButtonData in this._inspectorMethodButtonData) {
+        GUILayout.BeginVertical(this.MethodGroupStyle);
+          float oldFieldWidth = EditorGUIUtility.fieldWidth;
+          GUIStyle methodNameStyle = new GUIStyle(GUI.skin.label);
+          methodNameStyle.richText = true;
+
+          string methodName = CultureInfo.InvariantCulture.TextInfo.ToTitleCase(Regex.Replace(methodButtonData.method.Name, "(\\B[A-Z])", " $1"));
+          EditorGUILayout.LabelField("<b>" + methodName + "</b>", methodNameStyle);
+
+          GUILayout.BeginHorizontal();
+            for (int i = 0; i < methodButtonData.parameters.Length; i++) {
+              ParameterInfo parameter = methodButtonData.parameters[i];
+
+              EditorGUIUtility.fieldWidth = 100.0f;
+              EditorGUIUtility.labelWidth = GUI.skin.label.CalcSize(new GUIContent(parameter.Name)).x + 5.0f;
+
+              float paramWidth = EditorGUIUtility.fieldWidth + EditorGUIUtility.labelWidth;
+
+              if (parameter.ParameterType == typeof(int)) {
+                methodButtonData.parameterArguments[i] = EditorGUILayout.IntField(parameter.Name, (int)methodButtonData.parameterArguments[i], GUILayout.Width(paramWidth));
+              } else if (parameter.ParameterType == typeof(float)) {
+                methodButtonData.parameterArguments[i] = EditorGUILayout.FloatField(parameter.Name, (float)methodButtonData.parameterArguments[i], GUILayout.Width(paramWidth));
+              } else if (parameter.ParameterType == typeof(string)) {
+                methodButtonData.parameterArguments[i] = EditorGUILayout.TextField(parameter.Name, (string)methodButtonData.parameterArguments[i], GUILayout.Width(paramWidth));
+              } else {
+                EditorGUILayout.LabelField("Unsupported type: " + parameter.Name);
+              }
+            }
+          GUILayout.EndHorizontal();
+
+          if (GUILayout.Button("Invoke", GUILayout.Width(200))) {
+            // if method button pressed
+            foreach (var eachTarget in targets) {
+              methodButtonData.method.Invoke(eachTarget, methodButtonData.parameterArguments);
+            }
           }
-        }
+
+          EditorGUIUtility.fieldWidth = oldFieldWidth;
+          EditorGUIUtility.labelWidth = 0.0f;
+        GUILayout.EndVertical();
+        EditorGUILayout.Space();
+        EditorGUILayout.Space();
       }
     }
 
     protected virtual void OnSceneGUI() {
-      if (_onSceneGuiMethod != null) {
-        _onSceneGuiMethod.Invoke(target, new object[0]);
+      if (this._onSceneGuiMethod != null) {
+        this._onSceneGuiMethod.Invoke(target, new object[0]);
       }
 
-      if (_hasVectorFields) {
+      if (this._hasVectorFields) {
         this.VectorOnSceneGUI();
       }
 
-      if (_hasLocalVectorFields) {
+      if (this._hasLocalVectorFields) {
         this.LocalVectorOnSceneGUI();
       }
     }
 
     protected void VectorOnSceneGUI() {
       Undo.RecordObject(target, "Vector Editor");
-      this.DisplayVectorFields(_vectorInspectibleFields);
+      this.DisplayVectorFields(this._vectorInspectibleFields);
     }
 
     protected void LocalVectorOnSceneGUI() {
       Undo.RecordObject(target, "Local Vector Editor");
-      this.DisplayVectorFields(_localVectorInspectibleFields, (target as MonoBehaviour).gameObject.transform.position);
+      this.DisplayVectorFields(this._localVectorInspectibleFields, (target as MonoBehaviour).gameObject.transform.position);
     }
 
     protected void DisplayVectorFields(IEnumerable<FieldInfo> fields, Vector3 offset = default(Vector3)) {
@@ -139,11 +191,11 @@ namespace DT {
               field.SetValue(target, (Vector2)newValue);
             }
 
-            if (_updateMethod != null) {
-              _updateMethod.Invoke(target, new object[0]);
+            if (this._updateMethod != null) {
+              this._updateMethod.Invoke(target, new object[0]);
             }
-            if (_onValidateMethod != null) {
-              _onValidateMethod.Invoke(target, new object[0]);
+            if (this._onValidateMethod != null) {
+              this._onValidateMethod.Invoke(target, new object[0]);
             }
             EditorUtility.SetDirty(target);
           }
