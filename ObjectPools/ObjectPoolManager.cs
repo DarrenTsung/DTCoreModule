@@ -4,6 +4,17 @@ using System.Collections.Generic;
 
 namespace DT {
 	public class ObjectPoolManager : Singleton<ObjectPoolManager> {
+    // PRAGMA MARK - Static
+    // TODO (darren): convert all Instantiate calls to static
+		public static T SInstantiate<T>(string prefabName, GameObject parent = null, bool worldPositionStays = false) where T : MonoBehaviour {
+      return ObjectPoolManager.Instance.Instantiate<T>(prefabName, parent, worldPositionStays);
+    }
+
+		public static GameObject SInstantiate(string prefabName, GameObject parent = null, bool worldPositionStays = false) {
+      return ObjectPoolManager.Instance.Instantiate(prefabName, parent, worldPositionStays);
+    }
+
+
 		// PRAGMA MARK - Public Interface
 		public T Instantiate<T>(string prefabName, GameObject parent = null, bool worldPositionStays = false) where T : MonoBehaviour {
       GameObject instantiatedPrefab = this.Instantiate(prefabName, parent, worldPositionStays);
