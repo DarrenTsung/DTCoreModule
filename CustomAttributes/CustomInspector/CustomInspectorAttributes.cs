@@ -5,12 +5,6 @@ using System;
 
 namespace DT {
 	/// <summary>
-	/// add this attribute to tell the CustomInspectorEditor that your class should be inspected
-	/// </summary>
-	[AttributeUsageAttribute(AttributeTargets.Class)]
-	public class CustomInspectorAttribute : Attribute {}
-
-	/// <summary>
 	/// makes any method have a button in the inspector to call it
 	/// </summary>
 	[AttributeUsageAttribute(AttributeTargets.Method)]

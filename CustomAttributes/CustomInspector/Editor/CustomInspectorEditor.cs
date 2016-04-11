@@ -51,15 +51,6 @@ namespace DT {
     public void OnEnable() {
       Type type = target.GetType();
 
-      bool earlyExit = true;
-      if (type.GetCustomAttributes(typeof(CustomInspectorAttribute), true).Count() > 0) {
-        earlyExit = false;
-      }
-
-      if (earlyExit) {
-        return;
-      }
-
       this._onInspectorGuiMethod = type.GetMethod("OnInspectorGUI", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
       this._onSceneGuiMethod = type.GetMethod("OnSceneGUI", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
       if (type.IsDefined(typeof(ExecuteInEditMode), false)) {
