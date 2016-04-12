@@ -37,7 +37,7 @@ namespace DT {
       }
 
       for (int i = children.Length - 1; i >= 0; i--) {
-        ObjectPoolManager.Instance.Recycle(children[i], worldPositionStays);
+        ObjectPoolManager.Recycle(children[i], worldPositionStays);
       }
     }
   }

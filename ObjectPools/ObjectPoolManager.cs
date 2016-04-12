@@ -5,23 +5,27 @@ using System.Collections.Generic;
 namespace DT {
 	public class ObjectPoolManager : Singleton<ObjectPoolManager> {
     // PRAGMA MARK - Static
-    // TODO (darren): convert all Instantiate calls to static
-		public static T SInstantiate<T>(string prefabName, GameObject parent = null, bool worldPositionStays = false) where T : MonoBehaviour {
-      return ObjectPoolManager.Instance.Instantiate<T>(prefabName, parent, worldPositionStays);
+		public static T Instantiate<T>(string prefabName, GameObject parent = null, bool worldPositionStays = false) where T : MonoBehaviour {
+      return ObjectPoolManager.Instance.InstantiateInternal<T>(prefabName, parent, worldPositionStays);
     }
 
-		public static GameObject SInstantiate(string prefabName, GameObject parent = null, bool worldPositionStays = false) {
-      return ObjectPoolManager.Instance.Instantiate(prefabName, parent, worldPositionStays);
+		public static GameObject Instantiate(string prefabName, GameObject parent = null, bool worldPositionStays = false) {
+      return ObjectPoolManager.Instance.InstantiateInternal(prefabName, parent, worldPositionStays);
+    }
+
+		public static void Recycle(GameObject usedObject, bool worldPositionStays = false) {
+      ObjectPoolManager.Instance.RecycleInternal(usedObject, worldPositionStays);
     }
 
 
-		// PRAGMA MARK - Public Interface
-		public T Instantiate<T>(string prefabName, GameObject parent = null, bool worldPositionStays = false) where T : MonoBehaviour {
-      GameObject instantiatedPrefab = this.Instantiate(prefabName, parent, worldPositionStays);
+		// PRAGMA MARK - Internal
+		private Dictionary<string, Stack<GameObject>> _objectPools = new Dictionary<string, Stack<GameObject>>();
+		private T InstantiateInternal<T>(string prefabName, GameObject parent = null, bool worldPositionStays = false) where T : MonoBehaviour {
+      GameObject instantiatedPrefab = this.InstantiateInternal(prefabName, parent, worldPositionStays);
       return instantiatedPrefab.GetRequiredComponent<T>();
     }
 
-		public GameObject Instantiate(string prefabName, GameObject parent = null, bool worldPositionStays = false) {
+		private GameObject InstantiateInternal(string prefabName, GameObject parent = null, bool worldPositionStays = false) {
 			GameObject instantiatedPrefab = this.GetGameObjectForPrefabName(prefabName);
 
 			if (parent != null) {
@@ -34,7 +38,7 @@ namespace DT {
 			return instantiatedPrefab;
 		}
 
-		public void Recycle(GameObject usedObject, bool worldPositionStays = false) {
+		private void RecycleInternal(GameObject usedObject, bool worldPositionStays = false) {
 			if (usedObject == null) {
 				Debug.LogWarning("Recycle: called on null object!");
 				return;
@@ -55,10 +59,6 @@ namespace DT {
       Stack<GameObject> recycledObjects = this.ObjectPoolForPrefabName(recycleData.prefabName);
       recycledObjects.Push(usedObject);
 		}
-
-
-		// PRAGMA MARK - Internal
-		private Dictionary<string, Stack<GameObject>> _objectPools = new Dictionary<string, Stack<GameObject>>();
 
 		private Stack<GameObject> ObjectPoolForPrefabName(string prefabName) {
 			return this._objectPools.GetAndCreateIfNotFound(prefabName);
