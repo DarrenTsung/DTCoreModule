@@ -69,5 +69,13 @@ namespace DT {
     public static T[] GetDepthSortedComponentsInChildren<T>(this MonoBehaviour m, bool greatestDepthFirst = false) {
       return m.gameObject.GetDepthSortedComponentsInChildren<T>(greatestDepthFirst);
     }
+
+    public static void DestroyAllChildren(this MonoBehaviour m, bool immediate = false) {
+      m.gameObject.DestroyAllChildren(immediate);
+    }
+
+    public static void RecycleAllChildren(this MonoBehaviour m, bool worldPositionStays = false) {
+      m.gameObject.RecycleAllChildren(worldPositionStays);
+    }
   }
 }

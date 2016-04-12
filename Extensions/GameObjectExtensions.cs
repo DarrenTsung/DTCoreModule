@@ -148,5 +148,13 @@ namespace DT {
         childTransform.gameObject.GetDepthAndComponentsInChildren(map, depth + 1);
       }
     }
+
+    public static void DestroyAllChildren(this GameObject g, bool immediate = false) {
+      g.transform.DestroyAllChildren(immediate);
+    }
+
+    public static void RecycleAllChildren(this GameObject g, bool worldPositionStays = false) {
+      g.transform.RecycleAllChildren(worldPositionStays);
+    }
   }
 }
