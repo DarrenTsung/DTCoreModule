@@ -8,6 +8,8 @@ namespace DT {
     }
 
     public static event Action OnUpdate = delegate {};
+    public static event Action OnApplicationPaused = delegate {};
+    public static event Action OnApplicationResumed = delegate {};
 
 
     // PRAGMA MARK - Public Interface
@@ -17,6 +19,14 @@ namespace DT {
 
     public void Update() {
       MonoBehaviourHelper.OnUpdate.Invoke();
+    }
+
+    public void OnApplicationPause(bool paused) {
+      if (paused) {
+        MonoBehaviourHelper.OnApplicationPaused.Invoke();
+      } else {
+        MonoBehaviourHelper.OnApplicationResumed.Invoke();
+      }
     }
   }
 }
