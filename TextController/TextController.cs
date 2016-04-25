@@ -10,6 +10,10 @@ using TMPro;
 namespace DT {
   [Serializable]
   public class TextController {
+    public string Text {
+      set { this.SetText(value); }
+    }
+
     public void SetText(string text) {
       if (this._unityText != null) {
         this._unityText.text = text;
