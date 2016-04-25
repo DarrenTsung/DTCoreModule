@@ -5,7 +5,7 @@ using DT;
 namespace DT {
 	public class MathUtil {
 		public const double epsilon = 0.0001;
-		
+
 		/// <summary>
 		/// Pass in the relative position between two points, get QuadInOut (ref: easing.net)
 		/// </summary>
@@ -17,7 +17,7 @@ namespace DT {
 				Debug.LogError("Invalid r (" + r + ") value for QuadInOut!");
 				return 0.0f;
 			}
-			
+
 			float m = (a + b) / 2.0f;
 			r *= 2.0f;
 			if (r < 1.0f) {
@@ -26,7 +26,7 @@ namespace DT {
 				return m + (Mathf.Pow((r - 1.0f), 1.0f / 2.0f) * (b - m));
 			}
 		}
-		
+
 		/// <summary>
 		/// Returns a gaussian distributed value centered around mean and with a
 		/// standard deviation curve
@@ -34,17 +34,17 @@ namespace DT {
 		public static float SampleGaussian(float mean, float standardDeviation) {
 			float min = mean - (3.5f * standardDeviation);
 			float max = mean + (3.5f * standardDeviation);
-			
+
 			float val;
 			do {
 				val = mean + (MathUtil.SampleNormalizedGaussian() * standardDeviation);
 			} while (val < min || val > max);
-			
+
 			return val;
 		}
-		
+
 		/// <summary>
-		/// Returns a normalized gaussian value (0.0 --- 1.0 (one standardDeviation) ---- ...) 
+		/// Returns a normalized gaussian value (0.0 --- 1.0 (one standardDeviation) ---- ...)
 		/// </summary>
 		public static float SampleNormalizedGaussian() {
 			float v1, v2, s;
@@ -53,12 +53,12 @@ namespace DT {
 				v2 = 2.0f * Random.Range(0.0f, 1.0f) - 1.0f;
 				s = (v1 * v1) + (v2 * v2);
 			} while (s >= 1.0f || s == 0.0f);
-			
+
 			s = Mathf.Sqrt((-2.0f * Mathf.Log(s)) / s);
-			
+
 			return v1 * s;
 		}
-		
+
 		/// <summary>
 		/// Wraps a value between the range of min and max
 		/// </summary>
@@ -69,7 +69,17 @@ namespace DT {
 			}
 			return newVal;
 		}
-		
+
+    public static int Clamp(int val, int min, int max) {
+      if (val > max) {
+        return max;
+      } else if (val < min) {
+        return min;
+      } else {
+        return val;
+      }
+    }
+
 		/// <summary>
 		/// Evaluates a sine function with the given amplitude, wavelength, and offset
 		/// </summary>
@@ -79,7 +89,7 @@ namespace DT {
 			}
 			return amplitude * Mathf.Sin((val * 2.0f * Mathf.PI) / wavelength) + offset;
 		}
-		
+
 		/// <summary>
 		/// Example: RoundToDecimalPlace(12.345f, 1) == 12.3f
 		/// </summary>
