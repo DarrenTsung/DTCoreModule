@@ -26,6 +26,10 @@ namespace DT {
     }
 
 		private GameObject InstantiateInternal(string prefabName, GameObject parent = null, bool worldPositionStays = false) {
+      // if we want to use some app-specific prefab over a base prefab, we can register routings in the PrefabNameRouter
+      // ex. use AppIdQuantityView prefab instead of IdQuantityView prefab
+      prefabName = PrefabNameRouter.RoutedPrefabName(prefabName);
+
 			GameObject instantiatedPrefab = this.GetGameObjectForPrefabName(prefabName);
 
 			if (parent != null) {
