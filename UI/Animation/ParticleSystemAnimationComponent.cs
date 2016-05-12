@@ -5,17 +5,18 @@ using UnityEngine.UI;
 
 namespace DT {
   public class ParticleSystemAnimationComponent : MonoBehaviour {
+    // PRAGMA MARK - Outlets
     public bool emissionEnabled = false;
-    public ParticleSystem particleSystem;
+
+    // PRAGMA MARK - Internal
+    private ParticleSystem _particleSystem;
 
     private void Awake() {
-      if (this.particleSystem == null) {
-        this.particleSystem = this.GetRequiredComponent<ParticleSystem>();
-      }
+      this._particleSystem = this.GetRequiredComponent<ParticleSystem>();
     }
 
     private void LateUpdate() {
-      this.particleSystem.SetEmissionEnabled(this.emissionEnabled);
+      this._particleSystem.SetEmissionEnabled(this.emissionEnabled);
     }
   }
 }
