@@ -138,11 +138,7 @@ namespace DT {
 
     private static void GetDepthAndComponentsInChildren<T>(this GameObject g, Dictionary<int, List<T>> map, int depth = 0) {
       List<T> components = map.GetAndCreateIfNotFound(depth);
-
-      T component = g.GetComponent<T>();
-      if (component != null) {
-        components.Add(component);
-      }
+      components.AddRange(g.GetComponents<T>());
 
       foreach (Transform childTransform in g.transform) {
         childTransform.gameObject.GetDepthAndComponentsInChildren(map, depth + 1);
