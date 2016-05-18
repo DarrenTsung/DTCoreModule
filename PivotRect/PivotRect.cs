@@ -59,12 +59,7 @@ namespace DT {
     private bool _initialized = false;
 
     private void UpdateComputedRect() {
-      this._computedRect = new Rect(
-        this._rect.x - (this._pivot.x * this._rect.width),
-        this._rect.y - (this._pivot.y * this._rect.height),
-        this._rect.width,
-        this._rect.height
-      );
+      this._computedRect = RectUtil.MakeRect(this._rect.position, this._rect.size, this._pivot);
     }
   }
 }
