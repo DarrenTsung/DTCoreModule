@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using UnityEngine;
 
 namespace DT {
@@ -25,6 +26,65 @@ namespace DT {
 
     public static void SerializeToTextAssetFilename(object obj, string filename, bool prettyPrint = false) {
       TextAssetUtil.WriteToTextAssetFilename(JsonUtility.ToJson(obj, prettyPrint), filename);
+    }
+
+    public static string SerializeGeneric(object obj) {
+      if (obj == null) {
+        Debug.LogError("JsonSerialization - SerializeGeneric was passed in null!");
+        return "";
+      }
+
+      Type type = obj.GetType();
+
+      MethodInfo genericMethod = typeof(JsonSerialization).GetMethod("SerializeCondition", BindingFlags.Static | BindingFlags.NonPublic);
+      MethodInfo method = genericMethod.MakeGenericMethod(type);
+
+      string serializedCondition = (string)method.Invoke(null, new object[] { obj });
+
+      var serializedWrapper = new SerializedClassWrapper(type, serializedCondition);
+      return JsonUtility.ToJson(serializedWrapper, prettyPrint: true);
+    }
+
+    private static string SerializeCondition<T>(T obj) {
+      return JsonUtility.ToJson(obj, prettyPrint: true);
+    }
+
+    public static T DeserializeGeneric<T>(string serializedClassWrapper) {
+      SerializedClassWrapper serializedWrapper = JsonUtility.FromJson<SerializedClassWrapper>(serializedClassWrapper);
+      if (serializedWrapper == null) {
+        Debug.LogError("JsonSerialization - DeserializeGeneric failed to deserialize class wrapper!");
+        return default(T);
+      }
+
+      Type type = Type.GetType(serializedWrapper.typeName);
+
+      MethodInfo genericMethod = typeof(JsonSerialization).GetMethod("DeserializeCondition", BindingFlags.Static | BindingFlags.NonPublic);
+      MethodInfo method = genericMethod.MakeGenericMethod(type);
+
+      object obj = method.Invoke(null, new object[] { serializedWrapper.serializedClass });
+      T castedObject = default(T);
+      try {
+        castedObject = (T)obj;
+      } catch (InvalidCastException) {
+        Debug.LogError("JsonSerialization - DeserializeGeneric failed to cast deserialized class!");
+      }
+
+      return castedObject;
+    }
+
+    private static T DeserializeCondition<T>(string serializedT) {
+      return JsonUtility.FromJson<T>(serializedT);
+    }
+
+    [Serializable]
+    private class SerializedClassWrapper {
+      public string typeName;
+      public string serializedClass;
+
+      public SerializedClassWrapper(Type type, string serializedClass) {
+        this.typeName = type.AssemblyQualifiedName;
+        this.serializedClass = serializedClass;
+      }
     }
   }
 }
