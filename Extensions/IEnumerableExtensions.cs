@@ -22,5 +22,9 @@ namespace DT {
     public static int Max(this IEnumerable<int> enumerable) {
       return enumerable.Max(i => i);
     }
+
+    public static List<T> ToList<T>(this IEnumerable<T> enumerable) {
+      return new List<T>(enumerable);
+    }
   }
 }
