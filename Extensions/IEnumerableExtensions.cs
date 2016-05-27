@@ -26,5 +26,14 @@ namespace DT {
     public static List<T> ToList<T>(this IEnumerable<T> enumerable) {
       return new List<T>(enumerable);
     }
+
+    public static Dictionary<TKey, T> ToMapWithKeys<TKey, T>(this IEnumerable<T> enumerable, Func<T, TKey> keyTransformation) {
+      Dictionary<TKey, T> map = new Dictionary<TKey, T>();
+      foreach (T element in enumerable) {
+        TKey key = keyTransformation.Invoke(element);
+        map[key] = element;
+      }
+      return map;
+    }
   }
 }
