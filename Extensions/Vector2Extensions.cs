@@ -8,37 +8,37 @@ namespace DT {
       v.y = y;
       return v;
     }
-    
+
     public static Vector2 SetX(this Vector2 v, float x) {
       v.x = x;
       return v;
     }
-    
+
     public static Vector2 SetY(this Vector2 v, float y) {
       v.y = y;
       return v;
     }
-    
+
     public static Vector2 AddX(this Vector2 v, float x) {
       v.x = v.x + x;
       return v;
     }
-    
+
     public static Vector2 AddY(this Vector2 v, float y) {
       v.y = v.y + y;
       return v;
     }
-    
+
     public static Vector2 PerpendicularDirection(this Vector2 v) {
       Vector2 p = new Vector2(-v.y, v.x);
       return p.normalized;
     }
-    
+
     public static Vector2 PerpendicularVector(this Vector2 v) {
       Vector2 p = new Vector2(-v.y, v.x);
       return p;
     }
-    
+
     public static Vector2 CenterPoint(this Vector2[] points) {
   		Vector2 centerPoint = new Vector2(0.0f, 0.0f);
   		foreach (Vector2 point in points) {
@@ -46,7 +46,7 @@ namespace DT {
   		}
   		return new Vector2(centerPoint.x / points.Length, centerPoint.y / points.Length);
     }
-    
+
     /**
     * Get the minimum distance between a line segment and point
     *
@@ -59,7 +59,7 @@ namespace DT {
       if (lineVector.magnitude == 0.0f) {
         return (lineStart - point).magnitude;
       }
-      
+
       // Find the projection of the point onto the line (lineStart + t * (lineEnd - lineStart))
       float t = Vector2.Dot(point - lineStart, lineVector) / Vector2.Dot(lineVector, lineVector);
       if (t < 0.0f) {
@@ -72,11 +72,11 @@ namespace DT {
         return (point - projectionPoint).magnitude;
       }
     }
-    
+
     public static Vector2 Rotate(this Vector2 v, float degrees) {
       return Quaternion.Euler(0, 0, degrees) * v;
     }
-    
+
     public static Vector3 Vector3XZValue(this Vector2 v) {
       return new Vector3(v.x, 0.0f, v.y);
     }
