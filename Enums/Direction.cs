@@ -11,7 +11,7 @@ namespace DT {
 	}
 
 	public static class DirectionExtensions {
-		public static Vector2 Vec2Value(this Direction direction) {
+		public static Vector2 Vector2Value(this Direction direction) {
 			switch (direction) {
 				case Direction.UP:
 					return Vector2.up;
@@ -75,4 +75,14 @@ namespace DT {
 			}
 		}
 	}
+
+  public static class DirectionUtil {
+    public static Direction ConvertVector2(Vector2 v) {
+      if (Mathf.Abs(v.x) > Mathf.Abs(v.y)) {
+        return (v.x > 0.0f) ? Direction.RIGHT : Direction.LEFT;
+      } else {
+        return (v.y > 0.0f) ? Direction.UP : Direction.DOWN;
+      }
+    }
+  }
 }
