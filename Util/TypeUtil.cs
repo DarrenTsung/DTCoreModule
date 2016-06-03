@@ -7,19 +7,20 @@ namespace DT {
   public static class TypeUtil<T> {
     // PRAGMA MARK - Static Public Interface
     public static Type[] ImplementationTypes {
-      get { return TypeUtil<T>._implementationTypes; }
+      get {
+        if (TypeUtil<T>._implementationTypes == null) {
+          TypeUtil<T>._implementationTypes =
+              (from assembly in AppDomain.CurrentDomain.GetAssemblies()
+               from type in assembly.GetTypes()
+               where typeof(T).IsAssignableFrom(type) && type.IsClass && !type.IsAbstract
+               select type).ToArray();
+        }
+        return TypeUtil<T>._implementationTypes;
+      }
     }
 
 
     // PRAGMA MARK - Static Internal
-    private static Type[] _implementationTypes;
-
-    static TypeUtil() {
-      TypeUtil<T>._implementationTypes =
-          (from assembly in AppDomain.CurrentDomain.GetAssemblies()
-           from type in assembly.GetTypes()
-           where typeof(T).IsAssignableFrom(type) && type.IsClass && !type.IsAbstract
-           select type).ToArray();
-    }
+    private static Type[] _implementationTypes = null;
   }
 }
