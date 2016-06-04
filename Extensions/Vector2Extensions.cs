@@ -29,6 +29,16 @@ namespace DT {
       return v;
     }
 
+    public static Vector2 SubtractX(this Vector2 v, float x) {
+      v.x = v.x - x;
+      return v;
+    }
+
+    public static Vector2 SubtractY(this Vector2 v, float y) {
+      v.y = v.y - y;
+      return v;
+    }
+
     public static Vector2 PerpendicularDirection(this Vector2 v) {
       Vector2 p = new Vector2(-v.y, v.x);
       return p.normalized;
