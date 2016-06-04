@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -19,7 +20,7 @@ namespace DT {
     }
 
     private static string FormatMSTime(int ms) {
-      return string.Format("{0}s", (ms / 1000.0f).ToString("F3", CultureInfo.InvariantCulture));
+      return string.Format("{0}s", (ms / 1000.0f).ToString("F2", CultureInfo.InvariantCulture));
     }
 
     private static void LogCompileTimeKeyframe(CompileTimeKeyframe keyframe) {
@@ -34,12 +35,60 @@ namespace DT {
     // PRAGMA MARK - Internal
     private Vector2 _scrollPosition;
 
+    private bool ShowErrors {
+      get { return EditorPrefs.GetBool("CompileTimeTrackerWindow.ShowErrors"); }
+      set { EditorPrefs.SetBool("CompileTimeTrackerWindow.ShowErrors", value); }
+    }
+
+    private bool OnlyToday {
+      get { return EditorPrefs.GetBool("CompileTimeTrackerWindow.OnlyToday"); }
+      set { EditorPrefs.SetBool("CompileTimeTrackerWindow.OnlyToday", value); }
+    }
+
+    private bool OnlyYesterday {
+      get { return EditorPrefs.GetBool("CompileTimeTrackerWindow.OnlyYesterday"); }
+      set { EditorPrefs.SetBool("CompileTimeTrackerWindow.OnlyYesterday", value); }
+    }
+
     void OnGUI() {
       Rect screenRect = this.position;
       int totalCompileTimeInMS = 0;
 
-      this._scrollPosition = EditorGUILayout.BeginScrollView(this._scrollPosition, GUILayout.Height(screenRect.height - 20.0f));
-        foreach (CompileTimeKeyframe keyframe in CompileTimeTracker.GetCompileTimeHistory()) {
+      // show filters
+      EditorGUILayout.BeginHorizontal(GUILayout.Height(20.0f));
+        EditorGUILayout.Space();
+        float toggleRectWidth = screenRect.width / 4.0f;
+        Rect toggleRect = new Rect(Vector2.zero, new Vector2(toggleRectWidth, 20.0f));
+
+        // Psuedo enum logic here
+        if (this.OnlyToday && this.OnlyYesterday) {
+          this.OnlyYesterday = false;
+        }
+
+        if (!this.OnlyToday && !this.OnlyYesterday) {
+          this.OnlyToday = true;
+        }
+
+        bool newOnlyToday = GUI.Toggle(toggleRect, this.OnlyToday, "Today", (GUIStyle)"Button");
+        if (newOnlyToday != this.OnlyToday) {
+          this.OnlyToday = newOnlyToday;
+          this.OnlyYesterday = !newOnlyToday;
+        }
+
+        toggleRect.position = toggleRect.position.AddX(toggleRectWidth);
+        bool newOnlyYesterday = GUI.Toggle(toggleRect, this.OnlyYesterday, "Yesterday", (GUIStyle)"Button");
+        if (newOnlyYesterday != this.OnlyYesterday) {
+          this.OnlyYesterday = newOnlyYesterday;
+          this.OnlyToday = !newOnlyYesterday;
+        }
+        // End psuedo enum logic
+
+        toggleRect.position = toggleRect.position.AddX(toggleRectWidth + 20.0f);
+        this.ShowErrors = GUI.Toggle(toggleRect, this.ShowErrors, "Errors", (GUIStyle)"Button");
+      EditorGUILayout.EndHorizontal();
+
+      this._scrollPosition = EditorGUILayout.BeginScrollView(this._scrollPosition, GUILayout.Height(screenRect.height - 40.0f));
+        foreach (CompileTimeKeyframe keyframe in this.GetFilteredKeyframes()) {
           string compileText = CompileTimeTrackerWindow.FormatMSTime(keyframe.elapsedCompileTimeInMS);
           if (keyframe.hadErrors) {
             compileText += " (error)";
@@ -48,15 +97,13 @@ namespace DT {
 
           totalCompileTimeInMS += keyframe.elapsedCompileTimeInMS;
         }
-
-        EditorGUILayout.Space();
-
-        if (EditorApplication.isCompiling) {
-          GUILayout.Label("Compiling..");
-        }
       EditorGUILayout.EndScrollView();
 
-      GUILayout.Label("Total compile time: " + CompileTimeTrackerWindow.FormatMSTime(totalCompileTimeInMS));
+      string statusBarText = "Total compile time: " + CompileTimeTrackerWindow.FormatMSTime(totalCompileTimeInMS);
+      if (EditorApplication.isCompiling) {
+        statusBarText = "Compiling.. || " + statusBarText;
+      }
+      GUILayout.Label(statusBarText);
     }
 
     void OnEnable() {
@@ -67,6 +114,21 @@ namespace DT {
     void OnDisable() {
       EditorApplicationCompilationUtil.StartedCompiling -= this.HandleEditorStartedCompiling;
       CompileTimeTracker.KeyframeAdded -= this.HandleCompileTimeKeyframeAdded;
+    }
+
+    private IEnumerable<CompileTimeKeyframe> GetFilteredKeyframes() {
+      IEnumerable<CompileTimeKeyframe> filteredKeyframes = CompileTimeTracker.GetCompileTimeHistory();
+      if (!this.ShowErrors) {
+        filteredKeyframes = filteredKeyframes.Where(keyframe => !keyframe.hadErrors);
+      }
+
+      if (this.OnlyToday) {
+        filteredKeyframes = filteredKeyframes.Where(keyframe => DateTimeUtil.SameDay(keyframe.Date, DateTime.Now));
+      } else if (this.OnlyYesterday) {
+        filteredKeyframes = filteredKeyframes.Where(keyframe => DateTimeUtil.SameDay(keyframe.Date, DateTime.Now.AddDays(-1)));
+      }
+
+      return filteredKeyframes;
     }
 
     private void HandleEditorStartedCompiling() {
