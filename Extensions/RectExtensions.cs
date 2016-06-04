@@ -51,5 +51,9 @@ namespace DT {
 
       return distance;
     }
+
+    public static Vector2 RelativePoint(this Rect r, Vector2 relativePoint) {
+      return new Vector2(r.xMin + (r.width * relativePoint.x), r.yMin + (r.height * relativePoint.y));
+    }
   }
 }
