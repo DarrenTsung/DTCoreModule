@@ -39,6 +39,16 @@ namespace DT {
       return v;
     }
 
+    public static Vector2 FlipX(this Vector2 v) {
+      v.x = -v.x;
+      return v;
+    }
+
+    public static Vector2 FlipY(this Vector2 v) {
+      v.y = -v.y;
+      return v;
+    }
+
     public static Vector2 PerpendicularDirection(this Vector2 v) {
       Vector2 p = new Vector2(-v.y, v.x);
       return p.normalized;
