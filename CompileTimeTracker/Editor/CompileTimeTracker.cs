@@ -23,23 +23,20 @@ namespace DT {
 
     private const string kCompileTimeTrackerKey = "CompileTimeTracker::_data";
     private static CompileTimeTrackerData _data = new CompileTimeTrackerData(kCompileTimeTrackerKey);
+    private static int _storedErrorCount;
 
     private static void HandleEditorStartedCompiling() {
       CompileTimeTracker._data.StartTime = CompileTimeTracker.GetMilliseconds();
 
-      UnityEditorConsoleUtil.Clear();
+      UnityConsoleCountsByType countsByType = UnityEditorConsoleUtil.GetCountsByType();
+      CompileTimeTracker._storedErrorCount = countsByType.errorCount;
     }
 
     private static void HandleEditorFinishedCompiling() {
       int elapsedTime = (int)(CompileTimeTracker.GetMilliseconds() - CompileTimeTracker._data.StartTime);
 
-      // NOTE (darren): because we cleared the console when editor started compiling, all errors
-      // at this point should be compile errors
-
-      // NOTE (darren): we clear the console when starting compiling instead of now because we want
-      // to preserve warnings and other information
       UnityConsoleCountsByType countsByType = UnityEditorConsoleUtil.GetCountsByType();
-      bool hasErrors = countsByType.errorCount > 0;
+      bool hasErrors = (countsByType.errorCount - CompileTimeTracker._storedErrorCount) > 0;
 
       CompileTimeKeyframe keyframe = new CompileTimeKeyframe(elapsedTime, hasErrors);
       CompileTimeTracker._data.AddCompileTimeKeyframe(keyframe);
