@@ -9,7 +9,7 @@ using TMPro;
 
 namespace DT {
   [Serializable]
-  public class TextController {
+  public class TextOutlet {
     public string Text {
       set { this.SetText(value); }
     }
