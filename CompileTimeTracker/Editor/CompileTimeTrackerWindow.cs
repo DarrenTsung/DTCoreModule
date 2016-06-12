@@ -89,7 +89,8 @@ namespace DT {
 
       this._scrollPosition = EditorGUILayout.BeginScrollView(this._scrollPosition, GUILayout.Height(screenRect.height - 40.0f));
         foreach (CompileTimeKeyframe keyframe in this.GetFilteredKeyframes()) {
-          string compileText = CompileTimeTrackerWindow.FormatMSTime(keyframe.elapsedCompileTimeInMS);
+          string compileText = string.Format("({0:hh:mm tt}): ", keyframe.Date);
+          compileText += CompileTimeTrackerWindow.FormatMSTime(keyframe.elapsedCompileTimeInMS);
           if (keyframe.hadErrors) {
             compileText += " (error)";
           }

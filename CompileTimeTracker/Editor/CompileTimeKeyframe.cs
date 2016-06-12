@@ -5,11 +5,15 @@ namespace DT {
     public class CompileTimeKeyframe {
         public DateTime Date {
           get {
-            if (string.IsNullOrEmpty(this.serializedDate)) {
-              return DateTime.MinValue;
+            if (this._computedDate == null) {
+              if (string.IsNullOrEmpty(this.serializedDate)) {
+                this._computedDate = DateTime.MinValue;
+              } else {
+                this._computedDate = DateTime.Parse(this.serializedDate);
+              }
             }
 
-            return DateTime.Parse(this.serializedDate);
+            return this._computedDate.Value;
           }
         }
 
@@ -22,5 +26,7 @@ namespace DT {
             this.serializedDate = DateTime.Now.ToString();
             this.hadErrors = hadErrors;
         }
+
+        [NonSerialized] private DateTime? _computedDate;
     }
 }
