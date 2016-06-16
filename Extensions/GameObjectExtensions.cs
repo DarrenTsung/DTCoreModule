@@ -15,6 +15,10 @@ namespace DT {
       return name;
     }
 
+    public static void ToggleActive(this GameObject g) {
+      g.SetActive(!g.activeSelf);
+    }
+
     public static bool IsInLayerMask(this GameObject g, LayerMask mask) {
       return ((mask.value & (1 << g.layer)) > 0);
     }
