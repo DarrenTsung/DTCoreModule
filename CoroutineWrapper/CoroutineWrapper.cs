@@ -21,8 +21,16 @@ namespace DT {
       return CoroutineWrapper.StartCoroutine(CoroutineWrapper.DelayCoroutine(delay), finishedCallback);
     }
 
+    public static CoroutineWrapper DoAfterFrame(Action finishedCallback) {
+      return CoroutineWrapper.StartCoroutine(CoroutineWrapper.WaitOneFrameCoroutine(), finishedCallback);
+    }
+
     private static IEnumerator DelayCoroutine(float delay) {
       yield return new WaitForSeconds(delay);
+    }
+
+    private static IEnumerator WaitOneFrameCoroutine() {
+      yield return null;
     }
 
 
