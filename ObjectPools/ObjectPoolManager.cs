@@ -1,6 +1,6 @@
-﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+﻿using UnityEngine;
 
 namespace DT {
 	public class ObjectPoolManager : Singleton<ObjectPoolManager> {
@@ -19,6 +19,7 @@ namespace DT {
 
 
 		// PRAGMA MARK - Internal
+    private HashSet<GameObject> _objectsBeingCleanedUp = new HashSet<GameObject>();
 		private Dictionary<string, Stack<GameObject>> _objectPools = new Dictionary<string, Stack<GameObject>>();
 		private T InstantiateInternal<T>(string prefabName, GameObject parent = null, bool worldPositionStays = false) where T : MonoBehaviour {
       GameObject instantiatedPrefab = this.InstantiateInternal(prefabName, parent, worldPositionStays);
@@ -56,12 +57,21 @@ namespace DT {
 				return;
 			}
 
+      if (this._objectsBeingCleanedUp.Contains(usedObject)) {
+        return;
+      }
+
+      this._objectsBeingCleanedUp.Add(usedObject);
       recycleData.Cleanup();
 			usedObject.transform.SetParent(this.transform, worldPositionStays);
-			usedObject.SetActive(false);
+      CoroutineWrapper.DoAfterFrame(() => {
+  			usedObject.SetActive(false);
 
-      Stack<GameObject> recycledObjects = this.ObjectPoolForPrefabName(recycleData.prefabName);
-      recycledObjects.Push(usedObject);
+        Stack<GameObject> recycledObjects = this.ObjectPoolForPrefabName(recycleData.prefabName);
+        recycledObjects.Push(usedObject);
+
+        this._objectsBeingCleanedUp.Remove(usedObject);
+      });
 		}
 
 		private Stack<GameObject> ObjectPoolForPrefabName(string prefabName) {
