@@ -98,5 +98,10 @@ namespace DT {
 			float raisedValue = val * conversion;
 			return Mathf.Round(raisedValue) / conversion;
 		}
+
+    public static byte ConvertToByte(float f) {
+      f = Mathf.Clamp01(f);
+      return (byte)(f * 255);
+    }
 	}
 }
