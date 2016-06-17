@@ -1,14 +1,14 @@
 #if UNITY_EDITOR
 using DT;
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
-using System;
-using System.Linq;
-using System.Text.RegularExpressions;
 using System.Globalization;
-using UnityEngine;
+using System.Linq;
+using System.Reflection;
+using System.Text.RegularExpressions;
 using UnityEditor;
+using UnityEngine;
 
 // when implementing this in your MonoBehaviours, wrap your using UnityEditor and
 // OnInspectorGUI/OnSceneGUI methods in #if UNITY_EDITOR/#endif
@@ -49,7 +49,11 @@ namespace DT {
 
 
     public void OnEnable() {
-      Type type = target.GetType();
+      if (this.target == null) {
+        return;
+      }
+
+      Type type = this.target.GetType();
 
       this._onInspectorGuiMethod = type.GetMethod("OnInspectorGUI", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
       this._onSceneGuiMethod = type.GetMethod("OnSceneGUI", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
