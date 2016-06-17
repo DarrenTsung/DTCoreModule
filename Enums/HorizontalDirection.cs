@@ -21,4 +21,10 @@ namespace DT {
 			return (direction == HorizontalDirection.RIGHT) ? Vector2.right : -Vector2.right;
 		}
 	}
+
+  public static class HorizontalDirectionUtil {
+    public static HorizontalDirection RandomDirection() {
+      return (Random.value > 0.5f) ? HorizontalDirection.RIGHT : HorizontalDirection.LEFT;
+    }
+  }
 }
