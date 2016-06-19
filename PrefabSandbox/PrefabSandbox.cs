@@ -178,7 +178,7 @@ namespace DT.Prefab {
 
       // if the prefab is a UI element, child it under the canvas
       if (PrefabSandbox._data.prefabInstance.GetComponent<RectTransform>() != null) {
-        CanvasUtil.ParentUIElementToCanvas(CanvasUtil.ScreenSpaceMainCanvas, PrefabSandbox._data.prefabInstance);
+        CanvasUtil.ParentUIElementToCanvas(PrefabSandbox._data.prefabInstance, CanvasUtil.ScreenSpaceMainCanvas);
       }
 
 			Selection.activeGameObject = PrefabSandbox._data.prefabInstance;
