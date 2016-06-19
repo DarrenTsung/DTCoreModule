@@ -14,19 +14,19 @@ namespace DT {
         return _prefabDisplayIcon ?? new Texture2D(0, 0);
       }
     }
-    
+
     // PRAGMA MARK - IOpenableObject
     public override Texture2D DisplayIcon {
       get {
         return OpenablePrefabObject.PrefabDisplayIcon;
       }
     }
-    
+
     public override void Open() {
-			PrefabSandbox.OpenPrefab(_guid, null);
+			PrefabSandbox.OpenPrefab(_guid);
     }
-    
-    
+
+
     // PRAGMA MARK - Constructors
     public OpenablePrefabObject(string guid) : base(guid) {
       if (!PathUtil.IsPrefab(_path)) {

@@ -11,88 +11,74 @@ using UnityEditor.SceneManagement;
 namespace DT.Prefab {
 	[InitializeOnLoad]
 	public class PrefabSandbox {
-		public delegate void PrefabSandboxSetupCompleteCallback(bool success);
-
 		private const string kSandboxSceneName = "PrefabSandbox";
 		private const string kSandboxSetupPrefabName = "PrefabSandboxSetupPrefab";
 
+		private static readonly string kSandboxScenePath = PrefabSandbox.FindSandboxPath();
+
+    [Serializable]
 		public class PrefabSandboxData {
-			public string PrefabGuid;
-			public string PrefabPath;
-			public GameObject PrefabAsset;
+			public string prefabGuid;
+			public string prefabPath;
+			public GameObject prefabAsset;
+			public GameObject prefabInstance;
 
-			public GameObject PrefabInstance;
-			public int PrefabInstanceId;
-
-			public bool SceneIsDirty;
+      public string oldScenePath;
 		}
 
 		private static PrefabSandboxData _data;
-		private static GameObject _newPrefab;
-		private static PrefabSandboxSetupCompleteCallback _setupCompletionCallback;
-		private static bool _isSavingScene;
     private static Scene _sandboxScene;
-    private static string _oldScenePath;
 
-		private static string _sandboxScenePath;
 		private static GameObject _sandboxSetupPrefab;
 
 		static PrefabSandbox() {
-			PrefabSandbox._sandboxScenePath = PrefabSandbox.FindSandboxPath();
 			string sandboxSetupPrefabPath = PrefabSandbox.FindSandboxSetupPrefabPath();
 			PrefabSandbox._sandboxSetupPrefab = AssetDatabase.LoadAssetAtPath(sandboxSetupPrefabPath, typeof(GameObject)) as GameObject;
 
-			EditorApplicationUtil.SceneDirtied += PrefabSandbox.OnSceneDirtied;
-			EditorApplicationUtil.SceneSaved += PrefabSandbox.OnSceneSave;
 			EditorApplicationUtil.OnSceneGUIDelegate += PrefabSandbox.OnSceneGUI;
 		}
 
 
 		// PRAGMA MARK - Public Interface
-		public static bool OpenPrefab(string guid, PrefabSandboxSetupCompleteCallback callback) {
+		public static bool OpenPrefab(string guid) {
 			string assetPath = AssetDatabase.GUIDToAssetPath(guid);
 			GameObject prefab = AssetDatabase.LoadAssetAtPath(assetPath, typeof(GameObject)) as GameObject;
 
-			return PrefabSandbox.OpenPrefab(prefab, callback);
+			return PrefabSandbox.OpenPrefab(prefab);
 		}
 
-		public static bool OpenPrefab(GameObject prefab, PrefabSandboxSetupCompleteCallback callback) {
+		public static bool OpenPrefab(GameObject prefab) {
 			string assetPath = AssetDatabase.GetAssetPath(prefab);
 			string guid = AssetDatabase.AssetPathToGUID(assetPath);
 
-			bool alreadyEditing = (PrefabSandbox._data != null && PrefabSandbox._data.PrefabGuid == guid);
-			PrefabSandbox._setupCompletionCallback = callback;
+      Scene oldScene = EditorSceneManager.GetActiveScene();
+
+			bool alreadyEditing = (PrefabSandbox._data != null && PrefabSandbox._data.prefabGuid == guid);
 
 			if (prefab != null && assetPath != null && PathUtil.IsPrefab(assetPath) && !alreadyEditing) {
-				PrefabSandbox._data = new PrefabSandboxData();
-				PrefabSandbox._data.PrefabGuid = guid;
-				PrefabSandbox._data.PrefabPath = assetPath;
-				PrefabSandbox._data.PrefabAsset = prefab;
+        if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) {
+          return false;
+        }
 
+				PrefabSandbox._data = new PrefabSandboxData();
+				PrefabSandbox._data.prefabGuid = guid;
+				PrefabSandbox._data.prefabPath = assetPath;
+				PrefabSandbox._data.prefabAsset = prefab;
+        PrefabSandbox._data.oldScenePath = oldScene.path;
+
+        PrefabSandbox.SavePrefabData();
 				PrefabSandbox.SetupSandbox();
 				return true;
 			} else {
-				if (PrefabSandbox._setupCompletionCallback != null) {
-					PrefabSandbox._setupCompletionCallback(success: false);
-				}
 				return false;
 			}
 		}
 
 		public static void SavePrefabAsset() {
-			if (PrefabSandbox._data != null && PrefabSandbox._data.PrefabInstance != null && PrefabSandbox._data.PrefabAsset != null) {
-				string newPath = PrefabSandbox._data.PrefabPath.RemoveSubstring(Path.GetFileName(PrefabSandbox._data.PrefabPath));
-				newPath = newPath + PrefabSandbox._data.PrefabInstance.name + Path.GetExtension(PrefabSandbox._data.PrefabPath);
-
+			if (PrefabSandbox._data != null && PrefabSandbox._data.prefabInstance != null && PrefabSandbox._data.prefabAsset != null) {
 				UnityEditor.AnimationMode.StopAnimationMode();
 
-				PrefabUtility.ReplacePrefab(PrefabSandbox._data.PrefabInstance, PrefabSandbox._data.PrefabAsset, ReplacePrefabOptions.Default);
-				PrefabUtility.DisconnectPrefabInstance(PrefabSandbox._data.PrefabInstance);
-				AssetDatabase.MoveAsset(PrefabSandbox._data.PrefabPath, newPath);
-
-				PrefabSandbox.SaveScene();
-
-				PrefabSandbox._data.SceneIsDirty = false;
+				PrefabUtility.ReplacePrefab(PrefabSandbox._data.prefabInstance, PrefabSandbox._data.prefabAsset, ReplacePrefabOptions.Default);
 				SceneView.RepaintAll();
 			}
 		}
@@ -102,31 +88,14 @@ namespace DT.Prefab {
 		}
 
 
-		// PRAGMA MARK - Internal
+		// PRAGMA MARK - Static Internal
+    [UnityEditor.Callbacks.DidReloadScripts]
+    static void OnScriptsReloaded() {
+      PrefabSandbox.ReloadPrefabData();
+    }
 
-
-		// PRAGMA MARK - Editor Callbacks
-		private static void OnSceneDirtied() {
-			if (PrefabSandbox._data != null) {
-				PrefabSandbox._data.SceneIsDirty = true;
-				SceneView.RepaintAll();
-			}
-		}
-
-		private static void OnSceneSave() {
-			// if _isSavingScene is true, then we initiated the scene save
-			// and don't need to save the prefab asset
-			if (!PrefabSandbox._isSavingScene) {
-				PrefabSandbox.SavePrefabAsset();
-			}
-		}
-
-		public const float kSceneButtonHeight = 20.0f;
-		public const float kSceneButtonHeightPadding = 5.0f;
-
-		public const float kPreviousSceneButtonWidth = 120.0f;
-		public const float kSaveButtonWidth = 80.0f;
-		public const float kRevertButtonWidth = 80.0f;
+		private const float kSceneButtonHeight = 20.0f;
+		private const float kPreviousSceneButtonWidth = 120.0f;
 
 		private static void OnSceneGUI(SceneView sceneView) {
 			if (!PrefabSandbox.IsEditing()) {
@@ -139,19 +108,8 @@ namespace DT.Prefab {
 
 			// BEGIN SCENE GUI
 			GUI.color = Color.green;
-			if (GUI.Button(new Rect(sceneView.position.size.x - PrefabSandbox.kPreviousSceneButtonWidth, 0.0f, PrefabSandbox.kPreviousSceneButtonWidth, PrefabSandbox.kSceneButtonHeight), "Close Sandbox Scene")) {
+			if (GUI.Button(new Rect(sceneView.position.size.x - PrefabSandbox.kPreviousSceneButtonWidth, 0.0f, PrefabSandbox.kPreviousSceneButtonWidth, PrefabSandbox.kSceneButtonHeight), "Close Sandbox")) {
 				PrefabSandbox.CloseSandboxScene();
-			}
-
-			if (GUI.Button(new Rect(0.0f, 0.0f, PrefabSandbox.kSaveButtonWidth, PrefabSandbox.kSceneButtonHeight), "Save")) {
-				PrefabSandbox.SavePrefabAsset();
-			}
-
-			GUI.color = Color.red;
-			if (GUI.Button(new Rect(0.0f, PrefabSandbox.kSceneButtonHeight + PrefabSandbox.kSceneButtonHeightPadding, PrefabSandbox.kRevertButtonWidth, PrefabSandbox.kSceneButtonHeight), "Revert")) {
-				if (EditorUtility.DisplayDialog("Discard Changes?", "Would you like to revert all changes since last save?", "Discard Changes", "Keep Changes")) {
-					PrefabSandbox.CreatePrefabInstance();
-				}
 			}
 			// END SCENE GUI
 
@@ -162,7 +120,7 @@ namespace DT.Prefab {
 		}
 
 		// PRAGMA MARK - Setup
-		protected static string FindSandboxPath() {
+		private static string FindSandboxPath() {
 			string guid = AssetDatabaseUtil.FindSpecificAsset(PrefabSandbox.kSandboxSceneName + " t:Scene");
 			string path = AssetDatabase.GUIDToAssetPath(guid);
 			if (PathUtil.IsScene(path)) {
@@ -172,7 +130,7 @@ namespace DT.Prefab {
 			}
 		}
 
-		protected static string FindSandboxSetupPrefabPath() {
+		private static string FindSandboxSetupPrefabPath() {
 			string guid = AssetDatabaseUtil.FindSpecificAsset(PrefabSandbox.kSandboxSetupPrefabName + " t:Prefab");
 			string path = AssetDatabase.GUIDToAssetPath(guid);
 			if (PathUtil.IsPrefab(path)) {
@@ -182,70 +140,84 @@ namespace DT.Prefab {
 			}
 		}
 
-		protected static void SetupSandbox() {
-      PrefabSandbox._oldScenePath = EditorSceneManager.GetActiveScene().path;
-      PrefabSandbox._sandboxScene = EditorSceneManager.OpenScene(PrefabSandbox._sandboxScenePath);
+		private static void SetupSandbox() {
+      PrefabSandbox._sandboxScene = EditorSceneManager.OpenScene(PrefabSandbox.kSandboxScenePath);
       EditorSceneManager.SetActiveScene(PrefabSandbox._sandboxScene);
 
 			if (PrefabSandbox._sandboxScene.isLoaded) {
-				PrefabSandbox.SaveScene();
 				PrefabSandbox.ClearAllGameObjectsInSandbox();
 
 				// setup scene with sandbox setup prefab
-				PrefabUtility.InstantiatePrefab(PrefabSandbox._sandboxSetupPrefab);
+				GameObject.Instantiate(PrefabSandbox._sandboxSetupPrefab);
 
 				if (!PrefabSandbox.CreatePrefabInstance()) {
 					PrefabSandbox.CloseSandboxScene();
 					return;
 				}
 			} else {
-				throw new Exception(string.Format("Sandbox Scene ({0}) was not able to be opened!", PrefabSandbox._sandboxScenePath));
+				throw new Exception(string.Format("Sandbox Scene ({0}) was not able to be opened!", PrefabSandbox.kSandboxScenePath));
 			}
 		}
 
-		protected static void SaveScene() {
-			PrefabSandbox._isSavingScene = true;
-			EditorSceneManager.SaveScene(PrefabSandbox._sandboxScene);
-			PrefabSandbox._isSavingScene = false;
-		}
-
-		protected static void CloseSandboxScene() {
-			if (PrefabSandbox._data == null) {
+		private static void CloseSandboxScene() {
+			if (!PrefabSandbox.IsEditing()) {
 				return;
 			}
 
 			PrefabSandbox.ClearAllGameObjectsInSandbox();
-			PrefabSandbox.SaveScene();
+      PrefabSandbox._sandboxScene = default(Scene);
 
-			EditorSceneManager.OpenScene(PrefabSandbox._oldScenePath);
+			EditorSceneManager.OpenScene(PrefabSandbox._data.oldScenePath);
 			PrefabSandbox._data = null;
+      PrefabSandbox.ClearPrefabData();
 		}
 
-		protected static bool CreatePrefabInstance() {
-			if (PrefabSandbox._data.PrefabInstance != null) {
-				GameObject.DestroyImmediate(PrefabSandbox._data.PrefabInstance);
+		private static bool CreatePrefabInstance() {
+			if (PrefabSandbox._data.prefabInstance != null) {
+				GameObject.DestroyImmediate(PrefabSandbox._data.prefabInstance);
 			}
 
-			PrefabSandbox._data.PrefabInstance = PrefabUtility.InstantiatePrefab(PrefabSandbox._data.PrefabAsset) as GameObject;
-			PrefabUtility.DisconnectPrefabInstance(PrefabSandbox._data.PrefabInstance);
-			PrefabSandbox._data.PrefabInstanceId = PrefabSandbox._data.PrefabInstance.GetInstanceID();
+			PrefabSandbox._data.prefabInstance = PrefabUtility.InstantiatePrefab(PrefabSandbox._data.prefabAsset) as GameObject;
 
       // if the prefab is a UI element, child it under the canvas
-      if (PrefabSandbox._data.PrefabInstance.GetComponent<RectTransform>() != null) {
-        PrefabSandbox._data.PrefabInstance.transform.SetParent(CanvasUtil.ScreenSpaceMainCanvas.transform, worldPositionStays : false);
+      if (PrefabSandbox._data.prefabInstance.GetComponent<RectTransform>() != null) {
+        CanvasUtil.ParentUIElementToCanvas(CanvasUtil.ScreenSpaceMainCanvas, PrefabSandbox._data.prefabInstance);
       }
 
-			Selection.activeGameObject = PrefabSandbox._data.PrefabInstance;
+			Selection.activeGameObject = PrefabSandbox._data.prefabInstance;
       HierarchyUtil.ExpandCurrentSelectedObjectInHierarchy();
 
 			return true;
 		}
 
-		protected static void ClearAllGameObjectsInSandbox() {
+		private static void ClearAllGameObjectsInSandbox() {
 			foreach (GameObject obj in PrefabSandbox._sandboxScene.GetRootGameObjects()) {
 				GameObject.DestroyImmediate(obj);
 			}
 		}
+
+    private static void SavePrefabData() {
+      EditorPrefs.SetString("PrefabSandbox._data", JsonUtility.ToJson(PrefabSandbox._data));
+    }
+
+    private static void ReloadPrefabData() {
+      string serialized = EditorPrefs.GetString("PrefabSandbox._data");
+      if (serialized.IsNullOrEmpty()) {
+        return;
+      }
+
+      Scene currentScene = EditorSceneManager.GetActiveScene();
+      if (currentScene.path != PrefabSandbox.kSandboxScenePath) {
+        return;
+      }
+
+      PrefabSandbox._sandboxScene = currentScene;
+      PrefabSandbox._data = JsonUtility.FromJson<PrefabSandboxData>(serialized);
+    }
+
+    private static void ClearPrefabData() {
+      EditorPrefs.DeleteKey("PrefabSandbox._data");
+    }
 	}
 }
 #endif
