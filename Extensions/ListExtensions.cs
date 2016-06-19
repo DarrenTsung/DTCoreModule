@@ -13,6 +13,14 @@ namespace DT {
       return list[chosenIndex];
     }
 
+    public static IEnumerable<T> Repeat<T>(this IList<T> list) {
+      int index = 0;
+      while (true) {
+        yield return list[index];
+        index = MathUtil.Wrap(index + 1, 0, list.Count);
+      }
+    }
+
     public static T SafeGet<T>(this IList<T> list, int index, T defaultValue = default(T)) {
       if (index >= 0 && index < list.Count) {
         return list[index];
