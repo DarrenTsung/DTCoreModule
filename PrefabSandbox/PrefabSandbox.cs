@@ -123,7 +123,8 @@ namespace DT.Prefab {
 			if (PathUtil.IsScene(path)) {
 				return path;
 			} else {
-				throw new Exception(string.Format("Path for sandbox scene ({0}) is not a scene", path));
+				Debug.LogError(string.Format("Path for sandbox scene ({0}) is not a scene", path));
+        return "";
 			}
 		}
 
@@ -133,7 +134,8 @@ namespace DT.Prefab {
 			if (PathUtil.IsPrefab(path)) {
 				return path;
 			} else {
-				throw new Exception(string.Format("Path for sandbox setup prefab ({0}) is not a prefab", path));
+				Debug.LogError(string.Format("Path for sandbox setup prefab ({0}) is not a prefab", path));
+        return "";
 			}
 		}
 
