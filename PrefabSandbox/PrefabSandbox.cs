@@ -56,15 +56,21 @@ namespace DT.Prefab {
 			bool alreadyEditing = (PrefabSandbox._data != null && PrefabSandbox._data.prefabGuid == guid);
 
 			if (prefab != null && assetPath != null && PathUtil.IsPrefab(assetPath) && !alreadyEditing) {
-        if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) {
-          return false;
+        string oldScenePath = oldScene.path;
+
+        if (oldScene.path == PrefabSandbox.kSandboxScenePath) {
+          oldScenePath = PrefabSandbox._data.oldScenePath;
+        } else {
+          if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) {
+            return false;
+          }
         }
 
 				PrefabSandbox._data = new PrefabSandboxData();
 				PrefabSandbox._data.prefabGuid = guid;
 				PrefabSandbox._data.prefabPath = assetPath;
 				PrefabSandbox._data.prefabAsset = prefab;
-        PrefabSandbox._data.oldScenePath = oldScene.path;
+        PrefabSandbox._data.oldScenePath = oldScenePath;
 
         PrefabSandbox.SavePrefabData();
 				PrefabSandbox.SetupSandbox();
