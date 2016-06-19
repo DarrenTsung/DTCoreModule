@@ -1,18 +1,21 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace DT {
   public static class ListExtensions {
-    static Random rand = new Random();
+    public static T Random<T>(this IList<T> list) {
+      if (list.Count <= 0) {
+        return default(T);
+      }
 
-    public static T PickRandom<T>(this IList<T> source) {
-        return source[ListExtensions.rand.Next(source.Count)];
+      int chosenIndex = UnityEngine.Random.Range(0, list.Count);
+      return list[chosenIndex];
     }
 
-    public static T SafeGet<T>(this IList<T> source, int index, T defaultValue = default(T)) {
-      if (index >= 0 && index < source.Count) {
-        return source[index];
+    public static T SafeGet<T>(this IList<T> list, int index, T defaultValue = default(T)) {
+      if (index >= 0 && index < list.Count) {
+        return list[index];
       } else {
         return defaultValue;
       }
