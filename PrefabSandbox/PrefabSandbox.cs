@@ -74,19 +74,6 @@ namespace DT.Prefab {
 			}
 		}
 
-		public static void SavePrefabAsset() {
-			if (PrefabSandbox._data != null && PrefabSandbox._data.prefabInstance != null && PrefabSandbox._data.prefabAsset != null) {
-				UnityEditor.AnimationMode.StopAnimationMode();
-
-				PrefabUtility.ReplacePrefab(PrefabSandbox._data.prefabInstance, PrefabSandbox._data.prefabAsset, ReplacePrefabOptions.Default);
-				SceneView.RepaintAll();
-			}
-		}
-
-		public static bool IsEditing() {
-			return PrefabSandbox._data != null;
-		}
-
 
 		// PRAGMA MARK - Static Internal
     [UnityEditor.Callbacks.DidReloadScripts]
@@ -117,6 +104,10 @@ namespace DT.Prefab {
 			GUI.enabled = true;
 
 			Handles.EndGUI();
+		}
+
+		private static bool IsEditing() {
+			return PrefabSandbox._data != null;
 		}
 
 		// PRAGMA MARK - Setup
