@@ -1,6 +1,7 @@
 #if UNITY_EDITOR
-using UnityEngine;
+using System.IO;
 using UnityEditor;
+using UnityEngine;
 
 namespace DT {
   [OpenableClass]
@@ -27,6 +28,18 @@ namespace DT {
     public static void CreateTopLevelEmptyChild() {
       GameObject newObject = new GameObject();
       Selection.activeGameObject = newObject;
+    }
+
+    [OpenableMethod]
+    public static void DeletePersistentData() {
+      if (Application.isPlaying) {
+        Debug.Log("Won't delete persistent data because the application is playing!");
+        return;
+      }
+
+      DirectoryInfo dataDir = new DirectoryInfo(Application.persistentDataPath);
+      dataDir.Delete(recursive: true);
+      Debug.Log("Successfully deleted persistent data!");
     }
   }
 }

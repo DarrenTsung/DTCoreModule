@@ -2,9 +2,27 @@ using System;
 using UnityEngine;
 
 namespace DT {
+  [OpenableClass]
   public class MonoBehaviourHelper : Singleton<MonoBehaviourHelper> {
     static MonoBehaviourHelper() {
+      if (!Application.isPlaying) {
+        return;
+      }
+
       MonoBehaviourHelper.Instance.Initialize();
+    }
+
+    [OpenableMethod]
+    public static void MultitaskApplication() {
+      if (!Application.isPlaying) {
+        Debug.Log("Won't multitask because the application is not playing!");
+        return;
+      }
+
+      MonoBehaviourHelper.Instance.OnApplicationPause(paused : true);
+      CoroutineWrapper.DoAfterFrame(() => {
+        MonoBehaviourHelper.Instance.OnApplicationPause(paused : false);
+      });
     }
 
     public static event Action OnUpdate = delegate {};
