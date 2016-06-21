@@ -8,6 +8,10 @@ namespace DT {
         renderer.enabled = true;
       }
 
+      foreach (Canvas canvas in this._canvases) {
+        canvas.enabled = true;
+      }
+
       foreach (IRecycleSetupSubscriber subscriber in this._setupSubscribers) {
         subscriber.OnRecycleSetup();
       }
@@ -16,6 +20,10 @@ namespace DT {
     public void Cleanup() {
       foreach (Renderer renderer in this._renderers) {
         renderer.enabled = false;
+      }
+
+      foreach (Canvas canvas in this._canvases) {
+        canvas.enabled = false;
       }
 
       foreach (IRecycleCleanupSubscriber subscriber in this._cleanupSubscribers) {
@@ -30,12 +38,14 @@ namespace DT {
     private IRecycleCleanupSubscriber[] _cleanupSubscribers;
 
     private Renderer[] _renderers;
+    private Canvas[] _canvases;
 
     private void Awake() {
       this._setupSubscribers = this.GetDepthSortedComponentsInChildren<IRecycleSetupSubscriber>(greatestDepthFirst: true);
       this._cleanupSubscribers = this.GetDepthSortedComponentsInChildren<IRecycleCleanupSubscriber>(greatestDepthFirst: true);
 
       this._renderers = this.GetComponentsInChildren<Renderer>();
+      this._canvases = this.GetComponentsInChildren<Canvas>();
     }
   }
 }
