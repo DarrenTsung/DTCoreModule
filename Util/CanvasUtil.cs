@@ -17,10 +17,8 @@ namespace DT {
 
     public static void ParentUIElementToCanvas(GameObject uiElement, GameObject canvas) {
       // HACK: make this better Darren
-      uiElement.transform.SetParent(canvas.transform, false);
+      uiElement.transform.SetParent(canvas.transform, worldPositionStays: false);
       uiElement.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
-      ((RectTransform)uiElement.transform).offsetMin = new Vector2(0.0f, 0.0f);
-      ((RectTransform)uiElement.transform).offsetMax = new Vector2(0.0f, 0.0f);
     }
 
 
