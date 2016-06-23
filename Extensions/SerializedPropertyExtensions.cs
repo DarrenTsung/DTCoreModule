@@ -8,6 +8,41 @@ using UnityEditor;
 
 namespace DT {
   public static class SeralizedPropertyExtensions {
+    public static void ExpandAllChildren(this SerializedProperty property) {
+      property.SetIsExpandedForChildren(true);
+    }
+
+    public static void CollapseAllChildren(this SerializedProperty property) {
+      property.SetIsExpandedForChildren(false);
+    }
+
+    private static void SetIsExpandedForChildren(this SerializedProperty property, bool isExpanded) {
+      property = property.Copy();
+      foreach (SerializedProperty p in property.Recurse()) {
+        p.isExpanded = isExpanded;
+      }
+    }
+
+    private static IEnumerable<SerializedProperty> Recurse(this SerializedProperty property) {
+      SerializedProperty endProperty = property.GetEndProperty();
+
+      // go into the children of the property
+      property.NextVisible(enterChildren: true);
+
+      do {
+        yield return property;
+
+        if (property.hasVisibleChildren) {
+          SerializedProperty currentChild = property.Copy();
+          foreach (SerializedProperty p in currentChild.Recurse()) {
+            yield return p;
+          }
+        }
+
+        property.NextVisible(enterChildren: false);
+      } while (!SerializedProperty.EqualContents(property, endProperty));
+    }
+
     public static object GetValueAsObject(this SerializedProperty property) {
       switch (property.propertyType) {
         case SerializedPropertyType.Integer:
