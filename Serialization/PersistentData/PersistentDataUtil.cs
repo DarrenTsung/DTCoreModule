@@ -17,13 +17,16 @@ namespace DT {
         FileStream file = File.Create(filepath);
 
         T defaultValue = defaultProvider.Invoke();
+        string serializedDefaultValue = JsonUtility.ToJson(defaultValue);
 
-        PersistentDataUtil.formatter.Serialize(file, defaultValue);
+        PersistentDataUtil.formatter.Serialize(file, serializedDefaultValue);
         file.Close();
       }
 
       FileStream openedFile = File.Open(filepath, FileMode.Open);
-      T openedValue = (T)PersistentDataUtil.formatter.Deserialize(openedFile);
+      string serializedValue = (string)PersistentDataUtil.formatter.Deserialize(openedFile);
+      T openedValue = JsonUtility.FromJson<T>(serializedValue);
+
       openedFile.Close();
 
       return openedValue;
@@ -36,7 +39,8 @@ namespace DT {
       string filepath = Path.Combine(directoryPath, filename);
 
       FileStream file = File.Create(filepath);
-      PersistentDataUtil.formatter.Serialize(file, objectToSerialize);
+      string serializedObject = JsonUtility.ToJson(objectToSerialize);
+      PersistentDataUtil.formatter.Serialize(file, serializedObject);
       file.Close();
     }
 
