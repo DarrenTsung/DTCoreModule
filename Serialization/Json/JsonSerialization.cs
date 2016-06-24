@@ -36,7 +36,7 @@ namespace DT {
 
       Type type = obj.GetType();
 
-      MethodInfo genericMethod = typeof(JsonSerialization).GetMethod("SerializeCondition", BindingFlags.Static | BindingFlags.NonPublic);
+      MethodInfo genericMethod = typeof(JsonSerialization).GetMethod("SerializeTyle", BindingFlags.Static | BindingFlags.NonPublic);
       MethodInfo method = genericMethod.MakeGenericMethod(type);
 
       string serializedCondition = (string)method.Invoke(null, new object[] { obj });
@@ -45,7 +45,7 @@ namespace DT {
       return JsonUtility.ToJson(serializedWrapper, prettyPrint: true);
     }
 
-    private static string SerializeCondition<T>(T obj) {
+    private static string SerializeTyle<T>(T obj) {
       return JsonUtility.ToJson(obj, prettyPrint: true);
     }
 
@@ -58,7 +58,7 @@ namespace DT {
 
       Type type = Type.GetType(serializedWrapper.typeName);
 
-      MethodInfo genericMethod = typeof(JsonSerialization).GetMethod("DeserializeCondition", BindingFlags.Static | BindingFlags.NonPublic);
+      MethodInfo genericMethod = typeof(JsonSerialization).GetMethod("DeserializeType", BindingFlags.Static | BindingFlags.NonPublic);
       MethodInfo method = genericMethod.MakeGenericMethod(type);
 
       object obj = method.Invoke(null, new object[] { serializedWrapper.serializedClass });
@@ -72,7 +72,7 @@ namespace DT {
       return castedObject;
     }
 
-    private static T DeserializeCondition<T>(string serializedT) {
+    private static T DeserializeType<T>(string serializedT) {
       return JsonUtility.FromJson<T>(serializedT);
     }
 

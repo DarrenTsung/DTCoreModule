@@ -29,13 +29,11 @@ namespace DT {
       return m.gameObject.GetRequiredComponentInParent<T>();
     }
 
-    public static IEnumerator DoAfterDelay(this MonoBehaviour m, float delay, Action callback) {
+    public static Coroutine DoAfterDelay(this MonoBehaviour m, float delay, Action callback) {
       if (delay < 0) {
         delay = 0;
       }
-      IEnumerator coroutine = m.DoActionAfterDelayCoroutine(delay, callback);
-      m.StartCoroutine(coroutine);
-      return coroutine;
+      return m.StartCoroutine(m.DoActionAfterDelayCoroutine(delay, callback));
     }
 
     public static IEnumerator DoActionAfterDelayCoroutine(this MonoBehaviour m, float delay, Action callback) {
@@ -43,10 +41,17 @@ namespace DT {
       callback.Invoke();
     }
 
-    public static IEnumerator DoEveryFrameForDuration(this MonoBehaviour m, float duration, Action<float, float> frameCallback, Action finishedCallback = null) {
-      IEnumerator coroutine = m.DoEveryFrameForDurationCoroutine(duration, frameCallback, finishedCallback);
-      m.StartCoroutine(coroutine);
-      return coroutine;
+    public static Coroutine DoAfterFrame(this MonoBehaviour m, Action callback) {
+      return m.StartCoroutine(m.DoAfterFrameCoroutine(callback));
+    }
+
+    public static IEnumerator DoAfterFrameCoroutine(this MonoBehaviour m, Action callback) {
+      yield return null;
+      callback.Invoke();
+    }
+
+    public static Coroutine DoEveryFrameForDuration(this MonoBehaviour m, float duration, Action<float, float> frameCallback, Action finishedCallback = null) {
+      return m.StartCoroutine(m.DoEveryFrameForDurationCoroutine(duration, frameCallback, finishedCallback));
     }
 
     public static IEnumerator DoEveryFrameForDurationCoroutine(this MonoBehaviour m, float duration, Action<float, float> frameCallback, Action finishedCallback = null) {
