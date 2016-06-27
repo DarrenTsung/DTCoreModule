@@ -24,5 +24,15 @@ namespace DT {
       }
       return behaviour;
     }
+
+    public static Animator SetTimeForCurrentClip(this Animator animator, float normalizedTime, int layer = 0) {
+      AnimatorClipInfo[] currentClipInfo = animator.GetCurrentAnimatorClipInfo(layer);
+      if (currentClipInfo.Length > 0) {
+        AnimationClip clip = currentClipInfo[0].clip;
+        animator.Play(clip.name, layer, normalizedTime);
+      }
+
+      return animator;
+    }
   }
 }
