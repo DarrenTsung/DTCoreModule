@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -29,6 +30,25 @@ namespace DT {
       foreach (IRecycleCleanupSubscriber subscriber in this._cleanupSubscribers) {
         subscriber.OnRecycleCleanup();
       }
+
+      foreach (GameObject g in this._attachedChildRecycables) {
+        ObjectPoolManager.Recycle(g);
+      }
+      this._attachedChildRecycables.Clear();
+    }
+
+    public void AttachChildRecyclableObject(GameObject child) {
+      bool addedSuccessfully = this._attachedChildRecycables.Add(child);
+      if (!addedSuccessfully) {
+        Debug.LogWarning("AttachChildRecyclableObject - child already in attachedCleanupSubscribers!");
+      }
+    }
+
+    public void DettachChildRecyclableObject(GameObject child) {
+      bool successful = this._attachedChildRecycables.Remove(child);
+      if (!successful) {
+        Debug.LogWarning("DettachChildRecyclableObject - failed to find child in attachedCleanupSubscribers!");
+      }
     }
 
     public string prefabName;
@@ -36,6 +56,8 @@ namespace DT {
     // PRAGMA MARK - Internal
     private IRecycleSetupSubscriber[] _setupSubscribers;
     private IRecycleCleanupSubscriber[] _cleanupSubscribers;
+
+    private HashSet<GameObject> _attachedChildRecycables = new HashSet<GameObject>();
 
     private Renderer[] _renderers;
     private Canvas[] _canvases;
