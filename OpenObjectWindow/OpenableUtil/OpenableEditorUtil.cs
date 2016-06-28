@@ -41,6 +41,17 @@ namespace DT {
       dataDir.Delete(recursive: true);
       Debug.Log("Successfully deleted persistent data!");
     }
+
+    [OpenableMethod]
+    public static void DeletePlayerPrefs() {
+      if (Application.isPlaying) {
+        Debug.Log("Won't delete player prefs because the application is playing!");
+        return;
+      }
+
+      PlayerPrefs.DeleteAll();
+      Debug.Log("Successfully deleted player prefs!");
+    }
   }
 }
 #endif
