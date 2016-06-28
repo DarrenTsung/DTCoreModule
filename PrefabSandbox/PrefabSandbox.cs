@@ -164,6 +164,10 @@ namespace DT.Prefab {
 			}
 
 			PrefabSandbox.ClearAllGameObjectsInSandbox();
+      bool successful = EditorSceneManager.SaveScene(PrefabSandbox._sandboxScene);
+      if (!successful) {
+        Debug.LogWarning("Failed to save empty prefab sandbox scene when exiting!");
+      }
       PrefabSandbox._sandboxScene = default(Scene);
 
 			EditorSceneManager.OpenScene(PrefabSandbox._data.oldScenePath);
