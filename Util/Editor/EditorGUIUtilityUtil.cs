@@ -7,7 +7,7 @@ using UnityEditor;
 
 namespace DT {
 	public static class EditorGUIUtilityUtil {
-    public const float kIndentWidth = 15.0f;
+    public const float kIndentWidth = 18.0f;
 
     public static float IndentedLabelWidth {
       get {
