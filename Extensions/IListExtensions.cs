@@ -9,10 +9,6 @@ namespace DT {
       return index >= 0 && index < list.Count;
     }
 
-    public static bool ContainsIndex<T>(this IList<T> list, int index) {
-      return index >= 0 && index < list.Count;
-    }
-
     public static bool IsNullOrEmpty(this IList list) {
       return list == null || list.Count == 0;
     }
