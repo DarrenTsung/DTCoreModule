@@ -1,9 +1,12 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
 namespace DT {
   public class RecyclablePrefab : MonoBehaviour {
+    public Action<RecyclablePrefab> OnCleanup = delegate {};
+
     public void Setup() {
       foreach (Renderer renderer in this._renderers) {
         renderer.enabled = true;
@@ -19,6 +22,8 @@ namespace DT {
     }
 
     public void Cleanup() {
+      this.OnCleanup.Invoke(this);
+
       foreach (Renderer renderer in this._renderers) {
         renderer.enabled = false;
       }
@@ -31,24 +36,22 @@ namespace DT {
         subscriber.OnRecycleCleanup();
       }
 
-      foreach (GameObject g in this._attachedChildRecycables) {
-        ObjectPoolManager.Recycle(g);
+      foreach (RecyclablePrefab r in this._attachedChildRecycables) {
+        r.OnCleanup -= this.DetachChildRecyclableObject;
+        ObjectPoolManager.Recycle(r.gameObject);
       }
       this._attachedChildRecycables.Clear();
     }
 
     public void AttachChildRecyclableObject(GameObject child) {
-      bool addedSuccessfully = this._attachedChildRecycables.Add(child);
+      RecyclablePrefab r = child.GetRequiredComponent<RecyclablePrefab>();
+      bool addedSuccessfully = this._attachedChildRecycables.Add(r);
       if (!addedSuccessfully) {
-        Debug.LogWarning("AttachChildRecyclableObject - child already in attachedCleanupSubscribers!");
+        Debug.LogWarning("AttachChildRecyclableObject - child recyclablePrefab already in attachedCleanupSubscribers!");
+        return;
       }
-    }
 
-    public void DettachChildRecyclableObject(GameObject child) {
-      bool successful = this._attachedChildRecycables.Remove(child);
-      if (!successful) {
-        Debug.LogWarning("DettachChildRecyclableObject - failed to find child in attachedCleanupSubscribers!");
-      }
+      r.OnCleanup += this.DetachChildRecyclableObject;
     }
 
     public string prefabName;
@@ -57,7 +60,7 @@ namespace DT {
     private IRecycleSetupSubscriber[] _setupSubscribers;
     private IRecycleCleanupSubscriber[] _cleanupSubscribers;
 
-    private HashSet<GameObject> _attachedChildRecycables = new HashSet<GameObject>();
+    private HashSet<RecyclablePrefab> _attachedChildRecycables = new HashSet<RecyclablePrefab>();
 
     private Renderer[] _renderers;
     private Canvas[] _canvases;
@@ -68,6 +71,14 @@ namespace DT {
 
       this._renderers = this.GetComponentsInChildren<Renderer>();
       this._canvases = this.GetComponentsInChildren<Canvas>();
+    }
+
+    private void DetachChildRecyclableObject(RecyclablePrefab r) {
+      r.OnCleanup -= this.DetachChildRecyclableObject;
+      bool successful = this._attachedChildRecycables.Remove(r);
+      if (!successful) {
+        Debug.LogWarning("DetachChildRecyclableObject - failed to find child recyclablePrefab in attachedCleanupSubscribers!");
+      }
     }
   }
 }
