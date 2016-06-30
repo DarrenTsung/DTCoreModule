@@ -21,6 +21,10 @@ namespace DT {
 
 
 		// PRAGMA MARK - Easers
+    public static float Ease0To1(EaseType easeType, float t, float duration) {
+      return Easers.Ease(easeType, 0.0f, 1.0f, t, duration);
+    }
+
 		public static float Ease(EaseType easeType, float from, float to, float t, float duration) {
 			return Easers.UnclampedLerp(from, to, EaseHelper.Ease(easeType, t, duration));
 		}
