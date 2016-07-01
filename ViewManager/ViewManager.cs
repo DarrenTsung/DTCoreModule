@@ -9,6 +9,11 @@ namespace DT {
 		public void AttachView(GameObject view) {
       view.transform.SetParent(this.transform, worldPositionStays: false);
 
+      // if the application is not playing, we don't need to manage the view order
+      if (!Application.isPlaying) {
+        return;
+      }
+
       RecyclablePrefab r = view.GetRequiredComponent<RecyclablePrefab>();
       if (this._priorityMap == null) {
         Debug.LogError("ViewManager - no priority configuration when attaching view!");
