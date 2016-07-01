@@ -9,5 +9,8 @@ namespace DT {
 	}
 
 	public static class AxisExtensions {
+    public static Vector2 Vector2Value(this Axis a) {
+      return (a == Axis.HORIZONTAL) ? new Vector2(1.0f, 0.0f) : new Vector2(0.0f, 1.0f);
+    }
 	}
 }
