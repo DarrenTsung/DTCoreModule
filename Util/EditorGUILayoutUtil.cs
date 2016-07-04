@@ -22,6 +22,16 @@ namespace DT {
         fieldInfo.SetValue(obj, EditorGUILayout.FloatField(fieldName, (float)fieldInfo.GetValue(obj)));
       } else if (fieldInfo.FieldType == typeof(bool)) {
         fieldInfo.SetValue(obj, EditorGUILayout.Toggle(fieldName, (bool)fieldInfo.GetValue(obj)));
+      } else if (fieldInfo.FieldType.IsClass) {
+        object childFieldObj = fieldInfo.GetValue(obj);
+        EditorGUILayout.LabelField(fieldInfo.Name + ": ");
+
+        EditorGUI.indentLevel++;
+          FieldInfo[] childFields = TypeUtil.GetInspectorFields(fieldInfo.FieldType);
+          foreach (FieldInfo childField in childFields) {
+            EditorGUILayoutUtil.DynamicField(childField, childFieldObj);
+          }
+        EditorGUI.indentLevel--;
       }
     }
   }
