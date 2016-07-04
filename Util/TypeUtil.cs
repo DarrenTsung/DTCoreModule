@@ -25,28 +25,30 @@ namespace DT {
       return TypeUtil._inspectorFieldMapping[type];
     }
 
-
-    // PRAGMA MARK - Static Internal
-    private static Dictionary<Type, FieldInfo[]> _inspectorFieldMapping = new Dictionary<Type, FieldInfo[]>();
-  }
-
-  public static class TypeUtil<T> {
-    // PRAGMA MARK - Static Public Interface
-    public static Type[] ImplementationTypes {
-      get {
-        if (TypeUtil<T>._implementationTypes == null) {
-          TypeUtil<T>._implementationTypes =
-              (from assembly in AppDomain.CurrentDomain.GetAssemblies()
-               from type in assembly.GetTypes()
-               where typeof(T).IsAssignableFrom(type) && type.IsClass && !type.IsAbstract
-               select type).ToArray();
-        }
-        return TypeUtil<T>._implementationTypes;
+    public static Type[] GetImplementationTypes(Type inputType) {
+      if (!TypeUtil._implementationTypeMapping.ContainsKey(inputType)) {
+        TypeUtil._implementationTypeMapping[inputType] =
+          (from assembly in AppDomain.CurrentDomain.GetAssemblies()
+           from type in assembly.GetTypes()
+           where inputType.IsAssignableFrom(type) && type.IsClass && !type.IsAbstract
+           select type).ToArray();
       }
+
+      return TypeUtil._implementationTypeMapping[inputType];
+    }
+
+    public static string[] GetImplementationTypeNames(Type type) {
+      if (!TypeUtil._implementationTypeNameMapping.ContainsKey(type)) {
+        TypeUtil._implementationTypeNameMapping[type] = TypeUtil.GetImplementationTypes(type).Select(t => t.Name).ToArray();
+      }
+
+      return TypeUtil._implementationTypeNameMapping[type];
     }
 
 
     // PRAGMA MARK - Static Internal
-    private static Type[] _implementationTypes = null;
+    private static Dictionary<Type, FieldInfo[]> _inspectorFieldMapping = new Dictionary<Type, FieldInfo[]>();
+    private static Dictionary<Type, Type[]> _implementationTypeMapping = new Dictionary<Type, Type[]>();
+    private static Dictionary<Type, string[]> _implementationTypeNameMapping = new Dictionary<Type, string[]>();
   }
 }
