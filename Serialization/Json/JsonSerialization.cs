@@ -36,7 +36,7 @@ namespace DT {
 
       Type type = obj.GetType();
 
-      MethodInfo genericMethod = typeof(JsonSerialization).GetMethod("SerializeTyle", BindingFlags.Static | BindingFlags.NonPublic);
+      MethodInfo genericMethod = typeof(JsonSerialization).GetMethod("SerializeType", BindingFlags.Static | BindingFlags.NonPublic);
       MethodInfo method = genericMethod.MakeGenericMethod(type);
 
       string serializedCondition = (string)method.Invoke(null, new object[] { obj });
@@ -45,7 +45,7 @@ namespace DT {
       return JsonUtility.ToJson(serializedWrapper, prettyPrint: true);
     }
 
-    private static string SerializeTyle<T>(T obj) {
+    private static string SerializeType<T>(T obj) {
       return JsonUtility.ToJson(obj, prettyPrint: true);
     }
 

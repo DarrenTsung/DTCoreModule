@@ -1,10 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-
-#if UNITY_EDITOR
 using UnityEditor;
+using UnityEngine;
 
 namespace DT {
   public static class SeralizedPropertyExtensions {
@@ -17,30 +15,32 @@ namespace DT {
     }
 
     private static void SetIsExpandedForChildren(this SerializedProperty property, bool isExpanded) {
-      property = property.Copy();
       foreach (SerializedProperty p in property.Recurse()) {
         p.isExpanded = isExpanded;
       }
     }
 
-    private static IEnumerable<SerializedProperty> Recurse(this SerializedProperty property) {
-      SerializedProperty endProperty = property.GetEndProperty();
+    public static IEnumerable<SerializedProperty> Recurse(this SerializedProperty property) {
+      property = property.Copy();
 
-      // go into the children of the property
-      property.NextVisible(enterChildren: true);
+      bool successful = property.NextVisible(enterChildren: true);
+      if (!successful) {
+        yield break;
+      }
 
       do {
         yield return property;
 
         if (property.hasVisibleChildren) {
-          SerializedProperty currentChild = property.Copy();
-          foreach (SerializedProperty p in currentChild.Recurse()) {
+          EditorGUI.indentLevel++;
+
+          foreach (SerializedProperty p in property.Recurse()) {
             yield return p;
           }
-        }
 
-        property.NextVisible(enterChildren: false);
-      } while (!SerializedProperty.EqualContents(property, endProperty));
+          EditorGUI.indentLevel--;
+        }
+      } while (property.NextVisible(enterChildren: false));
     }
 
     public static object GetValueAsObject(this SerializedProperty property) {
@@ -76,4 +76,3 @@ namespace DT {
     }
   }
 }
-#endif

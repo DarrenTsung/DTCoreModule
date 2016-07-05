@@ -7,7 +7,7 @@ using UnityEditor;
 using UnityEngine;
 
 namespace DT {
-  public class SerializedDynamicObjectDrawer<T> : PropertyDrawer where T : class {
+  public class SerializedDynamicObjectDrawer<T> : PropertyDrawer where T : ScriptableObject {
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
       int oldIndex = this.GetCurrentIndex(property);
       int newIndex = EditorGUILayout.Popup(oldIndex, TypeUtil.GetImplementationTypeNames(typeof(T)));
@@ -15,35 +15,53 @@ namespace DT {
         this.ChangeCurrentIndex(property, newIndex);
       }
 
-      FieldInfo[] fields = TypeUtil.GetInspectorFields(this.GetCurrentImplementationType(property));
-      foreach (FieldInfo field in fields) {
-        EditorGUILayoutUtil.DynamicField(field, this.GetCurrentDynamicObject(property));
+      SerializedObject serializedObject = this.GetCurrentSerializedObject(property);
+      serializedObject.Update();
+      EditorGUI.BeginChangeCheck();
+
+      SerializedProperty firstProperty = serializedObject.GetIterator();
+      foreach (SerializedProperty p in firstProperty.Recurse()) {
+        EditorGUILayout.PropertyField(p);
       }
-      this.SaveCurrentDynamicObject(property);
+
+
+      if (EditorGUI.EndChangeCheck()) {
+        serializedObject.ApplyModifiedProperties();
+        this.SaveCurrentDynamicObject(property);
+      }
     }
 
 
 
     // PRAGMA MARK - Internal
     private Dictionary<SerializedProperty, T> _cachedDynamicObjectMapping = new Dictionary<SerializedProperty, T>();
+    private Dictionary<SerializedProperty, SerializedObject> _cachedSerializedObjectMapping = new Dictionary<SerializedProperty, SerializedObject>();
 
     private T GetCurrentDynamicObject(SerializedProperty property) {
       if (!this._cachedDynamicObjectMapping.ContainsKey(property)) {
         SerializedProperty p = property.FindPropertyRelative("serializedDynamicObject");
-        if (p.stringValue.IsNullOrEmpty()) {
-          this._cachedDynamicObjectMapping[property] = (T)Activator.CreateInstance(this.GetCurrentImplementationType(property));
-          this.SaveCurrentDynamicObject(property);
-        } else {
-          this._cachedDynamicObjectMapping[property] = JsonSerialization.DeserializeGeneric<T>(p.stringValue);
+        this._cachedDynamicObjectMapping[property] = (T)ScriptableObject.CreateInstance(this.GetCurrentImplementationType(property));
+        if (!p.stringValue.IsNullOrEmpty()) {
+          JsonUtility.FromJsonOverwrite(p.stringValue, this._cachedDynamicObjectMapping[property]);
         }
       }
 
       return this._cachedDynamicObjectMapping[property];
     }
 
+    private SerializedObject GetCurrentSerializedObject(SerializedProperty property) {
+      if (!this._cachedSerializedObjectMapping.ContainsKey(property)) {
+
+        T obj = this.GetCurrentDynamicObject(property);
+        this._cachedSerializedObjectMapping[property] = new SerializedObject(obj);
+      }
+      return this._cachedSerializedObjectMapping[property];
+    }
+
     private void SaveCurrentDynamicObject(SerializedProperty property) {
       SerializedProperty p = property.FindPropertyRelative("serializedDynamicObject");
-      p.stringValue = JsonSerialization.SerializeGeneric(this._cachedDynamicObjectMapping[property]);
+      p.stringValue = JsonUtility.ToJson(this._cachedDynamicObjectMapping[property]);
+      this._cachedSerializedObjectMapping.Remove(property);
     }
 
     private void ClearCurrentDynamicObject(SerializedProperty property) {
