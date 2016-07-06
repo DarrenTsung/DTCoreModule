@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.Serialization;
 using UnityEngine;
 
 namespace DT {
@@ -33,5 +34,10 @@ namespace DT {
 
     // PRAGMA MARK - Internal
     [NonSerialized] private T _cachedDynamicObject;
+
+    [OnSerializing]
+    private void SaveDynamicObjectBeforeSerializing(StreamingContext context) {
+      this.serializedDynamicObject = JsonUtility.ToJson(this.DynamicObject);
+    }
   }
 }
