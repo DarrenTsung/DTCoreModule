@@ -39,5 +39,9 @@ namespace DT {
       }
       return source[key];
     }
+
+    public static bool DoesntContainKey<K, V>(this Dictionary<K, V> source, K key) {
+      return !source.ContainsKey(key);
+    }
   }
 }
