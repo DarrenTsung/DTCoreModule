@@ -32,6 +32,6 @@ namespace DT {
 
 
     // PRAGMA MARK - Internal
-    private T _cachedDynamicObject;
+    [NonSerialized] private T _cachedDynamicObject;
   }
 }
