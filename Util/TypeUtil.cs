@@ -30,7 +30,7 @@ namespace DT {
         TypeUtil._implementationTypeMapping[inputType] =
           (from assembly in AppDomain.CurrentDomain.GetAssemblies()
            from type in assembly.GetTypes()
-           where inputType.IsAssignableFrom(type) && type.IsClass && !type.IsAbstract
+           where inputType.IsAssignableFrom(type) && type.IsClass && !type.IsAbstract && !type.IsGenericType
            select type).ToArray();
       }
 
