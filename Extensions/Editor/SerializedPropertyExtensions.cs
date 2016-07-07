@@ -20,8 +20,13 @@ namespace DT {
       }
     }
 
-    public static IEnumerable<SerializedProperty> Recurse(this SerializedProperty property) {
+    public static IEnumerable<SerializedProperty> Recurse(this SerializedProperty property, bool checkEndProperty = false) {
       property = property.Copy();
+
+      SerializedProperty endProperty = null;
+      if (checkEndProperty) {
+        endProperty = property.GetEndProperty();
+      }
 
       bool successful = property.NextVisible(enterChildren: true);
       if (!successful) {
@@ -34,13 +39,13 @@ namespace DT {
         if (property.hasVisibleChildren) {
           EditorGUI.indentLevel++;
 
-          foreach (SerializedProperty p in property.Recurse()) {
+          foreach (SerializedProperty p in property.Recurse(checkEndProperty: true)) {
             yield return p;
           }
 
           EditorGUI.indentLevel--;
         }
-      } while (property.NextVisible(enterChildren: false));
+      } while (property.NextVisible(enterChildren: false) && !SerializedProperty.EqualContents(property, endProperty));
     }
 
     public static object GetValueAsObject(this SerializedProperty property) {
