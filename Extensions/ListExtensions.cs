@@ -13,6 +13,14 @@ namespace DT {
       return list[chosenIndex];
     }
 
+    public static T Random<T>(this IList<T> list, int seed) {
+      int oldSeed = UnityEngine.Random.seed;
+      UnityEngine.Random.seed = seed;
+        T item = list.Random();
+      UnityEngine.Random.seed = oldSeed;
+      return item;
+    }
+
     public static IEnumerable<T> Repeat<T>(this IList<T> list) {
       int index = 0;
       while (true) {
