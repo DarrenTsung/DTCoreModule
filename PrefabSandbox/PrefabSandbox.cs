@@ -32,6 +32,7 @@ namespace DT.Prefab {
 		private static GameObject _sandboxSetupPrefab;
 
 		static PrefabSandbox() {
+      // TODO (darren): make these lazy instantiate instead of InitializingOnLoad
 			string sandboxSetupPrefabPath = PrefabSandbox.FindSandboxSetupPrefabPath();
 			PrefabSandbox._sandboxSetupPrefab = AssetDatabase.LoadAssetAtPath(sandboxSetupPrefabPath, typeof(GameObject)) as GameObject;
 
