@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
 using UnityEditor;
@@ -23,28 +22,28 @@ namespace DT {
 
     private const string kCompileTimeTrackerKey = "CompileTimeTracker::_data";
     private static CompileTimeTrackerData _data = new CompileTimeTrackerData(kCompileTimeTrackerKey);
-    private static int _storedErrorCount;
+
+    private static int StoredErrorCount {
+      get { return EditorPrefs.GetInt("CompileTimeTracker::StoredErrorCount"); }
+      set { EditorPrefs.SetInt("CompileTimeTracker::StoredErrorCount", value); }
+    }
 
     private static void HandleEditorStartedCompiling() {
-      CompileTimeTracker._data.StartTime = CompileTimeTracker.GetMilliseconds();
+      CompileTimeTracker._data.StartTime = TrackingUtil.GetMilliseconds();
 
       UnityConsoleCountsByType countsByType = UnityEditorConsoleUtil.GetCountsByType();
-      CompileTimeTracker._storedErrorCount = countsByType.errorCount;
+      CompileTimeTracker.StoredErrorCount = countsByType.errorCount;
     }
 
     private static void HandleEditorFinishedCompiling() {
-      int elapsedTime = (int)(CompileTimeTracker.GetMilliseconds() - CompileTimeTracker._data.StartTime);
+      int elapsedTime = (int)(TrackingUtil.GetMilliseconds() - CompileTimeTracker._data.StartTime);
 
       UnityConsoleCountsByType countsByType = UnityEditorConsoleUtil.GetCountsByType();
-      bool hasErrors = (countsByType.errorCount - CompileTimeTracker._storedErrorCount) > 0;
+      bool hasErrors = (countsByType.errorCount - CompileTimeTracker.StoredErrorCount) > 0;
 
       CompileTimeKeyframe keyframe = new CompileTimeKeyframe(elapsedTime, hasErrors);
       CompileTimeTracker._data.AddCompileTimeKeyframe(keyframe);
       CompileTimeTracker.KeyframeAdded.Invoke(keyframe);
-    }
-
-    private static long GetMilliseconds() {
-      return DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
     }
   }
 }

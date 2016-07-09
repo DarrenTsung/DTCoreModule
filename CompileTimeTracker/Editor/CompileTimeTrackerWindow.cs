@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using UnityEditor;
@@ -19,12 +18,8 @@ namespace DT {
       EditorWindow.GetWindow<CompileTimeTrackerWindow>(false, "Compile Timer Tracker", true);
     }
 
-    private static string FormatMSTime(int ms) {
-      return string.Format("{0}s", (ms / 1000.0f).ToString("F2", CultureInfo.InvariantCulture));
-    }
-
     private static void LogCompileTimeKeyframe(CompileTimeKeyframe keyframe) {
-      string compilationFinishedLog = "Compilation Finished: " + CompileTimeTrackerWindow.FormatMSTime(keyframe.elapsedCompileTimeInMS);
+      string compilationFinishedLog = "Compilation Finished: " + TrackingUtil.FormatMSTime(keyframe.elapsedCompileTimeInMS);
       if (keyframe.hadErrors) {
         compilationFinishedLog += " (error)";
       }
@@ -90,7 +85,7 @@ namespace DT {
       this._scrollPosition = EditorGUILayout.BeginScrollView(this._scrollPosition, GUILayout.Height(screenRect.height - 40.0f));
         foreach (CompileTimeKeyframe keyframe in this.GetFilteredKeyframes()) {
           string compileText = string.Format("({0:hh:mm tt}): ", keyframe.Date);
-          compileText += CompileTimeTrackerWindow.FormatMSTime(keyframe.elapsedCompileTimeInMS);
+          compileText += TrackingUtil.FormatMSTime(keyframe.elapsedCompileTimeInMS);
           if (keyframe.hadErrors) {
             compileText += " (error)";
           }
@@ -100,7 +95,7 @@ namespace DT {
         }
       EditorGUILayout.EndScrollView();
 
-      string statusBarText = "Total compile time: " + CompileTimeTrackerWindow.FormatMSTime(totalCompileTimeInMS);
+      string statusBarText = "Total compile time: " + TrackingUtil.FormatMSTime(totalCompileTimeInMS);
       if (EditorApplication.isCompiling) {
         statusBarText = "Compiling.. || " + statusBarText;
       }
