@@ -5,7 +5,7 @@ using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
-namespace DT {
+namespace DT.CompileTimeTracker {
   [InitializeOnLoad]
   public static class CompileTimeTracker {
     public static event Action<CompileTimeKeyframe> KeyframeAdded = delegate {};

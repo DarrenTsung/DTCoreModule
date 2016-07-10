@@ -5,7 +5,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
-namespace DT {
+namespace DT.CompileTimeTracker {
   [InitializeOnLoad]
   public class CompileTimeTrackerWindow : EditorWindow {
     // PRAGMA MARK - Static
