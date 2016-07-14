@@ -1,5 +1,6 @@
 using DT;
 using System.Collections;
+using System.Collections.Generic;
 ﻿using UnityEngine;
 
 namespace DT {
@@ -74,6 +75,25 @@ namespace DT {
 				return input.y;
 			}
 		}
+
+    public static bool ContainsDirection(this IList<Direction> directions, Direction direction) {
+      if (directions == null) {
+        return false;
+      }
+
+      for (int i = 0; i < directions.Count; i++) {
+        Direction d = directions[i];
+        if (d == direction) {
+          return true;
+        }
+      }
+
+      return false;
+    }
+
+    public static bool DoesNotContainDirection(this IList<Direction> directions, Direction direction) {
+      return !directions.ContainsDirection(direction);
+    }
 	}
 
   public static class DirectionUtil {
