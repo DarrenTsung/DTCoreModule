@@ -13,7 +13,11 @@ namespace DT {
 			return (direction == HorizontalDirection.RIGHT) ? 1.0f : -1.0f;
 		}
 
-		public static HorizontalDirection Flip(this HorizontalDirection direction) {
+		public static int IntValue(this HorizontalDirection direction) {
+			return (direction == HorizontalDirection.RIGHT) ? 1 : -1;
+		}
+
+		public static HorizontalDirection Flipped(this HorizontalDirection direction) {
 			return (direction == HorizontalDirection.RIGHT) ? HorizontalDirection.LEFT : HorizontalDirection.RIGHT;
 		}
 
@@ -24,7 +28,11 @@ namespace DT {
 
   public static class HorizontalDirectionUtil {
     public static HorizontalDirection RandomDirection() {
-      return (Random.value > 0.5f) ? HorizontalDirection.RIGHT : HorizontalDirection.LEFT;
+      return (Random.value >= 0.5f) ? HorizontalDirection.RIGHT : HorizontalDirection.LEFT;
+    }
+
+    public static HorizontalDirection FromValue(float value) {
+      return (value >= 0.0f) ? HorizontalDirection.RIGHT : HorizontalDirection.LEFT;
     }
   }
 }
