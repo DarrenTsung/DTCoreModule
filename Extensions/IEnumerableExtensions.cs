@@ -57,6 +57,18 @@ namespace DT {
       return new List<T>(enumerable);
     }
 
+    public static HashSet<T> ToHashSet<T>(this IEnumerable<T> enumerable) {
+      return new HashSet<T>(enumerable);
+    }
+
+    public static Dictionary<K, V> ToDictionary<K, V>(this IEnumerable<KeyValuePair<K, V>> enumerable) {
+      Dictionary<K, V> d = new Dictionary<K, V>();
+      foreach (KeyValuePair<K, V> p in enumerable) {
+        d[p.Key] = p.Value;
+      }
+      return d;
+    }
+
     public static Dictionary<TKey, T> ToMapWithKeys<TKey, T>(this IEnumerable<T> enumerable, Func<T, TKey> keyTransformation) {
       Dictionary<TKey, T> map = new Dictionary<TKey, T>();
       foreach (T element in enumerable) {
