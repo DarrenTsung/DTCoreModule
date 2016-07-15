@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 ﻿using UnityEngine;
+﻿using UnityEngine.UI;
 
 namespace DT {
 	public class ViewManager : MonoBehaviour {
@@ -43,9 +44,25 @@ namespace DT {
       this._priorityMap = priorityMap;
     }
 
+    public Canvas Canvas {
+      get { return this._canvas; }
+    }
+
+    public CanvasScaler CanvasScaler {
+      get { return this._canvasScaler; }
+    }
+
 
 		// PRAGMA MARK - Internal
     private ViewPriorityMap _priorityMap;
     private Dictionary<Transform, int> _cachedPriorities = new Dictionary<Transform, int>();
+
+    private Canvas _canvas;
+    private CanvasScaler _canvasScaler;
+
+    void Awake() {
+      this._canvas = this.GetComponent<Canvas>();
+      this._canvasScaler = this.GetComponent<CanvasScaler>();
+    }
   }
 }
