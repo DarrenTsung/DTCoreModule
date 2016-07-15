@@ -25,6 +25,22 @@ namespace DT {
       return CoroutineWrapper.StartCoroutine(CoroutineWrapper.WaitOneFrameCoroutine(), finishedCallback);
     }
 
+    public static CoroutineWrapper DoEaseEveryFrameForDuration(float duration, EaseType easeType, Action<float> frameCallback, Action finishedCallback = null) {
+      return CoroutineWrapper.StartCoroutine(CoroutineWrapper.EaseEveryFrameForDurationCoroutine(duration, easeType, frameCallback), finishedCallback);
+    }
+
+
+    private static IEnumerator EaseEveryFrameForDurationCoroutine(float duration, EaseType easeType, Action<float> frameCallback) {
+			for (float time = 0.0f; time < duration; time += Time.deltaTime) {
+        float easedPercentage = Easers.Ease0To1(easeType, time, duration);
+        frameCallback.Invoke(easedPercentage);
+				yield return null;
+			}
+
+      // add frame callback for final frame (when time == duration)
+      frameCallback.Invoke(1.0f);
+    }
+
     private static IEnumerator DelayCoroutine(float delay) {
       yield return new WaitForSeconds(delay);
     }
