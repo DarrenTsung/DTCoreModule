@@ -11,6 +11,10 @@ namespace DT {
   		return found;
   	}
 
+  	public static T GetRequiredComponentInParent<T>(this Transform transform, bool required = true) {
+      return transform.gameObject.GetRequiredComponentInParent<T>();
+  	}
+
     public static void DestroyAllChildren(this Transform transform, bool immediate = false) {
       GameObject[] children = new GameObject[transform.childCount];
 
