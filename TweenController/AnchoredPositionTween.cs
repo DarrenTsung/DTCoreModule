@@ -20,8 +20,8 @@ namespace DT {
       }
     }
 
-    protected override void HandleTimeUpdated(float time) {
-      this.RectTransform.anchoredPosition = Vector2.Lerp(this._startPosition, this._endPosition, time);
+    protected override void HandleValueUpdated(float value) {
+      this.RectTransform.anchoredPosition = Vector2.Lerp(this._startPosition, this._endPosition, value);
     }
   }
 }

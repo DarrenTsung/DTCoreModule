@@ -7,13 +7,13 @@ using UnityEngine;
 namespace DT {
   public class TweenController : MonoBehaviour {
     // PRAGMA MARK - Public Interface
-    public float Time {
+    public float Value {
       set {
-        if (this._time == value) {
+        if (this._value == value) {
           return;
         }
 
-        this._time = value;
+        this._value = value;
         this.SynchronizeTweens();
       }
     }
@@ -27,16 +27,38 @@ namespace DT {
       t.Controller = this;
     }
 
+    public void Play() {
+      if (this._playCoroutine != null) {
+        this.StopCoroutine(this._playCoroutine);
+        this._playCoroutine = null;
+      }
+
+      this._playCoroutine = this.DoEveryFrameForDuration(this._duration, (float time, float duration) => {
+        this.Value = time / duration;
+      });
+    }
+
 
     // PRAGMA MARK - Internal
-    [SerializeField, Range(0.0f, 1.0f)] private float _time = 0.0f;
+    [SerializeField, Range(0.0f, 1.0f)] private float _value = 0.0f;
 
+    [Header("Properties")]
+    [SerializeField] private float _duration = 1.0f;
+
+    [Header("Read-Only Properties")]
     [SerializeField, ReadOnly] private List<Tween> _tweens = null;
+
+    private Coroutine _playCoroutine;
+
     private List<Tween> Tweens {
       get {
         if (this._tweens == null) {
           this._tweens = this.GetComponentsInChildren<Tween>().ToList();
           foreach (Tween t in this.Tweens) {
+            if (t.Controller != null) {
+              continue;
+            }
+
             t.Controller = this;
           }
         }
@@ -53,7 +75,7 @@ namespace DT {
 
       // synchronize time between all child tweens
       foreach (Tween t in this.Tweens) {
-        t.Time = this._time;
+        t.Value = this._value;
       }
     }
   }

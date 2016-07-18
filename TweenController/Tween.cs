@@ -7,24 +7,28 @@ namespace DT {
   [ExecuteInEditMode]
   public abstract class Tween : MonoBehaviour {
     // PRAGMA MARK - Public Interface
-    public float Time {
+    public float Value {
       set {
-        if (this._time == value) {
+        if (this._value == value) {
           return;
         }
 
-        this._time = value;
-        this.HandleTimeUpdated(this._time);
+        this._value = value;
+        this.HandleValueUpdated(this._value);
       }
     }
 
     public TweenController Controller {
-      get; set;
+      get { return this._controller; }
+      set { this._controller = value; }
     }
 
 
     // PRAGMA MARK - Internal
-    [SerializeField, Range(0.0f, 1.0f)] private float _time = 0.0f;
+    [SerializeField, Range(0.0f, 1.0f)] private float _value = 0.0f;
+
+    [Header("Outlets")]
+    [SerializeField] private TweenController _controller;
 
     void OnEnable() {
       TweenController tc = this.GetComponentInParent<TweenController>();
@@ -35,11 +39,11 @@ namespace DT {
 
     void OnValidate() {
       if (this.Controller != null) {
-        this.Controller.Time = this._time;
+        this.Controller.Value = this._value;
       }
-      this.HandleTimeUpdated(this._time);
+      this.HandleValueUpdated(this._value);
     }
 
-    protected abstract void HandleTimeUpdated(float time);
+    protected abstract void HandleValueUpdated(float time);
   }
 }
