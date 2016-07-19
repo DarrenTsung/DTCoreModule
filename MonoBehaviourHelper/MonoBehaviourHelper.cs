@@ -4,14 +4,6 @@ using UnityEngine;
 namespace DT {
   [OpenableClass]
   public class MonoBehaviourHelper : Singleton<MonoBehaviourHelper> {
-    static MonoBehaviourHelper() {
-      if (!Application.isPlaying) {
-        return;
-      }
-
-      MonoBehaviourHelper.Instance.Initialize();
-    }
-
     [OpenableMethod]
     public static void MultitaskApplication() {
       if (!Application.isPlaying) {
@@ -35,11 +27,11 @@ namespace DT {
       // empty function so singleton will be created
     }
 
-    public void Update() {
+    void Update() {
       MonoBehaviourHelper.OnUpdate.Invoke();
     }
 
-    public void OnApplicationPause(bool paused) {
+    void OnApplicationPause(bool paused) {
       if (paused) {
         MonoBehaviourHelper.OnApplicationPaused.Invoke();
       } else {
