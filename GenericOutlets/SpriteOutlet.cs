@@ -20,6 +20,20 @@ namespace DT {
       }
     }
 
+    public Color Color {
+      set { this.SetColor(value); }
+    }
+
+    public void SetColor(Color color) {
+      if (this._spriteRenderer != null) {
+        this._spriteRenderer.color = color;
+      }
+
+      if (this._image != null) {
+        this._image.color = color;
+      }
+    }
+
 
     // PRAGMA MARK - Internal
     [SerializeField] private SpriteRenderer _spriteRenderer;
