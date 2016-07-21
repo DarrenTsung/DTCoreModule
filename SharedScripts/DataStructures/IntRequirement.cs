@@ -24,7 +24,7 @@ namespace DT {
 
     // PRAGMA MARK - Internal
     [SerializeField] private int _required;
-    private int _fulfilled;
+    [SerializeField, HideInInspector] private int _fulfilled;
   }
 
   public static class IntRequirementExtensions {
