@@ -59,6 +59,10 @@ namespace DT {
 			return v1 * s;
 		}
 
+    public static float RandomSign() {
+      return Random.Range(0.0f, 1.0f) > 0.5f ? 1.0f : -1.0f;
+    }
+
 		/// <summary>
 		/// Wraps a value between the range of min and max
 		/// </summary>

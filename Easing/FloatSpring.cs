@@ -51,12 +51,13 @@ namespace DT {
   }
 
   public static class FloatSpringExtensions {
-    public static void SetTargetValueIfDifferent(this FloatSpring spring, float targetValue) {
+    public static bool SetTargetValueIfDifferent(this FloatSpring spring, float targetValue) {
       if (spring.TargetValue == targetValue) {
-        return;
+        return false;
       }
 
       spring.SetTargetValue(targetValue);
+      return true;
     }
   }
 }
