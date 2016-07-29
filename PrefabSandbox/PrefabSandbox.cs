@@ -148,7 +148,8 @@ namespace DT.Prefab {
 				PrefabSandbox.ClearAllGameObjectsInSandbox();
 
 				// setup scene with sandbox setup prefab
-				GameObject.Instantiate(PrefabSandbox._sandboxSetupPrefab);
+				GameObject sandboxSetupObject = GameObject.Instantiate(PrefabSandbox._sandboxSetupPrefab);
+        sandboxSetupObject.transform.localPosition = Vector3.zero;
 
 				if (!PrefabSandbox.CreatePrefabInstance()) {
 					PrefabSandbox.CloseSandboxScene();
