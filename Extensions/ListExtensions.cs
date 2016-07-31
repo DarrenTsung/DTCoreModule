@@ -14,10 +14,10 @@ namespace DT {
     }
 
     public static T Random<T>(this IList<T> list, int seed) {
-      int oldSeed = UnityEngine.Random.seed;
-      UnityEngine.Random.seed = seed;
+      UnityEngine.Random.State oldState = UnityEngine.Random.state;
+      UnityEngine.Random.InitState(seed);
         T item = list.Random();
-      UnityEngine.Random.seed = oldSeed;
+      UnityEngine.Random.state = oldState;
       return item;
     }
 
