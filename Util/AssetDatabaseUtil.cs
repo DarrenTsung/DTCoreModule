@@ -9,11 +9,13 @@ namespace DT {
 			string[] guids = AssetDatabase.FindAssets(findAssetsInput);
 
 			if (guids.Length <= 0) {
-				throw new Exception(string.Format("FindSpecificAsset: Can't find anything matching ({0}) anywhere in the project", findAssetsInput));
+				Debug.LogError(string.Format("FindSpecificAsset: Can't find anything matching ({0}) anywhere in the project", findAssetsInput));
+        return "";
 			}
 
 			if (guids.Length > 2) {
-				throw new Exception(string.Format("FindSpecificAsset: More than one file found for ({0}) in the project!", findAssetsInput));
+				Debug.LogError(string.Format("FindSpecificAsset: More than one file found for ({0}) in the project!", findAssetsInput));
+        return "";
 			}
 
       return guids[0];

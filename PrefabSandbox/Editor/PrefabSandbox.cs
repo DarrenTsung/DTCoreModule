@@ -30,12 +30,18 @@ namespace DT.Prefab {
     private static Scene _sandboxScene;
 
 		private static GameObject _sandboxSetupPrefab;
+    private static GameObject SandboxSetupPrefab {
+      get {
+        if (PrefabSandbox._sandboxSetupPrefab == null) {
+    			string sandboxSetupPrefabPath = PrefabSandbox.FindSandboxSetupPrefabPath();
+    			PrefabSandbox._sandboxSetupPrefab = AssetDatabase.LoadAssetAtPath(sandboxSetupPrefabPath, typeof(GameObject)) as GameObject;
+        }
+
+        return PrefabSandbox._sandboxSetupPrefab;
+      }
+    }
 
 		static PrefabSandbox() {
-      // TODO (darren): make these lazy instantiate instead of InitializingOnLoad
-			string sandboxSetupPrefabPath = PrefabSandbox.FindSandboxSetupPrefabPath();
-			PrefabSandbox._sandboxSetupPrefab = AssetDatabase.LoadAssetAtPath(sandboxSetupPrefabPath, typeof(GameObject)) as GameObject;
-
 			EditorApplicationUtil.OnSceneGUIDelegate += PrefabSandbox.OnSceneGUI;
 		}
 
@@ -120,6 +126,10 @@ namespace DT.Prefab {
 		// PRAGMA MARK - Setup
 		private static string FindSandboxPath() {
 			string guid = AssetDatabaseUtil.FindSpecificAsset(PrefabSandbox.kSandboxSceneName + " t:Scene");
+      if (guid.IsNullOrEmpty()) {
+        return "";
+      }
+
 			string path = AssetDatabase.GUIDToAssetPath(guid);
 			if (PathUtil.IsScene(path)) {
 				return path;
@@ -131,6 +141,10 @@ namespace DT.Prefab {
 
 		private static string FindSandboxSetupPrefabPath() {
 			string guid = AssetDatabaseUtil.FindSpecificAsset(PrefabSandbox.kSandboxSetupPrefabName + " t:Prefab");
+      if (guid.IsNullOrEmpty()) {
+        return "";
+      }
+
 			string path = AssetDatabase.GUIDToAssetPath(guid);
 			if (PathUtil.IsPrefab(path)) {
 				return path;
@@ -148,7 +162,7 @@ namespace DT.Prefab {
 				PrefabSandbox.ClearAllGameObjectsInSandbox();
 
 				// setup scene with sandbox setup prefab
-				GameObject sandboxSetupObject = GameObject.Instantiate(PrefabSandbox._sandboxSetupPrefab);
+				GameObject sandboxSetupObject = GameObject.Instantiate(PrefabSandbox.SandboxSetupPrefab);
         sandboxSetupObject.transform.localPosition = Vector3.zero;
 
 				if (!PrefabSandbox.CreatePrefabInstance()) {
