@@ -10,11 +10,11 @@ namespace DT {
     }
 
     public static bool GetBool(string key) {
-      return PlayerPrefs.GetInt("PlayerPrefsUtilBool::" + key) > 0;
+      return PlayerPrefs.GetInt(key) > 0;
     }
 
     public static void SetBool(string key, bool val) {
-      PlayerPrefs.SetInt("PlayerPrefsUtilBool::" + key, val ? 1 : 0);
+      PlayerPrefs.SetInt(key, val ? 1 : 0);
     }
 	}
 }
