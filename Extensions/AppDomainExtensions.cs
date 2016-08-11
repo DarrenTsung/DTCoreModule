@@ -1,11 +1,11 @@
 using DT;
 using System;
-﻿using System.Reflection;
 ﻿using System.Collections.Generic;
+﻿using System.Reflection;
 ﻿using UnityEngine;
 
 namespace DT {
-	public static class EditorUtil {
+	public static class AppDomainExtensions {
     /// <summary>
     /// Using reflection, get all derived types of a given type
     /// </summary>

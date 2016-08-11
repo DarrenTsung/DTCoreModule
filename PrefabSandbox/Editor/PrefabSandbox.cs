@@ -1,5 +1,6 @@
 #if UNITY_EDITOR
 ﻿using DT;
+using DTOpenObjectWindow;
 using System;
 using System.Collections;
 using System.IO;
@@ -43,6 +44,8 @@ namespace DT.Prefab {
 
 		static PrefabSandbox() {
 			EditorApplicationUtil.OnSceneGUIDelegate += PrefabSandbox.OnSceneGUI;
+
+      OpenablePrefabObject.OnPrefabGUIDOpened += PrefabSandbox.OpenGUID;
 		}
 
 
@@ -96,6 +99,10 @@ namespace DT.Prefab {
 
 		private const float kSceneButtonHeight = 20.0f;
 		private const float kPreviousSceneButtonWidth = 120.0f;
+
+    private static void OpenGUID(string guid) {
+      PrefabSandbox.OpenPrefab(guid);
+    }
 
 		private static void OnSceneGUI(SceneView sceneView) {
 			if (!PrefabSandbox.IsEditing()) {
