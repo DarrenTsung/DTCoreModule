@@ -3,9 +3,13 @@ using System;
 using UnityEngine;
 
 namespace DT {
+#if DT_OPEN_OBJECT_WINDOW
   [OpenableClass]
+#endif
   public class MonoBehaviourHelper : Singleton<MonoBehaviourHelper> {
+#if DT_OPEN_OBJECT_WINDOW
     [OpenableMethod]
+#endif
     public static void MultitaskApplication() {
       if (!Application.isPlaying) {
         Debug.Log("Won't multitask because the application is not playing!");
