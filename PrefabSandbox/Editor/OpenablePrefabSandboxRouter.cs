@@ -1,5 +1,4 @@
 #if UNITY_EDITOR
-#if DT_OPEN_OBJECT_WINDOW
 using DTOpenObjectWindow;
 using System;
 using System.Collections;
@@ -23,5 +22,4 @@ namespace DT {
     }
   }
 }
-#endif
 #endif
