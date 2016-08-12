@@ -56,6 +56,11 @@ namespace DT {
       this._manuallyStopped = true;
     }
 
+    public void Cancel() {
+      this._running = false;
+      this._cancelled = true;
+    }
+
 
     // PRAGMA MARK - Internal
     private CoroutineWrapper(IEnumerator coroutine, Action finishedCallback) : this(coroutine) {
@@ -77,6 +82,7 @@ namespace DT {
 
     private bool _manuallyStopped = false;
     private bool _running = true;
+    private bool _cancelled = false;
 
     private IEnumerator Coroutine() {
       while (this._running) {
@@ -87,11 +93,11 @@ namespace DT {
         }
       }
 
-      if (this._finishedNoArgsCallback != null) {
+      if (!this._cancelled && this._finishedNoArgsCallback != null) {
         this._finishedNoArgsCallback.Invoke();
       }
 
-      if (this._finishedArgsCallback != null) {
+      if (!this._cancelled && this._finishedArgsCallback != null) {
         this._finishedArgsCallback(this._manuallyStopped);
       }
     }
