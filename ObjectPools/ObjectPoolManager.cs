@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 ﻿using UnityEngine;
@@ -5,6 +6,8 @@ using System.Collections.Generic;
 namespace DT {
 	public class ObjectPoolManager : Singleton<ObjectPoolManager> {
     // PRAGMA MARK - Static
+    public static event Action<GameObject> OnGameObjectInstantiated = delegate {};
+
 		public static T Instantiate<T>(string prefabName, GameObject parent = null, bool worldPositionStays = false) where T : MonoBehaviour {
       return ObjectPoolManager.Instance.InstantiateInternal<T>(prefabName, parent, worldPositionStays);
     }
@@ -108,6 +111,7 @@ namespace DT {
 			RecyclablePrefab recycleData = instantiatedPrefab.GetOrAddComponent<RecyclablePrefab>();
 			recycleData.prefabName = prefabName;
 
+      ObjectPoolManager.OnGameObjectInstantiated.Invoke(instantiatedPrefab);
 			return instantiatedPrefab;
 		}
 
