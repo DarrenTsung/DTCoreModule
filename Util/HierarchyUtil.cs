@@ -1,6 +1,8 @@
 #if UNITY_EDITOR
 using DT;
+#if DT_OPEN_OBJECT_WINDOW
 using DTOpenObjectWindow;
+#endif
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;

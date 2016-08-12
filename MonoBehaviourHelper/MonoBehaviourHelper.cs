@@ -1,4 +1,6 @@
+#if DT_OPEN_OBJECT_WINDOW
 using DTOpenObjectWindow;
+#endif
 using System;
 using UnityEngine;
 
