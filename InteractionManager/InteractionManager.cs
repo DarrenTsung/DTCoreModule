@@ -50,7 +50,21 @@ namespace DT {
     }
 
     public static void ReenableInteractionForGameObjectsMatching(Predicate<GameObject> predicate) {
+      bool objectMatchedPredicate = false;
+
       foreach (Selectable s in InteractionManager.AllSelectables(predicate)) {
+        objectMatchedPredicate = true;
+        InteractionManager.ReenableSelectable(s);
+      }
+
+      if (!objectMatchedPredicate) {
+        Debug.LogWarning("Failed to find object matching predicate, probably unexpected behaviour!");
+      }
+    }
+
+    public static void ReenableSelectablesInGameObject(GameObject g) {
+      Selectable[] selectables = g.GetComponentsInChildren<Selectable>(includeInactive: true);
+      foreach (Selectable s in selectables) {
         InteractionManager.ReenableSelectable(s);
       }
     }
