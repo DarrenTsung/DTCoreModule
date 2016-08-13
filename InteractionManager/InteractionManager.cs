@@ -24,8 +24,7 @@ namespace DT {
 
     public static void ReenableInteractionAfter(float seconds) {
       if (InteractionManager._reenableAfterSecondsCoroutine != null) {
-        InteractionManager._reenableAfterSecondsCoroutine.Cancel();
-        InteractionManager._reenableAfterSecondsCoroutine = null;
+        return;
       }
 
       InteractionManager._reenableAfterSecondsCoroutine = CoroutineWrapper.DoAfterDelay(seconds, InteractionManager.ReenableInteraction);
@@ -43,6 +42,8 @@ namespace DT {
     }
 
     public static void ReenableInteraction() {
+      InteractionManager._reenableAfterSecondsCoroutine = null;
+
       foreach (Selectable s in InteractionManager.AllSelectables()) {
         InteractionManager.ReenableSelectable(s);
       }
