@@ -6,7 +6,8 @@ using System.Collections.Generic;
 
 namespace DT {
 	public static class SpotlightManager {
-    private const int kDownsizeFactor = 4;
+    private const int kDownsizeFactor = 3;
+    private static readonly Color kSpotlightBackgroundColor = new Color(0.7f, 0.7f, 0.7f, 1.0f);
 
     // PRAGMA MARK - Public Interface
     public static event Action<RenderTexture> OnRenderTextureRecreated = delegate {};
@@ -109,7 +110,7 @@ namespace DT {
       CameraClearFlags cachedClearFlags = camera.clearFlags;
 
       camera.cullingMask = SpotlightManager._layerMask.value;
-      camera.backgroundColor = new Color(1.0f, 1.0f, 1.0f, 0.6f);
+      camera.backgroundColor = kSpotlightBackgroundColor;
       camera.clearFlags = CameraClearFlags.Color;
 
       foreach (GameObject g in SpotlightManager._spotlightGameObjects) {
