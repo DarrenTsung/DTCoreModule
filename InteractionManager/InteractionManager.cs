@@ -22,7 +22,21 @@ namespace DT {
       InteractionManager._disabledForSecondsCoroutine = CoroutineWrapper.DoAfterDelay(seconds, InteractionManager.ReenableInteraction);
     }
 
+    public static void ReenableInteractionAfter(float seconds) {
+      if (InteractionManager._reenableAfterSecondsCoroutine != null) {
+        InteractionManager._reenableAfterSecondsCoroutine.Cancel();
+        InteractionManager._reenableAfterSecondsCoroutine = null;
+      }
+
+      InteractionManager._reenableAfterSecondsCoroutine = CoroutineWrapper.DoAfterDelay(seconds, InteractionManager.ReenableInteraction);
+    }
+
     public static void DisableInteraction() {
+      if (InteractionManager._reenableAfterSecondsCoroutine != null) {
+        InteractionManager._reenableAfterSecondsCoroutine.Cancel();
+        InteractionManager._reenableAfterSecondsCoroutine = null;
+      }
+
       foreach (Selectable s in InteractionManager.AllSelectables()) {
         InteractionManager.DisableSelectable(s);
       }
@@ -48,9 +62,10 @@ namespace DT {
     private static HashSet<Selectable> _selectablesToReenable = new HashSet<Selectable>();
 
     private static CoroutineWrapper _disabledForSecondsCoroutine;
+    private static CoroutineWrapper _reenableAfterSecondsCoroutine;
 
     private static void HandleGameObjectInstantiated(GameObject g) {
-      Selectable[] selectables = g.GetComponentsInChildren<Selectable>();
+      Selectable[] selectables = g.GetComponentsInChildren<Selectable>(includeInactive: true);
       InteractionManager._selectableMap[g] = selectables;
     }
 
