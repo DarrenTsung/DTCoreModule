@@ -16,6 +16,10 @@ namespace DT {
       return ObjectPoolManager.Instance.InstantiateInternal(prefabName, parent, worldPositionStays);
     }
 
+		public static void Recycle(MonoBehaviour usedObject, bool worldPositionStays = false) {
+      ObjectPoolManager.Recycle(usedObject.gameObject, worldPositionStays);
+    }
+
 		public static void Recycle(GameObject usedObject, bool worldPositionStays = false) {
       ObjectPoolManager.Instance.RecycleInternal(usedObject, worldPositionStays);
     }
