@@ -39,6 +39,10 @@ namespace DT {
     // PRAGMA MARK - Internal
     [SerializeField] private RawImage _rawImage;
 
+    void OnDestroy() {
+      this._rawImage.material.SetColor("_Color", Color.clear);
+    }
+
     private void HandleSpotlightRenderTextureRecreated(RenderTexture texture) {
       this._rawImage.texture = texture;
     }
