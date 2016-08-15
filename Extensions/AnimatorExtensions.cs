@@ -17,6 +17,18 @@ namespace DT {
       return false;
     }
 
+    public static bool IsCurrentState(this Animator animator, int layerIndex, params int[] fullPathHashes) {
+      AnimatorStateInfo currentStateInfo = animator.GetCurrentAnimatorStateInfo(layerIndex);
+
+      foreach (int fullPathHash in fullPathHashes) {
+        if (currentStateInfo.fullPathHash == fullPathHash) {
+          return true;
+        }
+      }
+
+      return false;
+    }
+
     public static T GetRequiredBehaviour<T>(this Animator animator) where T : StateMachineBehaviour {
       T behaviour = animator.GetBehaviour<T>();
       if (behaviour == null) {
