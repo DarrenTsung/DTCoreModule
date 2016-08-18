@@ -9,8 +9,19 @@ namespace DT {
 		static PrefabList() {
 			Object[] loadedPrefabs = Resources.LoadAll("Prefabs", typeof(GameObject));
 			foreach (Object o in loadedPrefabs) {
-				GameObject go = o as GameObject;
-				PrefabList._prefabMap[go.name.ToLower()] = go;
+				GameObject g = o as GameObject;
+				PrefabList._prefabMap[g.name.ToLower()] = g;
+			}
+
+      AssetBundle streamingAssets = AssetBundle.LoadFromFile(Application.streamingAssetsPath + "/bundled");
+      if (streamingAssets == null) {
+        Debug.LogError("Failed to load streaming assets");
+        return;
+      }
+
+      GameObject[] prefabs = streamingAssets.LoadAllAssets<GameObject>();
+			foreach (GameObject g in prefabs) {
+				PrefabList._prefabMap[g.name.ToLower()] = g;
 			}
 		}
 
