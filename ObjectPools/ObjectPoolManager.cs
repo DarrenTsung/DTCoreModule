@@ -8,7 +8,11 @@ namespace DT {
     // PRAGMA MARK - Static
     public static event Action<GameObject> OnGameObjectInstantiated = delegate {};
 
-		public static T Instantiate<T>(string prefabName, GameObject parent = null, bool worldPositionStays = false) where T : MonoBehaviour {
+		public static T Instantiate<T>(string prefabName = null, GameObject parent = null, bool worldPositionStays = false) where T : MonoBehaviour {
+      if (prefabName == null) {
+        prefabName = typeof(T).Name;
+      }
+
       return ObjectPoolManager.Instance.InstantiateInternal<T>(prefabName, parent, worldPositionStays);
     }
 
