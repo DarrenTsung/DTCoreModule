@@ -13,7 +13,7 @@ namespace DT {
 				PrefabList._prefabMap[g.name.ToLower()] = g;
 			}
 
-      AssetBundle streamingAssets = AssetBundle.LoadFromFile(Application.streamingAssetsPath + "/bundled");
+      AssetBundle streamingAssets = AssetBundle.LoadFromFile(Application.streamingAssetsPath + "/" + ApplicationUtil.PlatformAssetBundleString() + "/bundled");
       if (streamingAssets == null) {
         Debug.LogError("Failed to load streaming assets");
         return;

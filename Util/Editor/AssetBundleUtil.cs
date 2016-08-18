@@ -1,12 +1,11 @@
 using UnityEditor;
 using UnityEngine;
 
-public class AssetBundleUtil {
+public static class AssetBundleUtil {
   [MenuItem("DarrenTsung/Build AssetBundles To Streaming Assets")]
   static void BuildAllAssetBundles() {
-    AssetBundleManifest manifest = BuildPipeline.BuildAssetBundles("Assets/StreamingAssets", BuildAssetBundleOptions.None, BuildTarget.StandaloneOSXUniversal);
-    if (manifest == null) {
-      Debug.LogError("Failed to build asset bundle, does Assets/StreamingAssets exist?");
-    }
+    BuildPipeline.BuildAssetBundles("Assets/StreamingAssets/" + ApplicationUtil.AssetBundleStringFor(RuntimePlatform.OSXEditor), BuildAssetBundleOptions.None, BuildTarget.StandaloneOSXUniversal);
+    BuildPipeline.BuildAssetBundles("Assets/StreamingAssets/" + ApplicationUtil.AssetBundleStringFor(RuntimePlatform.IPhonePlayer), BuildAssetBundleOptions.None, BuildTarget.iOS);
+    BuildPipeline.BuildAssetBundles("Assets/StreamingAssets/" + ApplicationUtil.AssetBundleStringFor(RuntimePlatform.Android), BuildAssetBundleOptions.None, BuildTarget.Android);
   }
 }
