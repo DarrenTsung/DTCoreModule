@@ -19,6 +19,7 @@ namespace DT {
     }
 
     public static event Action OnUpdate = delegate {};
+    public static event Action OnFixedUpdate = delegate {};
     public static event Action OnApplicationPaused = delegate {};
     public static event Action OnApplicationResumed = delegate {};
 
@@ -30,6 +31,10 @@ namespace DT {
 
     void Update() {
       MonoBehaviourHelper.OnUpdate.Invoke();
+    }
+
+    void FixedUpdate() {
+      MonoBehaviourHelper.OnFixedUpdate.Invoke();
     }
 
     void OnApplicationPause(bool paused) {
