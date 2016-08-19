@@ -72,6 +72,19 @@ namespace DT {
       return true;
     }
 
+    public static Vector2 Average<T>(this IEnumerable<T> enumerable, Func<T, Vector2> selector) {
+      int count = 0;
+      Vector2 sum = Vector2.zero;
+
+      foreach (T element in enumerable) {
+        Vector2 x = selector.Invoke(element);
+        sum += x;
+        count++;
+      }
+
+      return sum / count;
+    }
+
     public static List<T> ToList<T>(this IEnumerable<T> enumerable) {
       return new List<T>(enumerable);
     }
