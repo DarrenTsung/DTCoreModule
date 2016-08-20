@@ -25,6 +25,10 @@ namespace DT {
       return CoroutineWrapper.StartCoroutine(CoroutineWrapper.WaitOneFrameCoroutine(), finishedCallback);
     }
 
+    public static CoroutineWrapper DoAtEndOfFrame(Action finishedCallback) {
+      return CoroutineWrapper.StartCoroutine(CoroutineWrapper.EndOfFrameCoroutine(), finishedCallback);
+    }
+
     public static CoroutineWrapper DoEaseEveryFrameForDuration(float duration, EaseType easeType, Action<float> frameCallback, Action finishedCallback = null) {
       return CoroutineWrapper.StartCoroutine(CoroutineWrapper.EaseEveryFrameForDurationCoroutine(duration, easeType, frameCallback), finishedCallback);
     }
@@ -43,6 +47,11 @@ namespace DT {
 
     private static IEnumerator DelayCoroutine(float delay) {
       yield return new WaitForSeconds(delay);
+    }
+
+    private static readonly WaitForEndOfFrame kWaitForEndOfFrame = new WaitForEndOfFrame();
+    private static IEnumerator EndOfFrameCoroutine() {
+      yield return kWaitForEndOfFrame;
     }
 
     private static IEnumerator WaitOneFrameCoroutine() {
