@@ -78,12 +78,14 @@ namespace DT {
       recycleData.Cleanup();
 			usedObject.transform.SetParent(this.transform, worldPositionStays);
       CoroutineWrapper.DoAfterFrame(() => {
-  			usedObject.SetActive(false);
+        CoroutineWrapper.DoAfterFrame(() => {
+    			usedObject.SetActive(false);
 
-        Stack<GameObject> recycledObjects = this.ObjectPoolForPrefabName(recycleData.prefabName);
-        recycledObjects.Push(usedObject);
+          Stack<GameObject> recycledObjects = this.ObjectPoolForPrefabName(recycleData.prefabName);
+          recycledObjects.Push(usedObject);
 
-        this._objectsBeingCleanedUp.Remove(usedObject);
+          this._objectsBeingCleanedUp.Remove(usedObject);
+        });
       });
 		}
 

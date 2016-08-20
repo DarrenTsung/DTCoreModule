@@ -7,22 +7,21 @@ namespace DT {
 		private static Dictionary<string, GameObject> _prefabMap = new Dictionary<string, GameObject>();
 
 		static PrefabList() {
-			Object[] loadedPrefabs = Resources.LoadAll("", typeof(GameObject));
-			foreach (Object o in loadedPrefabs) {
-				GameObject g = o as GameObject;
+			GameObject[] loadedPrefabs = Resources.LoadAll<GameObject>("");
+			foreach (GameObject g in loadedPrefabs) {
 				PrefabList._prefabMap[g.name.ToLower()] = g;
 			}
 
       AssetBundle streamingAssets = AssetBundle.LoadFromFile(Application.streamingAssetsPath + "/" + ApplicationUtil.PlatformAssetBundleString() + "/bundled");
-      if (streamingAssets == null) {
-        Debug.LogError("Failed to load streaming assets");
+      if (streamingAssets != null) {
+        GameObject[] prefabs = streamingAssets.LoadAllAssets<GameObject>();
+  			foreach (GameObject g in prefabs) {
+  				PrefabList._prefabMap[g.name.ToLower()] = g;
+  			}
+      } else {
+        Debug.LogWarning("Failed to load streaming assets");
         return;
       }
-
-      GameObject[] prefabs = streamingAssets.LoadAllAssets<GameObject>();
-			foreach (GameObject g in prefabs) {
-				PrefabList._prefabMap[g.name.ToLower()] = g;
-			}
 		}
 
 		public static GameObject PrefabForName(string name) {
