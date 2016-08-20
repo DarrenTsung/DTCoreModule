@@ -7,7 +7,7 @@ namespace DT {
 		private static Dictionary<string, GameObject> _prefabMap = new Dictionary<string, GameObject>();
 
 		static PrefabList() {
-			Object[] loadedPrefabs = Resources.LoadAll("Prefabs", typeof(GameObject));
+			Object[] loadedPrefabs = Resources.LoadAll("", typeof(GameObject));
 			foreach (Object o in loadedPrefabs) {
 				GameObject g = o as GameObject;
 				PrefabList._prefabMap[g.name.ToLower()] = g;
