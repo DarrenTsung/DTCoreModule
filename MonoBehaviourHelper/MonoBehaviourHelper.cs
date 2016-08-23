@@ -4,7 +4,13 @@ using UnityEngine;
 
 namespace DT {
   [OpenableClass]
-  public class MonoBehaviourHelper : Singleton<MonoBehaviourHelper> {
+  public static class MonoBehaviourHelper {
+    public static event Action OnUpdate = delegate {};
+    public static event Action OnFixedUpdate = delegate {};
+    public static event Action OnApplicationPaused = delegate {};
+    public static event Action OnApplicationResumed = delegate {};
+    public static event Action OnApplicationQuit = delegate {};
+
     [OpenableMethod]
     public static void MultitaskApplication() {
       if (!Application.isPlaying) {
@@ -12,36 +18,44 @@ namespace DT {
         return;
       }
 
-      MonoBehaviourHelper.Instance.OnApplicationPause(paused : true);
-      CoroutineWrapper.DoAfterFrame(() => {
-        MonoBehaviourHelper.Instance.OnApplicationPause(paused : false);
-      });
+      MonoBehaviourHelper.UnityHelper.Instance.MultitaskApplication();
     }
 
-    public static event Action OnUpdate = delegate {};
-    public static event Action OnFixedUpdate = delegate {};
-    public static event Action OnApplicationPaused = delegate {};
-    public static event Action OnApplicationResumed = delegate {};
-
-
-    // PRAGMA MARK - Public Interface
-    public void Initialize() {
-      // empty function so singleton will be created
+    public static void Initialize() {
+      MonoBehaviourHelper.UnityHelper.Instance.Initialize();
     }
 
-    void Update() {
-      MonoBehaviourHelper.OnUpdate.Invoke();
-    }
+    private class UnityHelper : Singleton<UnityHelper> {
+      // PRAGMA MARK - Public Interface
+      public void MultitaskApplication() {
+        this.OnApplicationPause(paused : true);
+        CoroutineWrapper.DoAfterFrame(() => {
+          this.OnApplicationPause(paused : false);
+        });
+      }
 
-    void FixedUpdate() {
-      MonoBehaviourHelper.OnFixedUpdate.Invoke();
-    }
+      public void Initialize() {
+        // empty function so that MonoBehaviour will be created
+      }
 
-    void OnApplicationPause(bool paused) {
-      if (paused) {
-        MonoBehaviourHelper.OnApplicationPaused.Invoke();
-      } else {
-        MonoBehaviourHelper.OnApplicationResumed.Invoke();
+      void Update() {
+        MonoBehaviourHelper.OnUpdate.Invoke();
+      }
+
+      void FixedUpdate() {
+        MonoBehaviourHelper.OnFixedUpdate.Invoke();
+      }
+
+      void OnApplicationPause(bool paused) {
+        if (paused) {
+          MonoBehaviourHelper.OnApplicationPaused.Invoke();
+        } else {
+          MonoBehaviourHelper.OnApplicationResumed.Invoke();
+        }
+      }
+
+      void OnApplicationQuit() {
+        MonoBehaviourHelper.OnApplicationQuit.Invoke();
       }
     }
   }
