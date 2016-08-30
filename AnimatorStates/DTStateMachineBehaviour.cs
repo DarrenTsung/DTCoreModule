@@ -1,5 +1,3 @@
-using DT;
-using DT.GameEngine;
 using System;
 using System.Collections;
 using UnityEngine;
@@ -17,8 +15,14 @@ namespace DT {
       this.OnStateExited();
     }
 
+    public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
+      this.OnStateUpdated();
+    }
+
 
     // PRAGMA MARK - Internal
+    private bool _active = false;
+
     void OnDisable() {
       if (this._active) {
         this.OnStateExited();
@@ -27,7 +31,6 @@ namespace DT {
 
     protected virtual void OnStateEntered() {}
     protected virtual void OnStateExited() {}
-
-    private bool _active = false;
+    protected virtual void OnStateUpdated() {}
   }
 }
