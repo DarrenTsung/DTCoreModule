@@ -1,4 +1,3 @@
-#if UNITY_EDITOR
 ﻿using DT;
 using System;
 using System.Collections;
@@ -239,4 +238,3 @@ namespace DT {
     }
 	}
 }
-#endif
