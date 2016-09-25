@@ -16,31 +16,27 @@ namespace DT {
 
 		public static T Instance {
 			get {
-				lock(_lock) {
-					if (_instance == null) {
-						_instance = (T) FindObjectOfType(typeof(T));
+				lock(Singleton<T>._lock) {
+					if (Singleton<T>._instance == null) {
+						Singleton<T>._instance = (T) FindObjectOfType(typeof(T));
 
-						if (FindObjectsOfType(typeof(T)).Length > 1 ) {
+						if (Object.FindObjectsOfType(typeof(T)).Length > 1 ) {
 							Debug.LogError("[Singleton] Something went really wrong " +
 											               	" - there should never be more than 1 singleton!" +
 											               	" Reopening the scene might fix it.");
-							return _instance;
+							return Singleton<T>._instance;
 						}
 
-						if (_instance == null && Application.isPlaying) {
+						if (Singleton<T>._instance == null && Application.isPlaying) {
 							GameObject singleton = new GameObject();
-							_instance = singleton.AddComponent<T>();
+							Singleton<T>._instance = singleton.AddComponent<T>();
 							singleton.name = "(singleton) "+ typeof(T).ToString();
 
-							DontDestroyOnLoad(singleton);
-
-							Debug.LogWarning("[Singleton] An instance of " + typeof(T) +
-															          " is needed in the scene, so '" + singleton +
-															          "' was created with DontDestroyOnLoad.");
+							GameObject.DontDestroyOnLoad(singleton);
 						}
 					}
 
-					return _instance;
+					return Singleton<T>._instance;
 				}
 			}
 		}
