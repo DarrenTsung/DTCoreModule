@@ -11,17 +11,6 @@ namespace DT {
 			foreach (GameObject g in loadedPrefabs) {
 				PrefabList._prefabMap[g.name.ToLower()] = g;
 			}
-
-      AssetBundle streamingAssets = AssetBundle.LoadFromFile(Application.streamingAssetsPath + "/" + ApplicationUtil.PlatformAssetBundleString() + "/bundled");
-      if (streamingAssets != null) {
-        GameObject[] prefabs = streamingAssets.LoadAllAssets<GameObject>();
-  			foreach (GameObject g in prefabs) {
-  				PrefabList._prefabMap[g.name.ToLower()] = g;
-  			}
-      } else {
-        Debug.LogWarning("Failed to load streaming assets");
-        return;
-      }
 		}
 
 		public static GameObject PrefabForName(string name) {
