@@ -8,6 +8,10 @@ namespace DT {
       return new Rect(position, size);
     }
 
+    public static Rect MakeRect(Bounds b) {
+      return new Rect(b.center - b.extents, b.extents * 2.0f);
+    }
+
     public static Rect Expand(Rect r, float amount) {
       float halfAmount = amount / 2.0f;
 

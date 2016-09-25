@@ -16,5 +16,16 @@ namespace DT {
 
       c.targetTexture = cachedTexture;
     }
+
+    public static Bounds OrthographicBounds(this Camera camera) {
+      if (!camera.orthographic) {
+        Debug.LogError("OrthographicBounds - called on camera that is not orthographic! " + camera);
+        return default(Bounds);
+      }
+
+      float screenAspectRatio = (float)Screen.width / (float)Screen.height;
+      float cameraHeight = camera.orthographicSize * 2;
+      return new Bounds(camera.transform.position, new Vector3(cameraHeight * screenAspectRatio, cameraHeight, 0));
+    }
   }
 }
