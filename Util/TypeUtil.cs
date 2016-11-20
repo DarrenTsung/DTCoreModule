@@ -12,7 +12,7 @@ namespace DT {
     public static FieldInfo[] GetInspectorFields(Type type) {
       if (!TypeUtil._inspectorFieldMapping.ContainsKey(type)) {
         FieldInfo[] fields = type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-                                 .Where((fieldInfo) => {
+                                 .Where(fieldInfo => {
                                    if (fieldInfo.IsPublic) {
                                      return true;
                                    } else {

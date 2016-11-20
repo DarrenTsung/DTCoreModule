@@ -1,4 +1,3 @@
-#if UNITY_EDITOR
 using DT;
 using System;
 ﻿using UnityEditor;
@@ -16,7 +15,7 @@ namespace DT {
       }
 
       if (sceneSaved) {
-        EditorApplicationUtil.SceneSaved();
+        EditorApplicationUtil.SceneSaved.Invoke();
       }
 
       return paths;
@@ -34,23 +33,22 @@ namespace DT {
       Undo.postprocessModifications += EditorApplicationUtil.PostProcessModifications;
     }
 
-    private static int _objectCount = 0;
+    private static int _previousObjectCount = 0;
     private static void HierarchyWindowChanged() {
       int newObjectCount = GameObject.FindObjectsOfType<UnityEngine.Object>().Length;
-      if (newObjectCount != _objectCount) {
-        _objectCount = newObjectCount;
-        EditorApplicationUtil.SceneDirtied();
+      if (newObjectCount != _previousObjectCount) {
+        _previousObjectCount = newObjectCount;
+        EditorApplicationUtil.SceneDirtied.Invoke();
       }
     }
 
     private static UndoPropertyModification[] PostProcessModifications(UndoPropertyModification[] propertyModifications) {
-      EditorApplicationUtil.SceneDirtied();
+      EditorApplicationUtil.SceneDirtied.Invoke();
       return propertyModifications;
     }
 
     private static void OnSceneGUI(SceneView sceneView) {
-      EditorApplicationUtil.OnSceneGUIDelegate(sceneView);
+      EditorApplicationUtil.OnSceneGUIDelegate.Invoke(sceneView);
     }
   }
 }
-#endif

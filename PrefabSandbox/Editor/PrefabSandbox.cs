@@ -1,6 +1,7 @@
 ﻿using DT;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -27,6 +28,7 @@ namespace DT {
 
 		private static PrefabSandboxData _data;
     private static Scene _sandboxScene;
+    private static PrefabSandboxValidator _prefabSandboxValidator;
 
 		private static GameObject _sandboxSetupPrefab;
     private static GameObject SandboxSetupPrefab {
@@ -101,21 +103,19 @@ namespace DT {
 				return;
 			}
 
-			Handles.BeginGUI();
-
+      Handles.BeginGUI();
 			Color previousColor = GUI.color;
 
 			// BEGIN SCENE GUI
 			GUI.color = Color.green;
-			if (GUI.Button(new Rect(sceneView.position.size.x - PrefabSandbox.kPreviousSceneButtonWidth, 0.0f, PrefabSandbox.kPreviousSceneButtonWidth, PrefabSandbox.kSceneButtonHeight), "Close Sandbox")) {
+			if (GUI.Button(new Rect(sceneView.position.size.x - PrefabSandbox.kPreviousSceneButtonWidth, 0.0f, PrefabSandbox.kPreviousSceneButtonWidth, PrefabSandbox.kSceneButtonHeight), "Save and Exit")) {
+        PrefabSandbox.SavePrefabInstance();
 				PrefabSandbox.CloseSandboxScene();
 			}
 			// END SCENE GUI
 
 			GUI.color = previousColor;
-			GUI.enabled = true;
-
-			Handles.EndGUI();
+      Handles.EndGUI();
 		}
 
 		private static bool IsEditing() {
@@ -178,6 +178,14 @@ namespace DT {
 				return;
 			}
 
+      if (PrefabSandbox._prefabSandboxValidator.RefreshAndCheckValiationErrors()) {
+        if (EditorUtility.DisplayDialog("Prefab Validation Errors Found!", "Missing references found in prefab instance.", "I'll fix it", "Ignore it")) {
+          return;
+        }
+      }
+
+      // Cleanup validator before modifying scene to avoid extra validations
+      PrefabSandbox.CleanupValidator();
 			PrefabSandbox.ClearAllGameObjectsInSandbox();
       bool successful = EditorSceneManager.SaveScene(PrefabSandbox._sandboxScene);
       if (!successful) {
@@ -196,6 +204,8 @@ namespace DT {
 			}
 
 			PrefabSandbox._data.prefabInstance = PrefabUtility.InstantiatePrefab(PrefabSandbox._data.prefabAsset) as GameObject;
+      PrefabUtility.DisconnectPrefabInstance(PrefabSandbox._data.prefabInstance);
+      PrefabSandbox.ReloadValidator();
 
       // if the prefab is a UI element, child it under the canvas
       if (PrefabSandbox._data.prefabInstance.GetComponent<RectTransform>() != null) {
@@ -207,6 +217,16 @@ namespace DT {
 
 			return true;
 		}
+
+    private static void SavePrefabInstance() {
+			if (PrefabSandbox._data.prefabInstance == null) {
+        Debug.LogWarning("Failed to save prefab instance - instance is null!");
+        return;
+			}
+
+      PrefabUtility.ReplacePrefab(PrefabSandbox._data.prefabInstance, PrefabSandbox._data.prefabAsset, ReplacePrefabOptions.Default);
+      PrefabUtility.DisconnectPrefabInstance(PrefabSandbox._data.prefabInstance);
+    }
 
 		private static void ClearAllGameObjectsInSandbox() {
 			foreach (GameObject obj in PrefabSandbox._sandboxScene.GetRootGameObjects()) {
@@ -231,6 +251,31 @@ namespace DT {
 
       PrefabSandbox._sandboxScene = currentScene;
       PrefabSandbox._data = JsonUtility.FromJson<PrefabSandboxData>(serialized);
+      PrefabSandbox._data.prefabInstance = GameObject.Find(PrefabSandbox._data.prefabAsset.name);
+      PrefabSandbox.ReloadValidator();
+    }
+
+    private static void ReloadValidator() {
+      if (PrefabSandbox._data == null) {
+        Debug.LogError("Can't reload validator - _data is null!");
+        return;
+      }
+
+      GameObject prefabInstance = PrefabSandbox._data.prefabInstance;
+      if (prefabInstance == null) {
+        Debug.LogError("Can't reload validator - prefabInstance is null!");
+        return;
+      }
+
+      PrefabSandbox.CleanupValidator();
+      PrefabSandbox._prefabSandboxValidator = new PrefabSandboxValidator(prefabInstance);
+    }
+
+    private static void CleanupValidator() {
+      if (PrefabSandbox._prefabSandboxValidator != null) {
+        PrefabSandbox._prefabSandboxValidator.Dispose();
+        PrefabSandbox._prefabSandboxValidator = null;
+      }
     }
 
     private static void ClearPrefabData() {
