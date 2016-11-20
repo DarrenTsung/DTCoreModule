@@ -162,5 +162,21 @@ namespace DT {
         yield return childTransform.gameObject;
       }
     }
+
+    public static GameObject GetParent(this GameObject g) {
+      if (g.transform.parent == null) {
+        return null;
+      }
+
+      return g.transform.parent.gameObject;
+    }
+
+    public static IEnumerable<GameObject> GetParents(this GameObject g) {
+      while (g != null) {
+        yield return g.GetParent();
+
+        g = g.GetParent();
+      }
+    }
   }
 }

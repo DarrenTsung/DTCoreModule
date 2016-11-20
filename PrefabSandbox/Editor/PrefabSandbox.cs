@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 ﻿using UnityEngine;
@@ -44,6 +45,7 @@ namespace DT {
 
 		static PrefabSandbox() {
 			EditorApplicationUtil.OnSceneGUIDelegate += PrefabSandbox.OnSceneGUI;
+			EditorApplication.hierarchyWindowItemOnGUI += PrefabSandbox.OnHierarchyWindowItemOnGUI;
 		}
 
 
@@ -117,6 +119,35 @@ namespace DT {
 			GUI.color = previousColor;
       Handles.EndGUI();
 		}
+
+    private static void OnHierarchyWindowItemOnGUI(int instanceId, Rect selectionRect) {
+      if (!PrefabSandbox.IsEditing()) {
+        return;
+      }
+
+      if (Event.current.type != EventType.Repaint) {
+        return;
+      }
+
+      Color previousBackgroundColor = GUI.backgroundColor;
+
+      GameObject g = EditorUtility.InstanceIDToObject(instanceId) as GameObject;
+
+      GameObject prefabInstance = PrefabSandbox._data.prefabInstance;
+      bool isPartOfPrefabInstance = g == prefabInstance || g.GetParents().Any(parent => parent == prefabInstance);
+      if (isPartOfPrefabInstance) {
+        if (UnityEditor.AnimationMode.InAnimationMode()) {
+          GUI.backgroundColor = Color.red.WithAlpha(0.15f);
+        } else {
+          GUI.backgroundColor = Color.yellow.WithAlpha(0.15f);
+        }
+
+        GUI.Box(selectionRect, "");
+        EditorApplication.RepaintHierarchyWindow();
+      }
+
+      GUI.backgroundColor = previousBackgroundColor;
+    }
 
 		private static bool IsEditing() {
 			return PrefabSandbox._data != null;

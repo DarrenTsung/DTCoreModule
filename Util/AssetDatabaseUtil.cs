@@ -5,6 +5,10 @@ using UnityEditor;
 
 namespace DT {
   public static class AssetDatabaseUtil {
+    public static T LoadAssetAtPath<T>(string assetPath) where T : class {
+      return AssetDatabase.LoadAssetAtPath(assetPath, typeof(T)) as T;
+    }
+
     public static string FindSpecificAsset(string findAssetsInput) {
 			string[] guids = AssetDatabase.FindAssets(findAssetsInput);
 
