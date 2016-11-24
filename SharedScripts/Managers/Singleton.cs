@@ -40,5 +40,9 @@ namespace DT {
 				}
 			}
 		}
+
+    // empty function to create singleton from code
+    public void EmptyInitialize() {
+    }
 	}
 }
