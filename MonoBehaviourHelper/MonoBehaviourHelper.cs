@@ -18,11 +18,11 @@ namespace DT {
         return;
       }
 
-      MonoBehaviourHelper.UnityHelper.Instance.MultitaskApplication();
+      UnityHelper.Instance.MultitaskApplication();
     }
 
-    public static void Initialize() {
-      MonoBehaviourHelper.UnityHelper.Instance.Initialize();
+    static MonoBehaviourHelper() {
+      UnityHelper.Instance.Initialize();
     }
 
     private class UnityHelper : Singleton<UnityHelper> {
