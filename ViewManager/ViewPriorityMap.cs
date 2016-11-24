@@ -6,6 +6,8 @@ using System.Collections.Generic;
 namespace DT {
 	public class ViewPriorityMap {
 		// PRAGMA MARK - Public Interface
+    public ViewPriorityMap() {}
+
     public ViewPriorityMap(int defaultPriority, Dictionary<string, int> priorityMap) {
       this._defaultPriority = defaultPriority;
 
@@ -22,6 +24,6 @@ namespace DT {
 
 		// PRAGMA MARK - Internal
     private Dictionary<string, int> _priorityMap = new Dictionary<string, int>();
-    private int _defaultPriority;
+    private int _defaultPriority = 100;
   }
 }

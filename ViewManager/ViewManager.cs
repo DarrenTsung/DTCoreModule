@@ -54,7 +54,7 @@ namespace DT {
 
 
 		// PRAGMA MARK - Internal
-    private ViewPriorityMap _priorityMap;
+    private ViewPriorityMap _priorityMap = new ViewPriorityMap();
     private Dictionary<Transform, int> _cachedPriorities = new Dictionary<Transform, int>();
 
     private Canvas _canvas;
