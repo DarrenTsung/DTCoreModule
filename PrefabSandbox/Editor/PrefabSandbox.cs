@@ -209,7 +209,7 @@ namespace DT {
 				return;
 			}
 
-      if (PrefabSandbox._prefabSandboxValidator.RefreshAndCheckValiationErrors()) {
+      if (PrefabSandbox._prefabSandboxValidator != null && PrefabSandbox._prefabSandboxValidator.RefreshAndCheckValiationErrors()) {
         if (EditorUtility.DisplayDialog("Prefab Validation Errors Found!", "Missing references found in prefab instance.", "I'll fix it", "Ignore it")) {
           return;
         }
