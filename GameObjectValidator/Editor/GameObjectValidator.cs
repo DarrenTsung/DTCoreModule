@@ -33,6 +33,10 @@ namespace DT {
     };
 
     public static IList<ValidationError> Validate(GameObject gameObject) {
+      if (gameObject == null) {
+        return null;
+      }
+
       List<ValidationError> validationErrors = null;
 
       Queue<GameObject> queue = new Queue<GameObject>();
