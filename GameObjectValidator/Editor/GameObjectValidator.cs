@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEditor;
 ﻿using UnityEngine;
+﻿using UnityEngine.Events;
 
 namespace DT {
 	public static class GameObjectValidator {
@@ -56,6 +57,28 @@ namespace DT {
           }
 
           Type componentType = c.GetType();
+          foreach (FieldInfo fieldInfo in TypeUtil.GetInspectorFields(componentType)
+                                                  .Where(f => typeof(UnityEventBase).IsAssignableFrom(f.FieldType))
+                                                  .Where(f => !Attribute.IsDefined(f, typeof(OptionalAttribute)) && !Attribute.IsDefined(f, typeof(HideInInspector)))) {
+            // NOTE (darren): check UnityEvents for all classes
+            UnityEventBase unityEvent = (UnityEventBase)fieldInfo.GetValue(c);
+            if (unityEvent == null) {
+              Debug.LogError("Unexpected null UnityEvent in GameObjectValidator!");
+              continue;
+            }
+
+            for (int i = 0; i < unityEvent.GetPersistentEventCount(); i++) {
+              UnityEngine.Object target = unityEvent.GetPersistentTarget(i);
+              string targetMethod = unityEvent.GetPersistentMethodName(i);
+
+              if (target == null || string.IsNullOrEmpty(targetMethod) || target.GetType().GetMethod(targetMethod) == null) {
+                validationErrors = validationErrors ?? new List<ValidationError>();
+                validationErrors.Add(new ValidationError(c, componentType, fieldInfo));
+                break;
+              }
+            }
+          }
+
           if (kUnityAssemblies.Contains(componentType.Assembly)) {
             continue;
           }
