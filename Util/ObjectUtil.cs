@@ -1,9 +1,25 @@
 using DT;
 using System;
+using System.Reflection;
 ﻿using UnityEngine;
 
 namespace DT {
 	public static class ObjectUtil {
+    public static void DestroyImmediateRecursive(UnityEngine.Object obj, bool allowDestroyingAssets = false) {
+      if (obj == null) {
+        return;
+      }
+
+      Type objType = obj.GetType();
+      foreach (FieldInfo f in TypeUtil.GetInspectorFields(objType)) {
+        foreach (UnityEngine.Object o in f.GetUnityEngineObjects(obj)) {
+          ObjectUtil.DestroyImmediateRecursive(o, allowDestroyingAssets);
+        }
+      }
+
+      UnityEngine.Object.DestroyImmediate(obj, allowDestroyingAssets);
+    }
+
     public static T FindRequiredObjectOfType<T>() where T : UnityEngine.Object {
       T obj;
       obj = (T)UnityEngine.Object.FindObjectOfType(typeof(T));

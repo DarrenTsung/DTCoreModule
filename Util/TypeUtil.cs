@@ -11,15 +11,15 @@ namespace DT {
     // PRAGMA MARK - Static Public Interface
     public static FieldInfo[] GetInspectorFields(Type type) {
       if (!TypeUtil._inspectorFieldMapping.ContainsKey(type)) {
-        FieldInfo[] fields = type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-                                 .Where(fieldInfo => {
-                                   if (fieldInfo.IsPublic) {
-                                     return true;
-                                   } else {
-                                     return Attribute.IsDefined(fieldInfo, typeof(SerializeField));
-                                   }
-                                 }).ToArray();
-        TypeUtil._inspectorFieldMapping[type] = fields;
+        List<FieldInfo> fieldInfos = new List<FieldInfo>();
+        Type iterType = type;
+        while (iterType != null) {
+          fieldInfos.AddRange(iterType.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                                  .Where(f => f.IsPublic || Attribute.IsDefined(f, typeof(SerializeField))));
+          iterType = iterType.BaseType;
+        }
+
+        TypeUtil._inspectorFieldMapping[type] = fieldInfos.ToArray();
       }
 
       return TypeUtil._inspectorFieldMapping[type];
@@ -27,11 +27,9 @@ namespace DT {
 
     public static Type[] GetImplementationTypes(Type inputType) {
       if (!TypeUtil._implementationTypeMapping.ContainsKey(inputType)) {
-        TypeUtil._implementationTypeMapping[inputType] =
-          (from assembly in AppDomain.CurrentDomain.GetAssemblies()
-           from type in assembly.GetTypes()
-           where inputType.IsAssignableFrom(type) && type.IsClass && !type.IsAbstract && !type.IsGenericType
-           select type).ToArray();
+        TypeUtil._implementationTypeMapping[inputType] = TypeUtil.AllAssemblyTypes
+                                                                 .Where(t => inputType.IsAssignableFrom(t) && t.IsClass && !t.IsAbstract && !t.IsGenericType)
+                                                                 .ToArray();
       }
 
       return TypeUtil._implementationTypeMapping[inputType];
@@ -45,10 +43,20 @@ namespace DT {
       return TypeUtil._implementationTypeNameMapping[type];
     }
 
+    public static Type[] AllAssemblyTypes {
+      get {
+        return TypeUtil._allAssemblyTypes ?? (TypeUtil._allAssemblyTypes = (from assembly in AppDomain.CurrentDomain.GetAssemblies()
+           from type in assembly.GetTypes()
+           select type).ToArray());
+      }
+    }
+
 
     // PRAGMA MARK - Static Internal
     private static Dictionary<Type, FieldInfo[]> _inspectorFieldMapping = new Dictionary<Type, FieldInfo[]>();
     private static Dictionary<Type, Type[]> _implementationTypeMapping = new Dictionary<Type, Type[]>();
     private static Dictionary<Type, string[]> _implementationTypeNameMapping = new Dictionary<Type, string[]>();
+
+    private static Type[] _allAssemblyTypes = null;
   }
 }
