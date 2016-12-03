@@ -90,21 +90,7 @@ namespace DT {
               continue;
             }
 
-            bool isInvalid = false;
-            if (fieldInfo.FieldType.IsClass && typeof(UnityEngine.Object).IsAssignableFrom(fieldInfo.FieldType)) {
-              isInvalid = (UnityEngine.Object)fieldInfo.GetValue(c) == null;
-            } else if (typeof(IEnumerable).IsAssignableFrom(fieldInfo.FieldType)) {
-              var enumerable = (IEnumerable)fieldInfo.GetValue(c);
-              if (!(enumerable.EFirstOrDefault() is UnityEngine.Object)) {
-                continue;
-              }
-
-              isInvalid = enumerable.EAny(o => (UnityEngine.Object)o == null);
-            } else {
-              // not anything we can validate
-              continue;
-            }
-
+            bool isInvalid = fieldInfo.GetUnityEngineObjects(c).Any(o => o == null);
             if (isInvalid) {
               validationErrors = validationErrors ?? new List<ValidationError>();
               validationErrors.Add(new ValidationError(c, componentType, fieldInfo));
