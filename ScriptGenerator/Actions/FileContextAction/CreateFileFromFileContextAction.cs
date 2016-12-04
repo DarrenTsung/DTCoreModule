@@ -28,8 +28,20 @@ namespace DT.ScriptGenerator {
       }
 
       string fullFilePath = Path.Combine(qualifiedFolderPath, formattedFileName);
+
+      string formattedTemplate = fileContext.FormatString(this._template.text);
+      if (System.IO.File.Exists(fullFilePath)) {
+      using (StreamReader sr = System.IO.File.OpenText(fullFilePath)) {
+        string fileContents = sr.ReadToEnd();
+        // if file is the same as template
+        if (fileContents == formattedTemplate) {
+          return;
+        }
+      }
+      }
+
       using (FileStream fs = System.IO.File.Create(fullFilePath)) {
-        byte[] text = new UTF8Encoding(true).GetBytes(fileContext.FormatString(this._template.text));
+        byte[] text = new UTF8Encoding(true).GetBytes(formattedTemplate);
         fs.Write(text, 0, text.Length);
       }
 
