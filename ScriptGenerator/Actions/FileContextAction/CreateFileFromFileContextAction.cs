@@ -31,13 +31,14 @@ namespace DT.ScriptGenerator {
 
       string formattedTemplate = fileContext.FormatString(this._template.text);
       if (System.IO.File.Exists(fullFilePath)) {
-      using (StreamReader sr = System.IO.File.OpenText(fullFilePath)) {
-        string fileContents = sr.ReadToEnd();
-        // if file is the same as template
-        if (fileContents == formattedTemplate) {
-          return;
+        using (StreamReader sr = System.IO.File.OpenText(fullFilePath)) {
+          string fileContents = sr.ReadToEnd();
+          // if file is the same as template
+          if (fileContents == formattedTemplate) {
+            if (ScriptGenerator.Log) Debug.Log(string.Format("Skipped generating script at: {0} because file written is up-to-date.", fullFilePath));
+            return;
+          }
         }
-      }
       }
 
       using (FileStream fs = System.IO.File.Create(fullFilePath)) {
@@ -45,6 +46,7 @@ namespace DT.ScriptGenerator {
         fs.Write(text, 0, text.Length);
       }
 
+      if (ScriptGenerator.Log) Debug.Log(string.Format("Generated script at: {0}.", fullFilePath));
       AssetDatabase.ImportAsset(Path.Combine(this._folderPath, formattedFileName));
     }
 
