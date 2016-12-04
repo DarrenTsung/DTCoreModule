@@ -24,5 +24,12 @@ namespace DT {
 
       return false;
     }
+
+    public static IEnumerable<T> ESelect<T>(this IEnumerable enumerable, Func<object, T> selector) {
+      IEnumerator e = enumerable.GetEnumerator();
+      while (e.MoveNext()) {
+        yield return selector.Invoke(e.Current);
+      }
+    }
   }
 }

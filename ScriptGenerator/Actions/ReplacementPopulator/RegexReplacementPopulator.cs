@@ -1,3 +1,4 @@
+using DT;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,30 +7,33 @@ using UnityEditor;
 using UnityEngine;
 
 namespace DT.ScriptGenerator {
-    public class RegexReplacementPopulator : ReplacementPopulator {
-        // PRAGMA MARK - Public Interface
-        public override void Populate(FileContext fileContext) {
-            foreach (string line in fileContext.File.Lines) {
-                Match m = this._regex.Match(line);
-                while (m.Success) {
-                    string replacementKey = string.Format(this._replacementKeyFormat, m.Groups);
-                    string replacementValue = string.Format(this._replacementValueFormat, m.Groups);
+  public class RegexReplacementPopulator : ReplacementPopulator {
+    // PRAGMA MARK - Public Interface
+    public override void Populate(FileContext fileContext) {
+      Regex regex = new Regex(this._serializedRegex);
 
-                    fileContext.SetReplacement(replacementKey, replacementValue);
+      foreach (string line in fileContext.File.Lines) {
+        Match m = regex.Match(line);
+        while (m.Success) {
+          string[] matchGroups = m.Groups.ESelect(o => (o as Group).Value).ToArray();
+          string replacementKey = string.Format(this._replacementKeyFormat, matchGroups);
+          string replacementValue = string.Format(this._replacementValueFormat, matchGroups);
 
-                    m = m.NextMatch();
-                }
-            }
+          fileContext.SetReplacement(replacementKey, replacementValue);
+
+          m = m.NextMatch();
         }
-
-
-        // PRAGMA MARK - Internal
-        [Header("let")]
-        [SerializeField] private string _replacementKeyFormat = "{0}";
-        [Header("map to")]
-        [SerializeField] private string _replacementValueFormat = "{0}";
-
-        [Header("parsed from")]
-        [SerializeField] private Regex _regex;
+      }
     }
+
+
+    // PRAGMA MARK - Internal
+    [CustomHeader("let")]
+    [SerializeField] private string _replacementKeyFormat = "{0}";
+    [CustomHeader("map to")]
+    [SerializeField] private string _replacementValueFormat = "{0}";
+
+    [CustomHeader("parsed from")]
+    [SerializeField] private string _serializedRegex = @"private void ExampleFunc(\w+)\(";
+  }
 }
