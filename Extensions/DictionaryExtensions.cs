@@ -53,6 +53,13 @@ namespace DT {
       source[key] = value;
     }
 
+    public static V GetOrCreateCached<U, V>(this IDictionary<U, V> source, U key, Func<U, V> valueCreator) {
+      if (!source.ContainsKey(key)) {
+        source[key] = valueCreator.Invoke(key);
+      }
+      return source[key];
+    }
+
     public static V GetAndCreateIfNotFound<U, V>(this IDictionary<U, V> source, U key) where V : new() {
       if (!source.ContainsKey(key)) {
         source[key] = new V();

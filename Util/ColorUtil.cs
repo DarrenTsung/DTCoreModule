@@ -15,6 +15,10 @@ namespace DT {
       return new Color(red, green, blue);
     }
 
+    public static Color LerpWhiteBlack(float lerp) {
+      return Color.Lerp(Color.white, Color.black, lerp);
+    }
+
     public static Color HexStringToColor(string hex) {
       hex = hex.Replace ("0x", "");        // in case the string is formatted 0xFFFFFF
       hex = hex.Replace ("#", "");         // in case the string is formatted #FFFFFF
