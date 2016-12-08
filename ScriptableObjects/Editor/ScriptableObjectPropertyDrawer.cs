@@ -9,6 +9,8 @@ namespace DT {
   public class ScriptableObjectPropertyDrawer : PropertyDrawer {
     // PRAGMA MARK - Public Interface
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
+      Editor.CreateCachedEditor(property.objectReferenceValue, null, ref this._editor);
+
       this._property = property;
 
       Color oldColor = GUI.color;
@@ -17,6 +19,14 @@ namespace DT {
       EditorGUI.PropertyField(position, property, label);
 
       GUI.color = oldColor;
+
+      if (this._editor != null) {
+        EmbeddedScriptableObjectGUI.IncreaseIndent();
+
+        this._editor.OnInspectorGUI();
+
+        EmbeddedScriptableObjectGUI.DecreaseIndent();
+      }
 
       // handle click on property
       Event clickEvent = Event.current;
@@ -37,6 +47,7 @@ namespace DT {
 
 
     // PRAGMA MARK - Internal
+    private Editor _editor;
     private SerializedProperty _property;
 
     private Type[] _fieldImplementationTypes = null;

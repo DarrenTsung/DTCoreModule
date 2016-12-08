@@ -13,16 +13,6 @@ namespace DT.ScriptGenerator {
       EditorWindow.GetWindow<ScriptGeneratorWindow>(false, "Script Generator Browser", true);
     }
 
-    private static GUIStyle _oddGUIStyle;
-    private static GUIStyle _OddGUIStyle {
-      get { return _oddGUIStyle ?? (_oddGUIStyle = GUIStyleUtil.StyleWithBackgroundColor(ColorUtil.LerpWhiteBlack(0.10f))); }
-    }
-
-    private static GUIStyle _evenGUIStyle;
-    private static GUIStyle _EvenGUIStyle {
-      get { return _evenGUIStyle ?? (_evenGUIStyle = GUIStyleUtil.StyleWithBackgroundColor(ColorUtil.LerpWhiteBlack(0.15f))); }
-    }
-
 
     // PRAGMA MARK - Internal
     private Vector2 _scrollPosition;
@@ -41,7 +31,7 @@ namespace DT.ScriptGenerator {
       this._scrollPosition = EditorGUILayout.BeginScrollView(this._scrollPosition);
         int i = 0;
         foreach (ScriptGenerator scriptGenerator in this._scriptGenerators) {
-          GUIStyle style = i % 2 == 0 ? _EvenGUIStyle : _OddGUIStyle;
+          GUIStyle style = EditorGUIStyleUtil.CachedStyleWithColorFor(i);
 
           EditorGUILayout.BeginHorizontal(style, GUILayout.Height(40));
             EditorGUILayout.LabelField(scriptGenerator.name);
