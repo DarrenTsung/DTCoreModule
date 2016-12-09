@@ -5,7 +5,7 @@ using UnityEditor;
 using UnityEngine;
 
 namespace DT.ScriptGenerator {
-  public abstract class FileSelectorAction : ScriptableObject {
+  public abstract class FileSelectorAction : EmbeddedScriptableObject {
     // PRAGMA MARK - Public Interface
     public void Apply() {
       foreach (File f in this.SelectFiles()) {

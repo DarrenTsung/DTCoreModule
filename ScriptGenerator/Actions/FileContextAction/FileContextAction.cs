@@ -5,7 +5,7 @@ using UnityEditor;
 using UnityEngine;
 
 namespace DT.ScriptGenerator {
-  public abstract class FileContextAction : ScriptableObject {
+  public abstract class FileContextAction : EmbeddedScriptableObject {
     public abstract void Apply(FileContext fileContext);
   }
 }

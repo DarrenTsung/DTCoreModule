@@ -5,8 +5,8 @@ using UnityEditor;
 using UnityEngine;
 
 namespace DT {
-  [CustomPropertyDrawer(typeof(ScriptableObject), true)]
-  public class ScriptableObjectPropertyDrawer : PropertyDrawer {
+  [CustomPropertyDrawer(typeof(EmbeddedScriptableObject), true)]
+  public class EmbeddedScriptableObjectPropertyDrawer : PropertyDrawer {
     // PRAGMA MARK - Public Interface
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
       Editor.CreateCachedEditor(property.objectReferenceValue, null, ref this._editor);
