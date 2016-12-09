@@ -28,7 +28,7 @@ namespace DT {
         Transform child = this.transform.GetChild(i);
 
         if (!this._cachedPriorities.ContainsKey(child)) {
-          Debug.LogError("Child transform of ViewManager is not in cached priorties, didn't go through ViewManager flow?");
+          Debug.LogError(string.Format("Child ({0}) is not in cached priorties, didn't go through ViewManager flow?", child.gameObject.name));
           continue;
         }
 
