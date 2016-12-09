@@ -109,7 +109,7 @@ namespace DT {
       }
     }
 
-    public static T GetOrAddComponent<T>(this GameObject g) where T : MonoBehaviour {
+    public static T GetOrAddComponent<T>(this GameObject g) where T : UnityEngine.Component {
       T component = g.GetComponent<T>();
 
       if (component == null) {
