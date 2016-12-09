@@ -28,7 +28,8 @@ namespace DT {
         Transform child = this.transform.GetChild(i);
 
         if (!this._cachedPriorities.ContainsKey(child)) {
-          Debug.LogError(string.Format("Child ({0}) is not in cached priorties, didn't go through ViewManager flow?", child.gameObject.name));
+          Debug.LogWarning(string.Format("Child ({0}) is not in cached priorties, didn't go through ViewManager flow?", child.gameObject.name));
+          this._cachedPriorities[child] = this._priorityMap.DefaultPriority;
           continue;
         }
 

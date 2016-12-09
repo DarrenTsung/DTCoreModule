@@ -21,6 +21,8 @@ namespace DT {
       return this._priorityMap.SafeGet(prefabName.ToLower(), defaultValue: this._defaultPriority);
 		}
 
+    public int DefaultPriority { get { return this._defaultPriority; } }
+
 
 		// PRAGMA MARK - Internal
     private Dictionary<string, int> _priorityMap = new Dictionary<string, int>();
