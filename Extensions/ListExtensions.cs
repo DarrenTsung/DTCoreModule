@@ -29,6 +29,15 @@ namespace DT {
       }
     }
 
+    public static T GetRequiredValueOrDefault<T>(this IList<T> list, int index, T defaultValue = default(T)) {
+      if (index >= 0 && index < list.Count) {
+        return list[index];
+      } else {
+          Debug.LogError("Failed to find required value for index: " + index);
+        return defaultValue;
+      }
+    }
+
     public static T SafeGet<T>(this IList<T> list, int index, T defaultValue = default(T)) {
       if (index >= 0 && index < list.Count) {
         return list[index];
