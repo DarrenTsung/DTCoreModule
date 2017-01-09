@@ -99,6 +99,9 @@ namespace DT {
 			// try to find a recycled object that is usable
 			while (recycledObjects.Count > 0) {
 				GameObject recycledObj = recycledObjects.Pop();
+                if (this._objectsBeingCleanedUp.Contains(recycledObj)) {
+                    Debug.LogError("ObjectPoolManager - instantiating object that is being recycled (did you forget to clear references to recycled objects?)");
+                }
 
 				if (recycledObj != null) {
 					if (!this.ValidateRecycledObject(recycledObj, prefabName)) {
