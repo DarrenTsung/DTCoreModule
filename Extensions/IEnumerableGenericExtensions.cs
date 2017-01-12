@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace DT {
@@ -37,6 +38,11 @@ namespace DT {
       }
 
       return maxElement;
+    }
+
+    public static T Random<T>(this IEnumerable<T> enumerable) {
+        int index = UnityEngine.Random.Range(0, enumerable.Count());
+        return enumerable.ElementAt(index);
     }
 
     public static float Max(this IEnumerable<float> enumerable) {
