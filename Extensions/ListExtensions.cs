@@ -38,7 +38,7 @@ namespace DT {
       }
     }
 
-    public static T SafeGet<T>(this IList<T> list, int index, T defaultValue = default(T)) {
+    public static T GetValueOrDefault<T>(this IList<T> list, int index, T defaultValue = default(T)) {
       if (index >= 0 && index < list.Count) {
         return list[index];
       } else {
