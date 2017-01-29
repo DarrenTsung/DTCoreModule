@@ -1,6 +1,6 @@
 #if UNITY_EDITOR
 using DT;
-using DTOpenObjectWindow;
+using DTCommandPalette;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -8,7 +8,6 @@ using UnityEditor;
 using UnityEngine;
 
 namespace DT {
-  [OpenableClass]
   public static class HierarchyUtil {
     public enum FoldValue {
       EXPANDED,
@@ -25,26 +24,26 @@ namespace DT {
       }
     }
 
-    [OpenableMethod]
+    [MethodCommand]
     [MenuItem("DarrenTsung/Hiearchy Utilities/Collapse All Objects In Hierarchy Except Currently Selected")]
     public static void CollapseAllObjectsInHierarchyExceptCurrentlySelected() {
       HierarchyUtil.SetFoldValueForAllGameObjectsInHiearchy(FoldValue.COLLAPSED);
       HierarchyUtil.SetFoldValueForGameObjectInHiearchyRecursive(Selection.activeGameObject, FoldValue.EXPANDED);
     }
 
-    [OpenableMethod]
+    [MethodCommand]
     [MenuItem("DarrenTsung/Hiearchy Utilities/Collapse All Objects In Hierarchy")]
     public static void CollapseAllObjectsInHierarchy() {
       HierarchyUtil.SetFoldValueForAllGameObjectsInHiearchy(FoldValue.COLLAPSED);
     }
 
-    [OpenableMethod]
+    [MethodCommand]
     [MenuItem("DarrenTsung/Hiearchy Utilities/Expand All Objects In Hierarchy")]
     public static void ExpandAllObjectsInHierarchy() {
       HierarchyUtil.SetFoldValueForAllGameObjectsInHiearchy(FoldValue.EXPANDED);
     }
 
-    [OpenableMethod]
+    [MethodCommand]
     [MenuItem("DarrenTsung/Hiearchy Utilities/Expand Current Selected Object In Hierarchy")]
     public static void ExpandCurrentSelectedObjectInHierarchy() {
       HierarchyUtil.SetFoldValueForGameObjectInHiearchyRecursive(Selection.activeGameObject, FoldValue.EXPANDED);
