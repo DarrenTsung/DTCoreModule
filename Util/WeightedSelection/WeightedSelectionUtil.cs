@@ -30,13 +30,7 @@ namespace DT {
     }
 
     public static T SelectWeightedObject<T>(IEnumerable<T> collection) where T : IWeightedObject {
-      return WeightedSelectionUtil.SelectWeightedObject(collection, WeightedSelectionUtil.GetWeightForIWeightedObject);
-    }
-
-
-    // PRAGMA MARK - Static Internal
-    private static int GetWeightForIWeightedObject(IWeightedObject obj) {
-      return obj.Weight;
+      return WeightedSelectionUtil.SelectWeightedObject(collection, obj => obj.Weight);
     }
   }
 }

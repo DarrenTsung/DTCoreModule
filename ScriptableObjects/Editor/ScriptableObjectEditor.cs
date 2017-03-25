@@ -26,7 +26,7 @@ namespace DT {
       }
 
       this.serializedObject.Update();
-      this.DrawPropertiesExcluding(this.serializedObject, _kScriptPropertyName);
+      Editor.DrawPropertiesExcluding(this.serializedObject, _kScriptPropertyName);
       this.serializedObject.ApplyModifiedProperties();
     }
 
