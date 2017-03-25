@@ -10,29 +10,9 @@ namespace DT {
         public static event Action OnApplicationResumed = delegate {};
         public static event Action OnApplicationQuit = delegate {};
 
-        [MethodCommand]
-        public static void MultitaskApplication() {
-            if (!Application.isPlaying) {
-                Debug.Log("Won't multitask because the application is not playing!");
-                return;
-            }
-
-            UnityHelper.Instance.MultitaskApplication();
-        }
-
-        static MonoBehaviourHelper() {
-            UnityHelper.Instance.Initialize();
-        }
-
         private class UnityHelper : Singleton<UnityHelper> {
             // PRAGMA MARK - Public Interface
-            public void MultitaskApplication() {
-                this.OnApplicationPause(paused : true);
-                CoroutineWrapper.DoAfterFrame(() => {
-                    this.OnApplicationPause(paused : false);
-                });
-            }
-
+            [RuntimeInitializeOnLoadMethod]
             public void Initialize() {
                 // empty function so that MonoBehaviour will be created
             }
