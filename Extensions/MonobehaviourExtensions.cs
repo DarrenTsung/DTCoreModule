@@ -67,24 +67,6 @@ namespace DT {
       }
     }
 
-    public static Coroutine DoEaseEveryFrameForDuration(this MonoBehaviour m, float duration, EaseType easeType, Action<float> frameCallback, Action finishedCallback = null) {
-      return m.StartCoroutine(m.DoEaseEveryFrameForDurationCoroutine(duration, easeType, frameCallback, finishedCallback));
-    }
-
-    public static IEnumerator DoEaseEveryFrameForDurationCoroutine(this MonoBehaviour m, float duration, EaseType easeType, Action<float> frameCallback, Action finishedCallback = null) {
-			for (float time = 0.0f; time < duration; time += Time.deltaTime) {
-        float easedPercentage = Easers.Ease0To1(easeType, time, duration);
-        frameCallback.Invoke(easedPercentage);
-				yield return new WaitForEndOfFrame();
-			}
-
-      // add frame callback for final frame (when time == duration)
-      frameCallback.Invoke(1.0f);
-      if (finishedCallback != null) {
-        finishedCallback.Invoke();
-      }
-    }
-
     public static GameObject[] FindChildGameObjectsWithTag(this MonoBehaviour m, string tag) {
       return m.gameObject.FindChildGameObjectsWithTag(tag);
     }
