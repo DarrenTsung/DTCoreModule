@@ -24,11 +24,11 @@ namespace DT.Game {
         }
 
         void OnEnable() {
-            MonoBehaviourHelper.OnUpdate += HandleUpdate;
+            MonoBehaviourWrapper.OnUpdate += HandleUpdate;
         }
 
         void OnDisable() {
-            MonoBehaviourHelper.OnUpdate -= HandleUpdate;
+            MonoBehaviourWrapper.OnUpdate -= HandleUpdate;
         }
 
         void OnDrawGizmos() {

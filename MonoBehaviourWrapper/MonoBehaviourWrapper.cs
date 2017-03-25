@@ -3,7 +3,7 @@ using System;
 using UnityEngine;
 
 namespace DT {
-    public static class MonoBehaviourHelper {
+    public static class MonoBehaviourWrapper {
         public static event Action OnUpdate = delegate {};
         public static event Action OnFixedUpdate = delegate {};
         public static event Action OnApplicationPaused = delegate {};
@@ -18,23 +18,23 @@ namespace DT {
             }
 
             void Update() {
-                MonoBehaviourHelper.OnUpdate.Invoke();
+                MonoBehaviourWrapper.OnUpdate.Invoke();
             }
 
             void FixedUpdate() {
-                MonoBehaviourHelper.OnFixedUpdate.Invoke();
+                MonoBehaviourWrapper.OnFixedUpdate.Invoke();
             }
 
             void OnApplicationPause(bool paused) {
                 if (paused) {
-                    MonoBehaviourHelper.OnApplicationPaused.Invoke();
+                    MonoBehaviourWrapper.OnApplicationPaused.Invoke();
                 } else {
-                    MonoBehaviourHelper.OnApplicationResumed.Invoke();
+                    MonoBehaviourWrapper.OnApplicationResumed.Invoke();
                 }
             }
 
             void OnApplicationQuit() {
-                MonoBehaviourHelper.OnApplicationQuit.Invoke();
+                MonoBehaviourWrapper.OnApplicationQuit.Invoke();
             }
         }
     }
