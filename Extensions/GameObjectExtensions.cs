@@ -153,10 +153,6 @@ namespace DT {
       g.transform.DestroyAllChildren(immediate);
     }
 
-    public static void RecycleAllChildren(this GameObject g, bool worldPositionStays = false) {
-      g.transform.RecycleAllChildren(worldPositionStays);
-    }
-
     public static IEnumerable<GameObject> GetChildren(this GameObject g) {
       foreach (Transform childTransform in g.transform) {
         yield return childTransform.gameObject;

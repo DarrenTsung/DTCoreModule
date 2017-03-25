@@ -15,13 +15,16 @@ namespace DT {
         return;
       }
 
-      RecyclablePrefab r = view.GetRequiredComponent<RecyclablePrefab>();
+    //   RecyclablePrefab r = view.GetRequiredComponent<RecyclablePrefab>();
+	// string prefabName = r.prefabName;
+	// TODO (darren): fix this after removing ObjectPoolManager from DTCoreModule
+	string prefabName = "";
       if (this._priorityMap == null) {
         Debug.LogError("ViewManager - no priority configuration when attaching view!");
         return;
       }
 
-      int priority = this._priorityMap.PriorityForPrefabName(r.prefabName);
+      int priority = this._priorityMap.PriorityForPrefabName(prefabName);
       this._cachedPriorities[view.transform] = priority;
 
       for (int i = 0; i < this.transform.childCount; i++) {
