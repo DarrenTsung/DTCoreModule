@@ -42,14 +42,13 @@ namespace DT.Game {
             }
         }
 
-        [MakeButton]
         private void ResetSize() {
             Vector3 baseSize = Vector3Util.InverseScale(_SpriteRenderer.bounds.size, transform.lossyScale);
             Vector3 scale = Vector3Util.InverseScale(_size, baseSize);
             transform.localScale = scale;
         }
 
-        [MakeButton]
+        // TODO (darren): expose this in editor to change spriteRenderer
         private void SetSize() {
             _size = _SpriteRenderer.bounds.size;
         }
