@@ -29,6 +29,19 @@ namespace DT {
 			return StartCoroutine(EndOfFrameCoroutine(), finishedCallback);
 		}
 
+		public static CoroutineWrapper DoLerpFor(float duration, Action<float> lerpCallback, Action finishedCallback = null) {
+			return StartCoroutine(DoLerpCoroutine(duration, lerpCallback), finishedCallback);
+		}
+
+		private static IEnumerator DoLerpCoroutine(float duration, Action<float> lerpCallback) {
+			for (float time = 0.0f; time <= duration; time += Time.deltaTime) {
+				lerpCallback.Invoke(time / duration);
+				yield return null;
+			}
+
+			lerpCallback.Invoke(1.0f);
+		}
+
 		private static IEnumerator DelayCoroutine(float delay) {
 			yield return new WaitForSeconds(delay);
 		}
