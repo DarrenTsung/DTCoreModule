@@ -3,27 +3,27 @@ using UnityEngine;
 
 namespace DT {
 	public static class Texture2DUtil {
-    // PRAGMA MARK - Public
-    public static Texture2D CreateTextureWithColor(Color color, int width = 1, int height = 1) {
-      Color[] pixels = new Color[width * height];
+		// PRAGMA MARK - Public
+		public static Texture2D CreateTextureWithColor(Color color, int width = 1, int height = 1) {
+			Color[] pixels = new Color[width * height];
 
-      for (int i = 0; i < pixels.Length; i++) {
-        pixels[i] = color;
-      }
+			for (int i = 0; i < pixels.Length; i++) {
+				pixels[i] = color;
+			}
 
-      Texture2D tex = new Texture2D(width, height);
-      tex.SetPixels(pixels);
-      tex.Apply();
+			Texture2D tex = new Texture2D(width, height);
+			tex.SetPixels(pixels);
+			tex.Apply();
 
-      return tex;
-    }
+			return tex;
+		}
 
-    public static Texture2D GetCached1x1TextureWithColor(Color color) {
-      return Texture2DUtil._cached1x1Textures.GetOrCreateCached(color, c => Texture2DUtil.CreateTextureWithColor(c));
-    }
+		public static Texture2D GetCached1x1TextureWithColor(Color color) {
+			return cached1x1Textures_.GetOrCreateCached(color, c => CreateTextureWithColor(c));
+		}
 
 
-    // PRAGMA MARK - Internal
-    private static Dictionary<Color, Texture2D> _cached1x1Textures = new Dictionary<Color, Texture2D>();
+		// PRAGMA MARK - Internal
+		private static Dictionary<Color, Texture2D> cached1x1Textures_ = new Dictionary<Color, Texture2D>();
 	}
 }

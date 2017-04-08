@@ -1,6 +1,6 @@
 ﻿using DT;
 using System.Collections;
-﻿using UnityEngine;
+using UnityEngine;
 
 namespace DT {
 	public enum VerticalDirection {
@@ -22,9 +22,9 @@ namespace DT {
 		}
 	}
 
-  public static class VerticalDirectionUtil {
-    public static VerticalDirection RandomDirection() {
-      return (Random.value > 0.5f) ? VerticalDirection.UP : VerticalDirection.DOWN;
-    }
-  }
+	public static class VerticalDirectionUtil {
+		public static VerticalDirection RandomDirection() {
+			return (Random.value > 0.5f) ? VerticalDirection.UP : VerticalDirection.DOWN;
+		}
+	}
 }

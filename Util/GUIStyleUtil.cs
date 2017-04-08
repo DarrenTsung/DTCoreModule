@@ -5,28 +5,28 @@ using UnityEditor;
 using UnityEngine;
 
 namespace DT {
-  public static class GUIStyleUtil {
-    public static GUIStyle StyleWithBackgroundColor(Color color) {
-      return GUIStyleUtil.StyleWithTexture(Texture2DUtil.GetCached1x1TextureWithColor(color));
-    }
+	public static class GUIStyleUtil {
+		public static GUIStyle StyleWithBackgroundColor(Color color) {
+			return StyleWithTexture(Texture2DUtil.GetCached1x1TextureWithColor(color));
+		}
 
-    public static GUIStyle StyleWithTexture(Texture2D texture) {
-      return GUIStyleUtil.StyleWithTexture(GUIStyle.none, texture);
-    }
+		public static GUIStyle StyleWithTexture(Texture2D texture) {
+			return StyleWithTexture(GUIStyle.none, texture);
+		}
 
-    public static GUIStyle StyleWithTexture(GUIStyle baseStyle, Texture2D texture) {
-      GUIStyle style = GUIStyleUtil._cachedTextureStyles.SafeGet(texture);
-      if (style == null) {
-        style = new GUIStyle(baseStyle);
-        style.normal.background = texture;
-      }
+		public static GUIStyle StyleWithTexture(GUIStyle baseStyle, Texture2D texture) {
+			GUIStyle style = cachedTextureStyles_.SafeGet(texture);
+			if (style == null) {
+				style = new GUIStyle(baseStyle);
+				style.normal.background = texture;
+			}
 
-      return style;
-    }
+			return style;
+		}
 
 
-    // PRAGMA MARK - Internal
-    private static Dictionary<Texture2D, GUIStyle> _cachedTextureStyles = new Dictionary<Texture2D, GUIStyle>();
-  }
+		// PRAGMA MARK - Internal
+		private static Dictionary<Texture2D, GUIStyle> cachedTextureStyles_ = new Dictionary<Texture2D, GUIStyle>();
+	}
 }
 #endif

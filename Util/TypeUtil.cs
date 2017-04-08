@@ -7,56 +7,56 @@ using System.Reflection;
 using UnityEngine;
 
 namespace DT {
-  public static class TypeUtil {
-    // PRAGMA MARK - Static Public Interface
-    public static FieldInfo[] GetInspectorFields(Type type) {
-      if (!TypeUtil._inspectorFieldMapping.ContainsKey(type)) {
-        List<FieldInfo> fieldInfos = new List<FieldInfo>();
-        Type iterType = type;
-        while (iterType != null) {
-          fieldInfos.AddRange(iterType.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-                                  .Where(f => f.IsPublic || Attribute.IsDefined(f, typeof(SerializeField))));
-          iterType = iterType.BaseType;
-        }
+	public static class TypeUtil {
+		// PRAGMA MARK - Static Public Interface
+		public static FieldInfo[] GetInspectorFields(Type type) {
+			if (!inspectorFieldMapping_.ContainsKey(type)) {
+				List<FieldInfo> fieldInfos = new List<FieldInfo>();
+				Type iterType = type;
+				while (iterType != null) {
+					fieldInfos.AddRange(iterType.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+											.Where(f => f.IsPublic || Attribute.IsDefined(f, typeof(SerializeField))));
+					iterType = iterType.BaseType;
+				}
 
-        TypeUtil._inspectorFieldMapping[type] = fieldInfos.ToArray();
-      }
+				inspectorFieldMapping_[type] = fieldInfos.ToArray();
+			}
 
-      return TypeUtil._inspectorFieldMapping[type];
-    }
+			return inspectorFieldMapping_[type];
+		}
 
-    public static Type[] GetImplementationTypes(Type inputType) {
-      if (!TypeUtil._implementationTypeMapping.ContainsKey(inputType)) {
-        TypeUtil._implementationTypeMapping[inputType] = TypeUtil.AllAssemblyTypes
-                                                                 .Where(t => inputType.IsAssignableFrom(t) && t.IsClass && !t.IsAbstract && !t.IsGenericType)
-                                                                 .ToArray();
-      }
+		public static Type[] GetImplementationTypes(Type inputType) {
+			if (!implementationTypeMapping_.ContainsKey(inputType)) {
+				implementationTypeMapping_[inputType] = AllAssemblyTypes
+																		 .Where(t => inputType.IsAssignableFrom(t) && t.IsClass && !t.IsAbstract && !t.IsGenericType)
+																		 .ToArray();
+			}
 
-      return TypeUtil._implementationTypeMapping[inputType];
-    }
+			return implementationTypeMapping_[inputType];
+		}
 
-    public static string[] GetImplementationTypeNames(Type type) {
-      if (!TypeUtil._implementationTypeNameMapping.ContainsKey(type)) {
-        TypeUtil._implementationTypeNameMapping[type] = TypeUtil.GetImplementationTypes(type).Select(t => t.Name).ToArray();
-      }
+		public static string[] GetImplementationTypeNames(Type type) {
+			if (!implementationTypeNameMapping_.ContainsKey(type)) {
+				implementationTypeNameMapping_[type] = GetImplementationTypes(type).Select(t => t.Name).ToArray();
+			}
 
-      return TypeUtil._implementationTypeNameMapping[type];
-    }
+			return implementationTypeNameMapping_[type];
+		}
 
-    public static Type[] AllAssemblyTypes {
-      get {
-        return TypeUtil._allAssemblyTypes ?? (TypeUtil._allAssemblyTypes = (from assembly in AppDomain.CurrentDomain.GetAssemblies()
-           from type in assembly.GetTypes()
-           select type).ToArray());
-      }
-    }
+		public static Type[] AllAssemblyTypes {
+			get {
+				return allAssemblyTypes_ ?? (allAssemblyTypes_ = (from assembly in AppDomain.CurrentDomain.GetAssemblies()
+																  from type in assembly.GetTypes()
+																  select type).ToArray());
+			}
+		}
 
 
-    // PRAGMA MARK - Static Internal
-    private static Dictionary<Type, FieldInfo[]> _inspectorFieldMapping = new Dictionary<Type, FieldInfo[]>();
-    private static Dictionary<Type, Type[]> _implementationTypeMapping = new Dictionary<Type, Type[]>();
-    private static Dictionary<Type, string[]> _implementationTypeNameMapping = new Dictionary<Type, string[]>();
+		// PRAGMA MARK - Static Internal
+		private static Dictionary<Type, FieldInfo[]> inspectorFieldMapping_ = new Dictionary<Type, FieldInfo[]>();
+		private static Dictionary<Type, Type[]> implementationTypeMapping_ = new Dictionary<Type, Type[]>();
+		private static Dictionary<Type, string[]> implementationTypeNameMapping_ = new Dictionary<Type, string[]>();
 
-    private static Type[] _allAssemblyTypes = null;
-  }
+		private static Type[] allAssemblyTypes_ = null;
+	}
 }

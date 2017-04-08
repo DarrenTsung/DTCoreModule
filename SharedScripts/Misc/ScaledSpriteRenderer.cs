@@ -6,51 +6,52 @@ using System.Linq;
 using UnityEngine;
 
 namespace DT.Game {
-    [RequireComponent(typeof(SpriteRenderer))]
-    public class ScaledSpriteRenderer : MonoBehaviour {
-        // PRAGMA MARK - Internal
-        [SerializeField, ReadOnly] private Vector3 _size = Vector3.one;
+	[RequireComponent(typeof(SpriteRenderer))]
+	public class ScaledSpriteRenderer : MonoBehaviour {
+		// PRAGMA MARK - Internal
+		[SerializeField, ReadOnly]
+		private Vector3 _size = Vector3.one;
 
-        private Sprite _cachedSprite = null;
-        private SpriteRenderer _spriteRenderer;
+		private Sprite cachedSprite_ = null;
+		private SpriteRenderer spriteRenderer_;
 
-        private SpriteRenderer _SpriteRenderer {
-            get {
-                if (_spriteRenderer == null) {
-                    _spriteRenderer = GetComponent<SpriteRenderer>();
-                }
-                return _spriteRenderer;
-            }
-        }
+		private SpriteRenderer SpriteRenderer_ {
+			get {
+				if (spriteRenderer_ == null) {
+					spriteRenderer_ = GetComponent<SpriteRenderer>();
+				}
+				return spriteRenderer_;
+			}
+		}
 
-        void OnEnable() {
-            MonoBehaviourWrapper.OnUpdate += HandleUpdate;
-        }
+		private void OnEnable() {
+			MonoBehaviourWrapper.OnUpdate += HandleUpdate;
+		}
 
-        void OnDisable() {
-            MonoBehaviourWrapper.OnUpdate -= HandleUpdate;
-        }
+		private void OnDisable() {
+			MonoBehaviourWrapper.OnUpdate -= HandleUpdate;
+		}
 
-        void OnDrawGizmos() {
-            Gizmos.DrawWireCube(transform.position, _size);
-        }
+		private void OnDrawGizmos() {
+			Gizmos.DrawWireCube(transform.position, _size);
+		}
 
-        private void HandleUpdate() {
-            if (_cachedSprite != _SpriteRenderer.sprite) {
-                ResetSize();
-                _cachedSprite = _SpriteRenderer.sprite;
-            }
-        }
+		private void HandleUpdate() {
+			if (cachedSprite_ != SpriteRenderer_.sprite) {
+				ResetSize();
+				cachedSprite_ = SpriteRenderer_.sprite;
+			}
+		}
 
-        private void ResetSize() {
-            Vector3 baseSize = Vector3Util.InverseScale(_SpriteRenderer.bounds.size, transform.lossyScale);
-            Vector3 scale = Vector3Util.InverseScale(_size, baseSize);
-            transform.localScale = scale;
-        }
+		private void ResetSize() {
+			Vector3 baseSize = Vector3Util.InverseScale(SpriteRenderer_.bounds.size, transform.lossyScale);
+			Vector3 scale = Vector3Util.InverseScale(_size, baseSize);
+			transform.localScale = scale;
+		}
 
-        // TODO (darren): expose this in editor to change spriteRenderer
-        private void SetSize() {
-            _size = _SpriteRenderer.bounds.size;
-        }
-    }
+		// TODO (darren): expose this in editor to change spriteRenderer
+		private void SetSize() {
+			_size = SpriteRenderer_.bounds.size;
+		}
+	}
 }

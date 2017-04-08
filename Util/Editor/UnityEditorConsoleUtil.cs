@@ -5,60 +5,60 @@ using UnityEditor;
 using UnityEngine;
 
 namespace DT {
-  public struct UnityConsoleCountsByType {
-    public int errorCount;
-    public int warningCount;
-    public int logCount;
-  }
+	public struct UnityConsoleCountsByType {
+		public int errorCount;
+		public int warningCount;
+		public int logCount;
+	}
 
-  public static class UnityEditorConsoleUtil {
-    private static MethodInfo _clearMethod;
-    private static MethodInfo _getCountMethod;
-    private static MethodInfo _getCountsByTypeMethod;
+	public static class UnityEditorConsoleUtil {
+		private static MethodInfo clearMethod_;
+		private static MethodInfo getCountMethod_;
+		private static MethodInfo getCountsByTypeMethod_;
 
-    static UnityEditorConsoleUtil() {
-      Assembly assembly = Assembly.GetAssembly(typeof(SceneView));
-      Type logEntriesType = assembly.GetType("UnityEditorInternal.LogEntries");
+		static UnityEditorConsoleUtil() {
+			Assembly assembly = Assembly.GetAssembly(typeof(SceneView));
+			Type logEntriesType = assembly.GetType("UnityEditorInternal.LogEntries");
 
-      UnityEditorConsoleUtil._clearMethod = logEntriesType.GetMethod("Clear");
-      UnityEditorConsoleUtil._getCountMethod = logEntriesType.GetMethod("GetCount");
-      UnityEditorConsoleUtil._getCountsByTypeMethod = logEntriesType.GetMethod("GetCountsByType");
-    }
+			clearMethod_ = logEntriesType.GetMethod("Clear");
+			getCountMethod_ = logEntriesType.GetMethod("GetCount");
+			getCountsByTypeMethod_ = logEntriesType.GetMethod("GetCountsByType");
+		}
 
-    public static void Clear() {
-      if (UnityEditorConsoleUtil._clearMethod == null) {
-        Debug.LogError("Failed to find LogEntries.Clear method info!");
-        return;
-      }
+		public static void Clear() {
+			if (clearMethod_ == null) {
+				Debug.LogError("Failed to find LogEntries.Clear method info!");
+				return;
+			}
 
-      UnityEditorConsoleUtil._clearMethod.Invoke(null, null);
-    }
+			clearMethod_.Invoke(null, null);
+		}
 
-    public static int GetCount() {
-      if (UnityEditorConsoleUtil._getCountMethod == null) {
-        Debug.LogError("Failed to find LogEntries.GetCount method info!");
-        return 0;
-      }
+		public static int GetCount() {
+			if (getCountMethod_ == null) {
+				Debug.LogError("Failed to find LogEntries.GetCount method info!");
+				return 0;
+			}
 
-      return (int)UnityEditorConsoleUtil._getCountMethod.Invoke(null, null);
-    }
+			return (int)getCountMethod_.Invoke(null, null);
+		}
 
-    public static UnityConsoleCountsByType GetCountsByType() {
-      UnityConsoleCountsByType countsByType = new UnityConsoleCountsByType();
+		public static UnityConsoleCountsByType GetCountsByType() {
+			UnityConsoleCountsByType countsByType = new UnityConsoleCountsByType();
 
-      if (UnityEditorConsoleUtil._getCountsByTypeMethod == null) {
-        Debug.LogError("Failed to find LogEntries.GetCountsByType method info!");
-        return countsByType;
-      }
+			if (getCountsByTypeMethod_ == null) {
+				Debug.LogError("Failed to find LogEntries.GetCountsByType method info!");
+				return countsByType;
+			}
 
-      object[] arguments = new object[] { 0, 0, 0 };
-      UnityEditorConsoleUtil._getCountsByTypeMethod.Invoke(null, arguments);
+			object[] arguments = new object[] { 0, 0, 0 };
+			getCountsByTypeMethod_.Invoke(null, arguments);
 
-      countsByType.errorCount = (int)arguments[0];
-      countsByType.warningCount = (int)arguments[1];
-      countsByType.logCount = (int)arguments[2];
+			countsByType.errorCount = (int)arguments[0];
+			countsByType.warningCount = (int)arguments[1];
+			countsByType.logCount = (int)arguments[2];
 
-      return countsByType;
-    }
-  }
+			return countsByType;
+		}
+	}
 }

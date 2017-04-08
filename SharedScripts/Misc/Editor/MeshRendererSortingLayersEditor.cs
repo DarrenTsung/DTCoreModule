@@ -16,71 +16,71 @@ using System;
 
 [CustomEditor(typeof(MeshRenderer))]
 public class MeshRendererSortingLayersEditor : Editor {
-	 public override void OnInspectorGUI() {
-			 base.OnInspectorGUI();
+	public override void OnInspectorGUI() {
+		base.OnInspectorGUI();
 
-			 serializedObject.Update();
+		serializedObject.Update();
 
-			 SerializedProperty sortingLayerID = serializedObject.FindProperty("m_SortingLayerID");
-			 SerializedProperty sortingOrder = serializedObject.FindProperty("m_SortingOrder");
+		SerializedProperty sortingLayerID = serializedObject.FindProperty("m_SortingLayerID");
+		SerializedProperty sortingOrder = serializedObject.FindProperty("m_SortingOrder");
 
-			 Rect firstHoriz = EditorGUILayout.BeginHorizontal();
+		Rect firstHoriz = EditorGUILayout.BeginHorizontal();
 
-			 EditorGUI.BeginChangeCheck();
+		EditorGUI.BeginChangeCheck();
 
-			 EditorGUI.BeginProperty(firstHoriz,GUIContent.none,sortingLayerID);
+		EditorGUI.BeginProperty(firstHoriz, GUIContent.none, sortingLayerID);
 
-			 string[] layerNames = GetSortingLayerNames();
-			 int[] layerID = GetSortingLayerUniqueIDs();
+		string[] layerNames = GetSortingLayerNames();
+		int[] layerID = GetSortingLayerUniqueIDs();
 
-			 int selected = -1;
-			 // What is selected?
-			 int sID = sortingLayerID.intValue;
-			 for(int i = 0 ; i < layerID.Length ; i++) {
-					 //Debug.Log(sID + " " + layerID[i]);
-					 if(sID == layerID[i]) {
-							 selected = i;
-					 }
-			 }
+		int selected = -1;
+		// What is selected?
+		int sID = sortingLayerID.intValue;
+		for (int i = 0; i < layerID.Length; i++) {
+			//Debug.Log(sID + " " + layerID[i]);
+			if (sID == layerID[i]) {
+				selected = i;
+			}
+		}
 
-			 if(selected == -1) {
-					 //Select Default.
-					 for(int i = 0 ; i < layerID.Length ; i++) {
-							 if(layerID[i] == 0) {
-									 selected = i;
-							 }
-					 }
-			 }
+		if (selected == -1) {
+			//Select Default.
+			for (int i = 0; i < layerID.Length; i++) {
+				if (layerID[i] == 0) {
+					selected = i;
+				}
+			}
+		}
 
-			 selected = EditorGUILayout.Popup("Sorting Layer" ,selected,layerNames);
+		selected = EditorGUILayout.Popup("Sorting Layer", selected, layerNames);
 
-			 //Translate to ID
-			 sortingLayerID.intValue = layerID[selected];
-
-
-			 EditorGUI.EndProperty();
-
-			 EditorGUILayout.EndHorizontal();
-
-			 EditorGUILayout.BeginHorizontal();
-			 EditorGUI.BeginChangeCheck();
-
-			 EditorGUILayout.PropertyField(sortingOrder,new GUIContent("Order in Layer"));
+		//Translate to ID
+		sortingLayerID.intValue = layerID[selected];
 
 
-			 EditorGUILayout.EndHorizontal();
-			 serializedObject.ApplyModifiedProperties();
-	 }
+		EditorGUI.EndProperty();
 
-	 public string[] GetSortingLayerNames() {
-			 Type internalEditorUtilityType = typeof(InternalEditorUtility);
-			 PropertyInfo sortingLayersProperty = internalEditorUtilityType.GetProperty("sortingLayerNames", BindingFlags.Static | BindingFlags.NonPublic);
-			 return (string[])sortingLayersProperty.GetValue(null, new object[0]);
-	 }
+		EditorGUILayout.EndHorizontal();
 
-	 public int[] GetSortingLayerUniqueIDs() {
-			 Type internalEditorUtilityType = typeof(InternalEditorUtility);
-			 PropertyInfo sortingLayerUniqueIDsProperty = internalEditorUtilityType.GetProperty("sortingLayerUniqueIDs", BindingFlags.Static | BindingFlags.NonPublic);
-			 return (int[])sortingLayerUniqueIDsProperty.GetValue(null, new object[0]);
-	 }
+		EditorGUILayout.BeginHorizontal();
+		EditorGUI.BeginChangeCheck();
+
+		EditorGUILayout.PropertyField(sortingOrder, new GUIContent("Order in Layer"));
+
+
+		EditorGUILayout.EndHorizontal();
+		serializedObject.ApplyModifiedProperties();
+	}
+
+	public string[] GetSortingLayerNames() {
+		Type internalEditorUtilityType = typeof(InternalEditorUtility);
+		PropertyInfo sortingLayersProperty = internalEditorUtilityType.GetProperty("sortingLayerNames", BindingFlags.Static | BindingFlags.NonPublic);
+		return (string[])sortingLayersProperty.GetValue(null, new object[0]);
+	}
+
+	public int[] GetSortingLayerUniqueIDs() {
+		Type internalEditorUtilityType = typeof(InternalEditorUtility);
+		PropertyInfo sortingLayerUniqueIDsProperty = internalEditorUtilityType.GetProperty("sortingLayerUniqueIDs", BindingFlags.Static | BindingFlags.NonPublic);
+		return (int[])sortingLayerUniqueIDsProperty.GetValue(null, new object[0]);
+	}
 }

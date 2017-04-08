@@ -1,13 +1,13 @@
 using DT;
 using System;
-﻿using System.Collections.Generic;
-﻿using UnityEngine;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace DT {
 	public static class DeviceUtil {
-    private static int? _seed;
-    public static int Seed {
-      get { return (int)(DeviceUtil._seed ?? (DeviceUtil._seed = SystemInfo.deviceUniqueIdentifier.GetHashCode())); }
-    }
-  }
+		private static int? seed_;
+		public static int Seed {
+			get { return (int)(seed_ ?? (seed_ = SystemInfo.deviceUniqueIdentifier.GetHashCode())); }
+		}
+	}
 }

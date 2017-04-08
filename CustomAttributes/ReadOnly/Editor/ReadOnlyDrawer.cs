@@ -4,10 +4,10 @@ using UnityEngine;
 namespace DT {
 	[CustomPropertyDrawer(typeof(ReadOnlyAttribute))]
 	public class ReadOnlyDrawer : PropertyDrawer {
-		public override void OnGUI(Rect _position, SerializedProperty _property, GUIContent _label) {
-      GUI.enabled = false;
-      EditorGUI.PropertyField(_position, _property, _label, true);
-      GUI.enabled = true;
+		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
+			GUI.enabled = false;
+			EditorGUI.PropertyField(position, property, label, true);
+			GUI.enabled = true;
 		}
 	}
 }

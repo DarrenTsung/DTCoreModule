@@ -1,7 +1,7 @@
 ﻿using DT;
 using System.Collections;
-﻿using UnityEngine;
-﻿using UnityEngine.Events;
+using UnityEngine;
+using UnityEngine.Events;
 
 namespace DT {
 	public static class DTNotifications {

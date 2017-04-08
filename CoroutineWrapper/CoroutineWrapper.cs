@@ -3,102 +3,102 @@ using System.Collections;
 using UnityEngine;
 
 namespace DT {
-  public class CoroutineWrapper {
-    // PRAGMA MARK - Static
-    public static void Initialize() {
-      CoroutineManager.Instance.Initialize();
-    }
+	public class CoroutineWrapper {
+		// PRAGMA MARK - Static
+		public static void Initialize() {
+			CoroutineManager.Instance.Initialize();
+		}
 
-    public static CoroutineWrapper StartCoroutine(IEnumerator coroutine, Action finishedCallback) {
-      return new CoroutineWrapper(coroutine, finishedCallback);
-    }
+		public static CoroutineWrapper StartCoroutine(IEnumerator coroutine, Action finishedCallback) {
+			return new CoroutineWrapper(coroutine, finishedCallback);
+		}
 
-    public static CoroutineWrapper StartCoroutine(IEnumerator coroutine, Action<bool> finishedCallback = null) {
-      return new CoroutineWrapper(coroutine, finishedCallback);
-    }
+		public static CoroutineWrapper StartCoroutine(IEnumerator coroutine, Action<bool> finishedCallback = null) {
+			return new CoroutineWrapper(coroutine, finishedCallback);
+		}
 
-    public static CoroutineWrapper DoAfterDelay(float delay, Action finishedCallback) {
-      return CoroutineWrapper.StartCoroutine(CoroutineWrapper.DelayCoroutine(delay), finishedCallback);
-    }
+		public static CoroutineWrapper DoAfterDelay(float delay, Action finishedCallback) {
+			return StartCoroutine(DelayCoroutine(delay), finishedCallback);
+		}
 
-    public static CoroutineWrapper DoAfterFrame(Action finishedCallback) {
-      return CoroutineWrapper.StartCoroutine(CoroutineWrapper.WaitOneFrameCoroutine(), finishedCallback);
-    }
+		public static CoroutineWrapper DoAfterFrame(Action finishedCallback) {
+			return StartCoroutine(WaitOneFrameCoroutine(), finishedCallback);
+		}
 
-    public static CoroutineWrapper DoAtEndOfFrame(Action finishedCallback) {
-      return CoroutineWrapper.StartCoroutine(CoroutineWrapper.EndOfFrameCoroutine(), finishedCallback);
-    }
+		public static CoroutineWrapper DoAtEndOfFrame(Action finishedCallback) {
+			return StartCoroutine(EndOfFrameCoroutine(), finishedCallback);
+		}
 
-    private static IEnumerator DelayCoroutine(float delay) {
-      yield return new WaitForSeconds(delay);
-    }
+		private static IEnumerator DelayCoroutine(float delay) {
+			yield return new WaitForSeconds(delay);
+		}
 
-    private static readonly WaitForEndOfFrame kWaitForEndOfFrame = new WaitForEndOfFrame();
-    private static IEnumerator EndOfFrameCoroutine() {
-      yield return kWaitForEndOfFrame;
-    }
+		private static readonly WaitForEndOfFrame kWaitForEndOfFrame = new WaitForEndOfFrame();
+		private static IEnumerator EndOfFrameCoroutine() {
+			yield return kWaitForEndOfFrame;
+		}
 
-    private static IEnumerator WaitOneFrameCoroutine() {
-      yield return null;
-    }
-
-
-    // PRAGMA MARK - Public Interface
-    public void Stop() {
-      this._running = false;
-      this._manuallyStopped = true;
-    }
-
-    public void Cancel() {
-      this._running = false;
-      this._cancelled = true;
-    }
+		private static IEnumerator WaitOneFrameCoroutine() {
+			yield return null;
+		}
 
 
-    // PRAGMA MARK - Internal
-    private CoroutineWrapper(IEnumerator coroutine, Action finishedCallback) : this(coroutine) {
-      this._finishedNoArgsCallback = finishedCallback;
-    }
+		// PRAGMA MARK - Public Interface
+		public void Stop() {
+			running_ = false;
+			manuallyStopped_ = true;
+		}
 
-    private CoroutineWrapper(IEnumerator coroutine, Action<bool> finishedCallback) : this(coroutine) {
-      this._finishedArgsCallback = finishedCallback;
-    }
+		public void Cancel() {
+			running_ = false;
+			cancelled_ = true;
+		}
 
-    private CoroutineWrapper(IEnumerator coroutine) {
-      this._coroutine = coroutine;
-      CoroutineManager.Instance.StartCoroutine(this.Coroutine());
-    }
 
-    private Action _finishedNoArgsCallback;
-    private Action<bool> _finishedArgsCallback;
-    private IEnumerator _coroutine;
+		// PRAGMA MARK - Internal
+		private CoroutineWrapper(IEnumerator coroutine, Action finishedCallback) : this(coroutine) {
+			finishedNoArgsCallback_ = finishedCallback;
+		}
 
-    private bool _manuallyStopped = false;
-    private bool _running = true;
-    private bool _cancelled = false;
+		private CoroutineWrapper(IEnumerator coroutine, Action<bool> finishedCallback) : this(coroutine) {
+			finishedArgsCallback_ = finishedCallback;
+		}
 
-    private IEnumerator Coroutine() {
-      while (this._running) {
-        if (this._coroutine != null && this._coroutine.MoveNext()) {
-          yield return this._coroutine.Current;
-        } else {
-          this._running = false;
-        }
-      }
+		private CoroutineWrapper(IEnumerator coroutine) {
+			coroutine_ = coroutine;
+			CoroutineManager.Instance.StartCoroutine(Coroutine());
+		}
 
-      if (!this._cancelled && this._finishedNoArgsCallback != null) {
-        this._finishedNoArgsCallback.Invoke();
-      }
+		private Action finishedNoArgsCallback_;
+		private Action<bool> finishedArgsCallback_;
+		private IEnumerator coroutine_;
 
-      if (!this._cancelled && this._finishedArgsCallback != null) {
-        this._finishedArgsCallback(this._manuallyStopped);
-      }
-    }
+		private bool manuallyStopped_ = false;
+		private bool running_ = true;
+		private bool cancelled_ = false;
 
-    private class CoroutineManager : Singleton<CoroutineManager> {
-      public void Initialize() {
-        // empty method so that the object is created
-      }
-    }
-  }
+		private IEnumerator Coroutine() {
+			while (running_) {
+				if (coroutine_ != null && coroutine_.MoveNext()) {
+					yield return coroutine_.Current;
+				} else {
+					running_ = false;
+				}
+			}
+
+			if (!cancelled_ && finishedNoArgsCallback_ != null) {
+				finishedNoArgsCallback_.Invoke();
+			}
+
+			if (!cancelled_ && finishedArgsCallback_ != null) {
+				finishedArgsCallback_(manuallyStopped_);
+			}
+		}
+
+		private class CoroutineManager : Singleton<CoroutineManager> {
+			public void Initialize() {
+				// empty method so that the object is created
+			}
+		}
+	}
 }

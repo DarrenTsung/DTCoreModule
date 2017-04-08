@@ -5,56 +5,56 @@ using UnityEditor;
 using UnityEngine;
 
 namespace DT {
-  public static class EmbeddedScriptableObjectGUI {
-    // PRAGMA MARK - Public Interface
-    public static void IncreaseIndent() {
-      EmbeddedScriptableObjectGUI._indentLevel++;
-      if (EmbeddedScriptableObjectGUI._indentLevel <= 0) {
-        return;
-      }
+	public static class EmbeddedScriptableObjectGUI {
+		// PRAGMA MARK - Public Interface
+		public static void IncreaseIndent() {
+			indentLevel_++;
+			if (indentLevel_ <= 0) {
+				return;
+			}
 
-      EditorGUILayout.BeginVertical(_indentLevel % 2 == 0 ? _EvenGUIStyle : _OddGUIStyle);
-    }
+			EditorGUILayout.BeginVertical(indentLevel_ % 2 == 0 ? EvenGuistyle_ : OddGuistyle_);
+		}
 
-    public static void DecreaseIndent() {
-      EmbeddedScriptableObjectGUI._indentLevel--;
-      if (EmbeddedScriptableObjectGUI._indentLevel < 0) {
-        return;
-      }
+		public static void DecreaseIndent() {
+			indentLevel_--;
+			if (indentLevel_ < 0) {
+				return;
+			}
 
-      EditorGUILayout.EndVertical();
-    }
+			EditorGUILayout.EndVertical();
+		}
 
 
-    // PRAGMA MARK - Internal
-    private const int _kOffset = 15;
+		// PRAGMA MARK - Internal
+		private const int kOffset = 15;
 
-    private static int _indentLevel = 0;
+		private static int indentLevel_ = 0;
 
-    private static GUIStyle _oddGUIStyle;
-    private static GUIStyle _OddGUIStyle {
-      get {
-        if (_oddGUIStyle == null) {
-          _oddGUIStyle = EditorGUIStyleUtil.StyleWithOddColor();
-          _oddGUIStyle.padding.left = _kOffset;
-          _oddGUIStyle.margin.left = _kOffset;
-        }
+		private static GUIStyle oddGuistyle_;
+		private static GUIStyle OddGuistyle_ {
+			get {
+				if (oddGuistyle_ == null) {
+					oddGuistyle_ = EditorGUIStyleUtil.StyleWithOddColor();
+					oddGuistyle_.padding.left = kOffset;
+					oddGuistyle_.margin.left = kOffset;
+				}
 
-        return _oddGUIStyle;
-      }
-    }
+				return oddGuistyle_;
+			}
+		}
 
-    private static GUIStyle _evenGUIStyle;
-    private static GUIStyle _EvenGUIStyle {
-      get {
-        if (_evenGUIStyle == null) {
-          _evenGUIStyle = EditorGUIStyleUtil.StyleWithEvenColor();
-          _evenGUIStyle.padding.left = _kOffset;
-          _evenGUIStyle.margin.left = _kOffset;
-        }
+		private static GUIStyle evenGuistyle_;
+		private static GUIStyle EvenGuistyle_ {
+			get {
+				if (evenGuistyle_ == null) {
+					evenGuistyle_ = EditorGUIStyleUtil.StyleWithEvenColor();
+					evenGuistyle_.padding.left = kOffset;
+					evenGuistyle_.margin.left = kOffset;
+				}
 
-        return _evenGUIStyle;
-      }
-    }
-  }
+				return evenGuistyle_;
+			}
+		}
+	}
 }

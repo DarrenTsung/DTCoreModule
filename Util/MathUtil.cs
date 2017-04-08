@@ -1,6 +1,6 @@
 using DT;
-﻿using System.Collections;
-﻿using UnityEngine;
+using System.Collections;
+using UnityEngine;
 
 namespace DT {
 	public class MathUtil {
@@ -37,7 +37,7 @@ namespace DT {
 
 			float val;
 			do {
-				val = mean + (MathUtil.SampleNormalizedGaussian() * standardDeviation);
+				val = mean + (SampleNormalizedGaussian() * standardDeviation);
 			} while (val < min || val > max);
 
 			return val;
@@ -59,9 +59,9 @@ namespace DT {
 			return v1 * s;
 		}
 
-    public static float RandomSign() {
-      return Random.Range(0.0f, 1.0f) > 0.5f ? 1.0f : -1.0f;
-    }
+		public static float RandomSign() {
+			return Random.Range(0.0f, 1.0f) > 0.5f ? 1.0f : -1.0f;
+		}
 
 		/// <summary>
 		/// Wraps a value between the range of min and max
@@ -74,15 +74,15 @@ namespace DT {
 			return newVal;
 		}
 
-    public static int Clamp(int val, int min, int max) {
-      if (val > max) {
-        return max;
-      } else if (val < min) {
-        return min;
-      } else {
-        return val;
-      }
-    }
+		public static int Clamp(int val, int min, int max) {
+			if (val > max) {
+				return max;
+			} else if (val < min) {
+				return min;
+			} else {
+				return val;
+			}
+		}
 
 		/// <summary>
 		/// Evaluates a sine function with the given amplitude, wavelength, and offset
@@ -103,9 +103,9 @@ namespace DT {
 			return Mathf.Round(raisedValue) / conversion;
 		}
 
-    public static byte ConvertToByte(float f) {
-      f = Mathf.Clamp01(f);
-      return (byte)(f * 255);
-    }
+		public static byte ConvertToByte(float f) {
+			f = Mathf.Clamp01(f);
+			return (byte)(f * 255);
+		}
 	}
 }

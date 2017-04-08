@@ -8,33 +8,33 @@ using TMPro;
 #endif
 
 namespace DT {
-  [Serializable]
-  public class TextOutlet {
-    public string Text {
-      set { this.SetText(value); }
-    }
+	[Serializable]
+	public class TextOutlet {
+		public string Text {
+			set { SetText(value); }
+		}
 
-    public void SetText(string text) {
-      if (this._unityText != null) {
-        this._unityText.text = text;
-      }
+		public void SetText(string text) {
+			if (this._unityText != null) {
+				this._unityText.text = text;
+			}
 
 #if TMPRO
       if (this._tmpText != null) {
         this._tmpText.text = text;
       }
 #endif
-    }
+		}
 
-    public Color Color {
-      get { return this.GetColor(); }
-      set { this.SetColor(value); }
-    }
+		public Color Color {
+			get { return GetColor(); }
+			set { SetColor(value); }
+		}
 
-    public Color GetColor() {
-      if (this._unityText != null) {
-        return this._unityText.color;
-      }
+		public Color GetColor() {
+			if (this._unityText != null) {
+				return this._unityText.color;
+			}
 
 #if TMPRO
       if (this._tmpText != null) {
@@ -42,28 +42,28 @@ namespace DT {
       }
 #endif
 
-      return Color.white;
-    }
+			return Color.white;
+		}
 
-    public void SetColor(Color color) {
-      if (this._unityText != null) {
-        this._unityText.color = color;
-      }
+		public void SetColor(Color color) {
+			if (this._unityText != null) {
+				this._unityText.color = color;
+			}
 
 #if TMPRO
       if (this._tmpText != null) {
         this._tmpText.color = color;
       }
 #endif
-    }
+		}
 
 
-    // PRAGMA MARK - Internal
-    [SerializeField]
-    private Text _unityText;
+		// PRAGMA MARK - Internal
+		[SerializeField]
+		private Text _unityText;
 #if TMPRO
     [SerializeField]
     private TMP_Text _tmpText;
 #endif
-  }
+	}
 }

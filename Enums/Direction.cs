@@ -1,7 +1,7 @@
 using DT;
 using System.Collections;
 using System.Collections.Generic;
-﻿using UnityEngine;
+using UnityEngine;
 
 namespace DT {
 	public enum Direction {
@@ -76,33 +76,33 @@ namespace DT {
 			}
 		}
 
-    public static bool ContainsDirection(this IList<Direction> directions, Direction direction) {
-      if (directions == null) {
-        return false;
-      }
+		public static bool ContainsDirection(this IList<Direction> directions, Direction direction) {
+			if (directions == null) {
+				return false;
+			}
 
-      for (int i = 0; i < directions.Count; i++) {
-        Direction d = directions[i];
-        if (d == direction) {
-          return true;
-        }
-      }
+			for (int i = 0; i < directions.Count; i++) {
+				Direction d = directions[i];
+				if (d == direction) {
+					return true;
+				}
+			}
 
-      return false;
-    }
+			return false;
+		}
 
-    public static bool DoesNotContainDirection(this IList<Direction> directions, Direction direction) {
-      return !directions.ContainsDirection(direction);
-    }
+		public static bool DoesNotContainDirection(this IList<Direction> directions, Direction direction) {
+			return !directions.ContainsDirection(direction);
+		}
 	}
 
-  public static class DirectionUtil {
-    public static Direction ConvertVector2(Vector2 v) {
-      if (Mathf.Abs(v.x) > Mathf.Abs(v.y)) {
-        return (v.x > 0.0f) ? Direction.RIGHT : Direction.LEFT;
-      } else {
-        return (v.y > 0.0f) ? Direction.UP : Direction.DOWN;
-      }
-    }
-  }
+	public static class DirectionUtil {
+		public static Direction ConvertVector2(Vector2 v) {
+			if (Mathf.Abs(v.x) > Mathf.Abs(v.y)) {
+				return (v.x > 0.0f) ? Direction.RIGHT : Direction.LEFT;
+			} else {
+				return (v.y > 0.0f) ? Direction.UP : Direction.DOWN;
+			}
+		}
+	}
 }

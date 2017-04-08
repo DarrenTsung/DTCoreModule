@@ -1,6 +1,6 @@
 ﻿using DT;
 using System.Collections;
-﻿using UnityEngine;
+using UnityEngine;
 
 namespace DT {
 	public enum HorizontalDirection {
@@ -26,13 +26,13 @@ namespace DT {
 		}
 	}
 
-  public static class HorizontalDirectionUtil {
-    public static HorizontalDirection RandomDirection() {
-      return (Random.value >= 0.5f) ? HorizontalDirection.RIGHT : HorizontalDirection.LEFT;
-    }
+	public static class HorizontalDirectionUtil {
+		public static HorizontalDirection RandomDirection() {
+			return (Random.value >= 0.5f) ? HorizontalDirection.RIGHT : HorizontalDirection.LEFT;
+		}
 
-    public static HorizontalDirection FromValue(float value) {
-      return (value >= 0.0f) ? HorizontalDirection.RIGHT : HorizontalDirection.LEFT;
-    }
-  }
+		public static HorizontalDirection FromValue(float value) {
+			return (value >= 0.0f) ? HorizontalDirection.RIGHT : HorizontalDirection.LEFT;
+		}
+	}
 }
