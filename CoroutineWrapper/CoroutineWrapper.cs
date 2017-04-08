@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine;
 
 namespace DT {
-	public class CoroutineWrapper {
+	public partial class CoroutineWrapper {
 		// PRAGMA MARK - Static
 		public static void Initialize() {
 			CoroutineManager.Instance.Initialize();
