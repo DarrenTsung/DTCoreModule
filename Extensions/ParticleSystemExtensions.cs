@@ -9,5 +9,10 @@ namespace DT {
 			ParticleSystem.EmissionModule em = particleSystem.emission;
 			em.enabled = enabled;
 		}
+
+		public static void SetEmissionRateOverTime(this ParticleSystem particleSystem, float rateOverTime) {
+			ParticleSystem.EmissionModule em = particleSystem.emission;
+			em.rateOverTime = rateOverTime;
+		}
 	}
 }
