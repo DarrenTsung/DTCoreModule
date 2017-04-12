@@ -15,6 +15,11 @@ namespace DT {
 			em.rateOverTime = rateOverTime;
 		}
 
+		public static void SetEmissionRateOverDistance(this ParticleSystem particleSystem, float rateOverDistance) {
+			ParticleSystem.EmissionModule em = particleSystem.emission;
+			em.rateOverDistance = rateOverDistance;
+		}
+
 		public static void SetStartColor(this ParticleSystem particleSystem, Color startColor) {
 			ParticleSystem.MainModule main = particleSystem.main;
 			main.startColor = startColor;
