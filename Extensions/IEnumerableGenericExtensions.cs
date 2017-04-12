@@ -49,12 +49,12 @@ namespace DT {
 			return enumerable.Max(i => i);
 		}
 
-		public static T Min<T>(this IEnumerable<T> enumerable, Func<T, int> transformation) {
-			int minSoFar = int.MaxValue;
+		public static T Min<T>(this IEnumerable<T> enumerable, Func<T, float> transformation) {
+			float minSoFar = float.MaxValue;
 			T minElement = default(T);
 
 			foreach (T element in enumerable) {
-				int computedValue = transformation.Invoke(element);
+				float computedValue = transformation.Invoke(element);
 				if (computedValue < minSoFar) {
 					minSoFar = computedValue;
 					minElement = element;
@@ -62,6 +62,10 @@ namespace DT {
 			}
 
 			return minElement;
+		}
+
+		public static T Min<T>(this IEnumerable<T> enumerable, Func<T, int> transformation) {
+			return enumerable.Min((T elem) => (float)transformation.Invoke(elem));
 		}
 
 		public static int Min(this IEnumerable<int> enumerable) {
