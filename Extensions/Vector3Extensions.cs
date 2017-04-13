@@ -58,6 +58,10 @@ namespace DT {
 			return v;
 		}
 
+		public static Vector2 Vector2XZValue(this Vector3 v) {
+			return new Vector2(v.x, v.z);
+		}
+
 		public static Vector3 ClampedToMagnitude(this Vector3 v, float clampedMagnitude) {
 			if (v.magnitude > clampedMagnitude) {
 				return v.normalized * clampedMagnitude;
