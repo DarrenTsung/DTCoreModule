@@ -53,6 +53,10 @@ namespace DT {
 			}
 		}
 
+		public static void RemoveLast<T>(this List<T> l) {
+			l.RemoveAt(l.Count - 1);
+		}
+
 		public static int ClampIndex(this IList l, int i) {
 			return MathUtil.Clamp(i, 0, l.Count - 1);
 		}
