@@ -46,6 +46,10 @@ namespace DT {
 			}
 		}
 
+		public static T GetClamped<T>(this IList<T> list, int index) {
+			return list[list.ClampIndex(index)];
+		}
+
 		public static void RemoveRange<T>(this List<T> l, IList<T> itemsToRemove) {
 			for (int i = 0; i < itemsToRemove.Count; i++) {
 				T item = itemsToRemove[i];
@@ -55,6 +59,10 @@ namespace DT {
 
 		public static void RemoveLast<T>(this List<T> l) {
 			l.RemoveAt(l.Count - 1);
+		}
+
+		public static int ClampIndex<T>(this IList<T> l, int i) {
+			return MathUtil.Clamp(i, 0, l.Count - 1);
 		}
 
 		public static int ClampIndex(this IList l, int i) {
