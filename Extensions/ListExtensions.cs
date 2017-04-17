@@ -60,5 +60,14 @@ namespace DT {
 		public static int ClampIndex(this IList l, int i) {
 			return MathUtil.Clamp(i, 0, l.Count - 1);
 		}
+
+		public static IEnumerable<T> Join<T>(this IList<T> l, T separator) {
+			for (int i = 0; i < l.Count - 1; i++) {
+				yield return l[i];
+				yield return separator;
+			}
+
+			yield return l[l.Count - 1];
+		}
 	}
 }
