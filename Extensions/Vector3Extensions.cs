@@ -69,5 +69,9 @@ namespace DT {
 				return v;
 			}
 		}
+
+		public static Vector3 Floor(this Vector3 v) {
+			return new Vector3(Mathf.FloorToInt(v.x), Mathf.FloorToInt(v.y), Mathf.FloorToInt(v.z));
+		}
 	}
 }

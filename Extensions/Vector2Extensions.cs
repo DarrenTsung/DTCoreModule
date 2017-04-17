@@ -100,5 +100,9 @@ namespace DT {
 		public static Vector3 Vector3XZValue(this Vector2 v) {
 			return new Vector3(v.x, 0.0f, v.y);
 		}
+
+		public static Vector2 Floor(this Vector2 v) {
+			return new Vector2(Mathf.FloorToInt(v.x), Mathf.FloorToInt(v.y));
+		}
 	}
 }
