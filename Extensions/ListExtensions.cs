@@ -25,7 +25,7 @@ namespace DT {
 			int index = 0;
 			while (true) {
 				yield return list[index];
-				index = MathUtil.Wrap(index + 1, 0, list.Count);
+				index = list.WrapIndex(index + 1);
 			}
 		}
 
@@ -50,6 +50,10 @@ namespace DT {
 			return list[list.ClampIndex(index)];
 		}
 
+		public static T GetWrapped<T>(this IList<T> list, int index) {
+			return list[list.WrapIndex(index)];
+		}
+
 		public static void RemoveRange<T>(this List<T> l, IList<T> itemsToRemove) {
 			for (int i = 0; i < itemsToRemove.Count; i++) {
 				T item = itemsToRemove[i];
@@ -67,6 +71,14 @@ namespace DT {
 
 		public static int ClampIndex(this IList l, int i) {
 			return MathUtil.Clamp(i, 0, l.Count - 1);
+		}
+
+		public static int WrapIndex<T>(this IList<T> l, int i) {
+			return MathUtil.Wrap(i, 0, l.Count);
+		}
+
+		public static int WrapIndex(this IList l, int i) {
+			return MathUtil.Wrap(i, 0, l.Count);
 		}
 
 		public static IEnumerable<T> Join<T>(this IList<T> l, T separator) {
