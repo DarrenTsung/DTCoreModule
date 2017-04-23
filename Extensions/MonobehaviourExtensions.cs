@@ -67,6 +67,22 @@ namespace DT {
 			}
 		}
 
+		public static Coroutine DoLerpFor(this MonoBehaviour m, float duration, Action<float> lerpCallback, Action finishedCallback = null) {
+			return m.StartCoroutine(DoLerpCoroutine(duration, lerpCallback, finishedCallback));
+		}
+
+		private static IEnumerator DoLerpCoroutine(float duration, Action<float> lerpCallback, Action finishedCallback) {
+			for (float time = 0.0f; time <= duration; time += Time.deltaTime) {
+				lerpCallback.Invoke(time / duration);
+				yield return null;
+			}
+
+			lerpCallback.Invoke(1.0f);
+			if (finishedCallback != null) {
+				finishedCallback.Invoke();
+			}
+		}
+
 		public static GameObject[] FindChildGameObjectsWithTag(this MonoBehaviour m, string tag) {
 			return m.gameObject.FindChildGameObjectsWithTag(tag);
 		}
