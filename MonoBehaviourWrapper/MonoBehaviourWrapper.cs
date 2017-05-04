@@ -4,6 +4,10 @@ using UnityEngine;
 
 namespace DT {
 	public static class MonoBehaviourWrapper {
+		static MonoBehaviourWrapper() {
+			UnityHelper.Instance.Initialize();
+		}
+
 		public static event Action OnUpdate = delegate { };
 		public static event Action OnFixedUpdate = delegate { };
 		public static event Action OnApplicationPaused = delegate { };
