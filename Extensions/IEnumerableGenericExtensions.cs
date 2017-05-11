@@ -168,5 +168,15 @@ namespace DT {
 				yield return extraElement;
 			}
 		}
+
+		public static T FirstOrDefault<T>(this IEnumerable<T> enumerable, Predicate<T> predicate) {
+			foreach (T elem in enumerable) {
+				if (predicate.Invoke(elem)) {
+					return elem;
+				}
+			}
+
+			return default(T);
+		}
 	}
 }
