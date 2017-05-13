@@ -13,6 +13,10 @@ namespace DT {
 			return list[chosenIndex];
 		}
 
+		public static bool IsEmpty<T>(this IList<T> list) {
+			return list.Count <= 0;
+		}
+
 		public static T Random<T>(this IList<T> list, int seed) {
 			UnityEngine.Random.State oldState = UnityEngine.Random.state;
 			UnityEngine.Random.InitState(seed);
