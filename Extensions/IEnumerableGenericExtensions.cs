@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace DT {
 	public static class IEnumerableGenericExtensions {
-		public static T Max<T>(this IEnumerable<T> enumerable, Func<T, int> transformation) {
+		public static T MaxBy<T>(this IEnumerable<T> enumerable, Func<T, int> transformation) {
 			int maxSoFar = int.MinValue;
 			T maxElement = default(T);
 
@@ -21,11 +21,15 @@ namespace DT {
 			return maxElement;
 		}
 
-		public static int Max(this IEnumerable<int> enumerable) {
-			return enumerable.Max(i => i);
+		public static int MaxBy(this IEnumerable<int> enumerable) {
+			return enumerable.MaxBy(i => i);
 		}
 
-		public static T Max<T>(this IEnumerable<T> enumerable, Func<T, float> transformation) {
+		public static float MaxBy(this IEnumerable<float> enumerable) {
+			return enumerable.MaxBy(i => i);
+		}
+
+		public static T MaxBy<T>(this IEnumerable<T> enumerable, Func<T, float> transformation) {
 			float maxSoFar = float.MinValue;
 			T maxElement = default(T);
 
@@ -45,11 +49,7 @@ namespace DT {
 			return enumerable.ElementAt(index);
 		}
 
-		public static float Max(this IEnumerable<float> enumerable) {
-			return enumerable.Max(i => i);
-		}
-
-		public static T Min<T>(this IEnumerable<T> enumerable, Func<T, float> transformation) {
+		public static T MinBy<T>(this IEnumerable<T> enumerable, Func<T, float> transformation) {
 			float minSoFar = float.MaxValue;
 			T minElement = default(T);
 
@@ -64,12 +64,12 @@ namespace DT {
 			return minElement;
 		}
 
-		public static T Min<T>(this IEnumerable<T> enumerable, Func<T, int> transformation) {
-			return enumerable.Min((T elem) => (float)transformation.Invoke(elem));
+		public static T MinBy<T>(this IEnumerable<T> enumerable, Func<T, int> transformation) {
+			return enumerable.MinBy((T elem) => (float)transformation.Invoke(elem));
 		}
 
-		public static int Min(this IEnumerable<int> enumerable) {
-			return enumerable.Min(i => i);
+		public static int MinBy(this IEnumerable<int> enumerable) {
+			return enumerable.MinBy(i => i);
 		}
 
 		public static bool All<T>(this IEnumerable<T> enumerable, Predicate<T> predicate) {
