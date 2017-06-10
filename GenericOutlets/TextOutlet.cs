@@ -19,11 +19,11 @@ namespace DT {
 				this._unityText.text = text;
 			}
 
-#if TMPRO
-      if (this._tmpText != null) {
-        this._tmpText.text = text;
-      }
-#endif
+			#if TMPRO
+			if (this._tmpText != null) {
+				this._tmpText.text = text;
+			}
+			#endif
 		}
 
 		public Color Color {
@@ -36,11 +36,11 @@ namespace DT {
 				return this._unityText.color;
 			}
 
-#if TMPRO
-      if (this._tmpText != null) {
-        return this._tmpText.color;
-      }
-#endif
+			#if TMPRO
+			if (this._tmpText != null) {
+				return this._tmpText.color;
+			}
+			#endif
 
 			return Color.white;
 		}
@@ -50,20 +50,21 @@ namespace DT {
 				this._unityText.color = color;
 			}
 
-#if TMPRO
-      if (this._tmpText != null) {
-        this._tmpText.color = color;
-      }
-#endif
+			#if TMPRO
+			if (this._tmpText != null) {
+				this._tmpText.color = color;
+			}
+			#endif
 		}
 
 
 		// PRAGMA MARK - Internal
 		[SerializeField]
 		private Text _unityText;
-#if TMPRO
-    [SerializeField]
-    private TMP_Text _tmpText;
-#endif
+
+		#if TMPRO
+		[SerializeField]
+		private TMP_Text _tmpText;
+		#endif
 	}
 }
