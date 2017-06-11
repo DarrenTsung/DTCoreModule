@@ -17,6 +17,10 @@ namespace DT {
 			return new CoroutineWrapper(coroutine, finishedCallback);
 		}
 
+		public static CoroutineWrapper DoAfterRealtimeDelay(float delay, Action finishedCallback) {
+			return StartCoroutine(RealtimeDelayCoroutine(delay), finishedCallback);
+		}
+
 		public static CoroutineWrapper DoAfterDelay(float delay, Action finishedCallback) {
 			return StartCoroutine(DelayCoroutine(delay), finishedCallback);
 		}
@@ -40,6 +44,10 @@ namespace DT {
 			}
 
 			lerpCallback.Invoke(1.0f);
+		}
+
+		private static IEnumerator RealtimeDelayCoroutine(float delay) {
+			yield return new WaitForSecondsRealtime(delay);
 		}
 
 		private static IEnumerator DelayCoroutine(float delay) {
