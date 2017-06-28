@@ -57,6 +57,18 @@ namespace DT {
 			#endif
 		}
 
+		public void SetEnabled(bool enabled) {
+			if (this._unityText != null) {
+				this._unityText.enabled = enabled;
+			}
+
+			#if TMPRO
+			if (this._tmpText != null) {
+				this._tmpText.enabled = enabled;
+			}
+			#endif
+		}
+
 
 		// PRAGMA MARK - Internal
 		[SerializeField]
