@@ -5,10 +5,6 @@ using UnityEngine;
 namespace DT {
 	public partial class CoroutineWrapper {
 		// PRAGMA MARK - Static
-		public static void Initialize() {
-			CoroutineManager.Instance.Initialize();
-		}
-
 		public static CoroutineWrapper StartCoroutine(IEnumerator coroutine, Action finishedCallback) {
 			return new CoroutineWrapper(coroutine, finishedCallback);
 		}
@@ -35,6 +31,16 @@ namespace DT {
 
 		public static CoroutineWrapper DoLerpFor(float duration, Action<float> lerpCallback, Action finishedCallback = null) {
 			return StartCoroutine(DoLerpCoroutine(duration, lerpCallback), finishedCallback);
+		}
+
+
+		private static CoroutineRunner coroutineRunner_;
+
+		[RuntimeInitializeOnLoadMethod]
+		private static void Initialize() {
+			GameObject coroutineRunnerObject = new GameObject("CoroutineRunner (DontDestroyOnLoad)");
+			coroutineRunner_ = coroutineRunnerObject.AddComponent<CoroutineRunner>();
+			GameObject.DontDestroyOnLoad(coroutineRunnerObject);
 		}
 
 		private static IEnumerator DoLerpCoroutine(float duration, Action<float> lerpCallback) {
@@ -87,7 +93,7 @@ namespace DT {
 
 		private CoroutineWrapper(IEnumerator coroutine) {
 			coroutine_ = coroutine;
-			CoroutineManager.Instance.StartCoroutine(Coroutine());
+			coroutineRunner_.StartCoroutine(Coroutine());
 		}
 
 		private Action finishedNoArgsCallback_;
@@ -113,12 +119,6 @@ namespace DT {
 
 			if (!cancelled_ && finishedArgsCallback_ != null) {
 				finishedArgsCallback_(manuallyStopped_);
-			}
-		}
-
-		private class CoroutineManager : Singleton<CoroutineManager> {
-			public void Initialize() {
-				// empty method so that the object is created
 			}
 		}
 	}
