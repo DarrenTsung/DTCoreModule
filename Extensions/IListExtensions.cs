@@ -22,5 +22,11 @@ namespace DT {
 				action.Invoke(list[i]);
 			}
 		}
+
+		public static IEnumerable<T> ListReverse<T>(this IList<T> list) {
+			for (int i = list.Count - 1; i >= 0; i--) {
+				yield return list[i];
+			}
+		}
 	}
 }
