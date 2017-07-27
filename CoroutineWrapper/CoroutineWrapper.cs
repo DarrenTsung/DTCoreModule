@@ -21,6 +21,10 @@ namespace DT {
 			return StartCoroutine(DelayCoroutine(delay), finishedCallback);
 		}
 
+		public static CoroutineWrapper DoEveryFrameForDelay(float delay, Action perFrameCallback, Action finishedCallback) {
+			return StartCoroutine(DelayFrameCoroutine(delay, perFrameCallback), finishedCallback);
+		}
+
 		public static CoroutineWrapper DoAfterFrame(Action finishedCallback) {
 			return StartCoroutine(WaitOneFrameCoroutine(), finishedCallback);
 		}
@@ -67,6 +71,13 @@ namespace DT {
 
 		private static IEnumerator WaitOneFrameCoroutine() {
 			yield return null;
+		}
+
+		private static IEnumerator DelayFrameCoroutine(float delay, Action perFrameCallback) {
+			for (float time = 0.0f; time <= delay; time += Time.deltaTime) {
+				perFrameCallback.Invoke();
+				yield return null;
+			}
 		}
 
 
