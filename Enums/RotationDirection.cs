@@ -11,9 +11,9 @@ namespace DT {
 	public static class RotationDirectionExtensions {
 		public static float FloatValue(this RotationDirection direction) {
 			if (direction == RotationDirection.CLOCKWISE) {
-				return -1.0f;
-			} else {
 				return 1.0f;
+			} else {
+				return -1.0f;
 			}
 		}
 
