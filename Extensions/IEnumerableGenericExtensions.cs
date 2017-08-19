@@ -169,6 +169,14 @@ namespace DT {
 			}
 		}
 
+		public static T FirstOrDefault<T>(this IEnumerable<T> enumerable) {
+			foreach (T elem in enumerable) {
+				return elem;
+			}
+
+			return default(T);
+		}
+
 		public static T FirstOrDefault<T>(this IEnumerable<T> enumerable, Predicate<T> predicate) {
 			foreach (T elem in enumerable) {
 				if (predicate.Invoke(elem)) {
