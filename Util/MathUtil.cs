@@ -86,6 +86,7 @@ namespace DT {
 
 		/// <summary>
 		/// Evaluates a sine function with the given amplitude, wavelength, and offset
+		/// Sine goes from [-amplitude, amplitude]
 		/// </summary>
 		public static float EvaluateSine(float val, float amplitude, float wavelength, float offset = 0.0f) {
 			if (wavelength == 0) {
