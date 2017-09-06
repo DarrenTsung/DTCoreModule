@@ -14,6 +14,18 @@ namespace DT {
 			set { SetText(value); }
 		}
 
+		public void SetActive(bool active) {
+			if (this._unityText != null) {
+				this._unityText.gameObject.SetActive(active);
+			}
+
+			#if TMPRO
+			if (this._tmpText != null) {
+				this._tmpText.gameObject.SetActive(active);
+			}
+			#endif
+		}
+
 		public void SetText(string text) {
 			if (this._unityText != null) {
 				this._unityText.text = text;
