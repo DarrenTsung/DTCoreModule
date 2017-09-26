@@ -126,6 +126,9 @@ namespace DT {
 			Dictionary<TKey, T> map = new Dictionary<TKey, T>();
 			foreach (T element in enumerable) {
 				TKey key = keyTransformation.Invoke(element);
+				if (map.ContainsKey(key)) {
+					Debug.LogWarning("ToMapWithKeys - key (" + key + ") appears twice, will override the previous value: " + map[key]);
+				}
 				map[key] = element;
 			}
 			return map;
