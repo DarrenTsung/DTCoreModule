@@ -85,6 +85,23 @@ namespace DT {
 			}
 		}
 
+		public static T GetComponentInParent<T>(this GameObject g, bool includeInactive) {
+			while (true) {
+				var component = g.GetComponent<T>();
+				if (component != null) {
+					return component;
+				}
+
+				if (g.transform.parent == null) {
+					break;
+				}
+
+				g = g.transform.parent.gameObject;
+			}
+
+			return default(T);
+		}
+
 		public static T GetRequiredComponentInParent<T>(this GameObject g) {
 			T component = g.GetComponentInParent<T>();
 			if (component == null) {

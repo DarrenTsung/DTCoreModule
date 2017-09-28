@@ -25,6 +25,10 @@ namespace DT {
 			return m.gameObject.GetOnlyComponentInChildren<T>();
 		}
 
+		public static T GetComponentInParent<T>(this MonoBehaviour m, bool includeInactive) {
+			return m.gameObject.GetComponentInParent<T>(includeInactive);
+		}
+
 		public static T GetRequiredComponentInParent<T>(this MonoBehaviour m) {
 			return m.gameObject.GetRequiredComponentInParent<T>();
 		}
