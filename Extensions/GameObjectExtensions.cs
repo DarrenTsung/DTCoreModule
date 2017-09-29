@@ -57,6 +57,10 @@ namespace DT {
 			return cache[type] as T;
 		}
 
+		public static void AddComponentIfMissing<T>(this GameObject g) where T : UnityEngine.Component {
+			g.AddComponent<T>();
+		}
+
 		public static T GetRequiredComponent<T>(this GameObject g) {
 			T component = g.GetComponent<T>();
 			if (component == null) {

@@ -9,6 +9,10 @@ namespace DT {
 			return m.gameObject.GetRequiredComponent<T>();
 		}
 
+		public static void AddComponentIfMissing<T>(this MonoBehaviour m) where T : UnityEngine.Component {
+			m.gameObject.AddComponentIfMissing<T>();
+		}
+
 		public static void SetSelfAsParent(this MonoBehaviour m, GameObject other) {
 			other.transform.parent = m.transform;
 		}
