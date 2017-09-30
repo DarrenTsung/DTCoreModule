@@ -117,7 +117,7 @@ Shader "UI/Custom/Circle"
 				color.a *= smoothstep(coordSqrdLength, coordSqrdLength + ALIAS, pow(_Radius, 2));
 				// 0 if inside (_Radius - _Width), 1 otherwise
 				float inner = pow(max(0.0, _Radius - _Width), 2);
-				color.a *= smoothstep(inner, inner + ALIAS, coordSqrdLength);
+				color.a *= smoothstep(inner - ALIAS, inner, coordSqrdLength);
 
 				// Circle Segment Logic
 				const float PI = 3.14159265359;
