@@ -14,6 +14,20 @@ namespace DT {
 			set { SetText(value); }
 		}
 
+		public GameObject GameObject {
+			get {
+				if (this._unityText != null) {
+					return this._unityText.gameObject;
+				}
+
+				if (this._tmpText != null) {
+					return this._tmpText.gameObject;
+				}
+
+				return null;
+			}
+		}
+
 		public void SetActive(bool active) {
 			if (this._unityText != null) {
 				this._unityText.gameObject.SetActive(active);
