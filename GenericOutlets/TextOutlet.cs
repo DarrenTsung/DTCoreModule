@@ -14,6 +14,16 @@ namespace DT {
 			set { SetText(value); }
 		}
 
+		public Text UnityText {
+			get { return _unityText; }
+		}
+
+		#if TMPRO
+		public TMP_Text TMPText {
+			get { return _tmpText; }
+		}
+		#endif
+
 		public GameObject GameObject {
 			get {
 				if (this._unityText != null) {
