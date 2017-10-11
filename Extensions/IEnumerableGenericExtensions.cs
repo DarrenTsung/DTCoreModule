@@ -134,6 +134,18 @@ namespace DT {
 			return map;
 		}
 
+		public static Dictionary<T, TValue> ToMapWithValues<T, TValue>(this IEnumerable<T> enumerable, Func<T, TValue> valueTransformation) {
+			Dictionary<T, TValue> map = new Dictionary<T, TValue>();
+			foreach (T key in enumerable) {
+				TValue value = valueTransformation.Invoke(key);
+				if (map.ContainsKey(key)) {
+					Debug.LogWarning("ToMapWithValues - key (" + key + ") appears twice, will override the previous value: " + map[key]);
+				}
+				map[key] = value;
+			}
+			return map;
+		}
+
 		/// <summary>Adds a single element to the end of an IEnumerable.</summary>
 		/// <typeparam name="T">Type of enumerable to return.</typeparam>
 		/// <returns>IEnumerable containing all the input elements, followed by the
