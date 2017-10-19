@@ -30,9 +30,11 @@ namespace DT {
 					return this._unityText.gameObject;
 				}
 
+				#if TMPRO
 				if (this._tmpText != null) {
 					return this._tmpText.gameObject;
 				}
+				#endif
 
 				return null;
 			}
