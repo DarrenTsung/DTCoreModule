@@ -106,6 +106,18 @@ namespace DT {
 			return sum / count;
 		}
 
+		public static IEnumerable<T> Take<T>(this IEnumerable<T> enumerable, int amount) {
+			int index = 0;
+			foreach (var element in enumerable) {
+				if (index >= amount) {
+					yield break;
+				}
+
+				yield return element;
+				index++;
+			}
+		}
+
 		public static List<T> ToList<T>(this IEnumerable<T> enumerable) {
 			return new List<T>(enumerable);
 		}

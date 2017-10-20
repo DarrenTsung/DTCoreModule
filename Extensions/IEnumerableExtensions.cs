@@ -31,5 +31,15 @@ namespace DT {
 				yield return selector.Invoke(e.Current);
 			}
 		}
+
+		public static IEnumerable<T> ECast<T>(this IEnumerable enumerable) {
+			foreach (T element in enumerable) {
+				yield return element;
+			}
+		}
+
+		public static List<T> ToList<T>(this IEnumerable enumerable) {
+			return new List<T>(enumerable.ECast<T>());
+		}
 	}
 }

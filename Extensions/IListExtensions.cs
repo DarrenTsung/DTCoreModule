@@ -38,6 +38,10 @@ namespace DT {
 			return list[chosenIndex];
 		}
 
+		public static int RandomIndex(this IList list) {
+			return UnityEngine.Random.Range(0, list.Count);
+		}
+
 		public static bool IsEmpty<T>(this IList<T> list) {
 			return list.Count <= 0;
 		}
@@ -48,6 +52,11 @@ namespace DT {
 			T item = list.Random();
 			UnityEngine.Random.state = oldState;
 			return item;
+		}
+
+		public static IList<T> Shuffled<T>(this IList<T> list) {
+			list.Shuffle();
+			return list;
 		}
 
 		public static void Shuffle<T>(this IList<T> list) {
