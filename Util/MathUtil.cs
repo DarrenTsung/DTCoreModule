@@ -92,7 +92,7 @@ namespace DT {
 			if (wavelength == 0) {
 				wavelength = 1.0f;
 			}
-			return amplitude * Mathf.Sin((val * 2.0f * Mathf.PI) / wavelength) + offset;
+			return (amplitude * Mathf.Sin((val / wavelength) * 2.0f * Mathf.PI)) + offset;
 		}
 
 		/// <summary>
