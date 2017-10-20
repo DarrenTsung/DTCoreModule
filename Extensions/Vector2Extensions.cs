@@ -49,6 +49,11 @@ namespace DT {
 			return v;
 		}
 
+		public static Vector2 MultiplyY(this Vector2 v, float yMultiplier) {
+			v.y = v.y * yMultiplier;
+			return v;
+		}
+
 		public static Vector2 PerpendicularDirection(this Vector2 v) {
 			Vector2 p = new Vector2(-v.y, v.x);
 			return p.normalized;
