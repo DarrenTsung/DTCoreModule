@@ -104,5 +104,29 @@ namespace DT {
 				return (v.y > 0.0f) ? Direction.UP : Direction.DOWN;
 			}
 		}
+
+		// Order-dependent. Does not return smallest angle between.
+		// Ex. LEFT -> DOWN = 270
+		public static int AngleInDegreesFrom(Direction a, Direction b) {
+			int aValue = DirectionUtil.GetOrderedValue(a);
+			int bValue = DirectionUtil.GetOrderedValue(b);
+
+			int anglesBetween = (bValue - aValue) % 4;
+			return anglesBetween * 90;
+		}
+
+		private static int GetOrderedValue(Direction d) {
+			switch (d) {
+				case Direction.UP:
+					return 0;
+				case Direction.RIGHT:
+					return 1;
+				case Direction.DOWN:
+					return 2;
+				case Direction.LEFT:
+				default:
+					return 3;
+			}
+		}
 	}
 }
