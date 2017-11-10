@@ -26,6 +26,20 @@ namespace DT {
 			return Vector2.up;
 		}
 
+		public static IntVector2 IntVector2Value(this Direction direction) {
+			switch (direction) {
+				case Direction.UP:
+					return IntVector2.up;
+				case Direction.RIGHT:
+					return IntVector2.right;
+				case Direction.DOWN:
+					return -IntVector2.up;
+				case Direction.LEFT:
+					return -IntVector2.right;
+			}
+			return IntVector2.up;
+		}
+
 		public static Direction OppositeDirection(this Direction direction) {
 			switch (direction) {
 				case Direction.UP:
