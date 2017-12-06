@@ -126,10 +126,6 @@ namespace DT {
 			}
 		}
 
-		public static List<T> ToList<T>(this IEnumerable<T> enumerable) {
-			return new List<T>(enumerable);
-		}
-
 		public static HashSet<T> ToHashSet<T>(this IEnumerable<T> enumerable) {
 			return new HashSet<T>(enumerable);
 		}
