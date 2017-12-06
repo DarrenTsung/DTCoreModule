@@ -21,6 +21,14 @@ namespace DT {
 			return maxElement;
 		}
 
+		public static void Enumerate<T>(this IEnumerable<T> enumerable, Action<T, int> enumerateCallback) {
+			int i = 0;
+			foreach (T element in enumerable) {
+				enumerateCallback.Invoke(element, i);
+				i++;
+			}
+		}
+
 		public static int MaxBy(this IEnumerable<int> enumerable) {
 			return enumerable.MaxBy(i => i);
 		}
